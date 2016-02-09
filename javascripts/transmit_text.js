@@ -4,7 +4,7 @@ var TextTransmitter = (function() {
     var transmit = Transmitter.transmitter(profilename);
 
     document.querySelector('[data-quiet-send-button]').addEventListener('click',
-        onClick: function(e) {
+        function(e) {
             var payload = document.querySelector('[data-quiet-text-input]').value;
             if (payload === "") {
                 return
