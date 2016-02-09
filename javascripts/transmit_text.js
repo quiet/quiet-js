@@ -11,4 +11,4 @@ var TextTransmitter = (function() {
             }
             transmit(payload);
     }, false);
-}();
+})();
