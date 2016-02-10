@@ -1,18 +1,31 @@
 var TextTransmitter = (function() {
     Transmitter.setProfilesPath("javascripts/profiles.json");
-    document.addEventListener("DOMContentLoaded", function() {
-        var profilename = document.querySelector('[data-quiet-profile-name]').getAttribute('data-quiet-profile-name');
-        Transmitter.setReadyCallback(function() {
-            var transmit = Transmitter.transmitter(profilename);
+    var btn;
 
-            document.querySelector('[data-quiet-send-button]').addEventListener('click',
-                function(e) {
-                    var payload = document.querySelector('[data-quiet-text-input]').value;
-                    if (payload === "") {
-                        return
-                    }
-                    transmit(payload);
-            }, false);
-        });
-    });
+    function onTransmitFinish() {
+        btn.blur();
+        btn.addEventListener('click', onClick, false);
+    };
+
+    function onClick(e) {
+        e.target.removeEventListener(e.type, arguments.callee);
+        var payload = document.querySelector('[data-quiet-text-input]').value;
+        if (payload === "") {
+            return
+        }
+        transmit(payload, onTransmitFinish);
+    };
+
+    function onTransmitterReady() {
+        var transmit = Transmitter.transmitter(profilename);
+        btn.addEventListener('click', onClick, false);
+    };
+
+    function onDOMLoad() {
+        var profilename = document.querySelector('[data-quiet-profile-name]').getAttribute('data-quiet-profile-name');
+        btn = document.querySelector('[data-quiet-send-button]');
+        Transmitter.setReadyCallback(onTransmitterReady);
+    };
+
+    document.addEventListener("DOMContentLoaded", onDOMLoad);
 })();
