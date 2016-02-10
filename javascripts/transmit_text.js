@@ -7,9 +7,9 @@ var TextTransmitter = (function() {
         btn.blur();
         btn.addEventListener('click', onClick, false);
         btn.disabled = false;
-        var originalText = e.target.innerText;
-        e.target.innerText = e.target.getAttribute('data-quiet-sending-text');
-        e.target.setAttribute('data-quiet-sending-text', originalText);
+        var originalText = btn.innerText;
+        btn.innerText = btn.getAttribute('data-quiet-sending-text');
+        btn.setAttribute('data-quiet-sending-text', originalText);
     };
 
     function onClick(e) {
