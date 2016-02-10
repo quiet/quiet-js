@@ -6,13 +6,22 @@ var TextTransmitter = (function() {
     function onTransmitFinish() {
         btn.blur();
         btn.addEventListener('click', onClick, false);
+        btn.disabled = false;
+        var originalText = e.target.innerText;
+        e.target.innerText = e.target.getAttribute('data-quiet-sending-text');
+        e.target.setAttribute('data-quiet-sending-text', originalText);
     };
 
     function onClick(e) {
         e.target.removeEventListener(e.type, arguments.callee);
+        e.target.disabled = true;
+        var originalText = e.target.innerText;
+        e.target.innerText = e.target.getAttribute('data-quiet-sending-text');
+        e.target.setAttribute('data-quiet-sending-text', originalText);
         var payload = document.querySelector('[data-quiet-text-input]').value;
         if (payload === "") {
-            return
+            onTransmitFinish();
+            return;
         }
         transmit(payload, onTransmitFinish);
     };
