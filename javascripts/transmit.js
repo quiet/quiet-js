@@ -33,7 +33,7 @@ var Transmitter = (function() {
 
         return function(payloadStr, done) {
             var payload = allocate(Module.intArrayFromString(payloadStr), 'i8', ALLOC_NORMAL);
-            Module.ccall('encoder_set_payload', 'number', ['pointer', 'pointer', 'number'], [encoder, payload, payload.length]);
+            Module.ccall('encoder_set_payload', 'number', ['pointer', 'pointer', 'number'], [encoder, payload, payloadStr.length]);
 
             var sample_len = bufferSize;
             var samples = Module.ccall('malloc', 'pointer', ['number'], [4 * sample_len]);
