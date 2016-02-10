@@ -1,6 +1,7 @@
 var TextTransmitter = (function() {
     Transmitter.setProfilesPath("javascripts/profiles.json");
     var btn;
+    var transmit;
 
     function onTransmitFinish() {
         btn.blur();
@@ -18,7 +19,7 @@ var TextTransmitter = (function() {
 
     function onTransmitterReady() {
         var profilename = document.querySelector('[data-quiet-profile-name]').getAttribute('data-quiet-profile-name');
-        var transmit = Transmitter.transmitter(profilename);
+        transmit = Transmitter.transmitter(profilename);
         btn.addEventListener('click', onClick, false);
     };
 
