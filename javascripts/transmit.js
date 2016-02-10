@@ -6,6 +6,10 @@ var Transmitter = (function() {
     var audio_ctx;
     var readyCallback;
 
+    function isReady() {
+        return emscriptenInitialized && profilesFetched;
+    }
+
     function start() {
         audio_ctx = new (window.AudioContext || window.webkitAudioContext)();
         console.log(audio_ctx.sampleRate);
@@ -15,7 +19,7 @@ var Transmitter = (function() {
     };
 
     function checkInitState() {
-        if (emscriptenInitialized && profilesFetched) {
+        if (isReady()) {
             start();
         }
     };
@@ -100,9 +104,18 @@ var Transmitter = (function() {
         });
     };
 
+    function setReadyCallback(c) {
+        if (isReady()) {
+            c();
+            return
+        }
+        readyCallback = c;
+    }
+
     return {
         emscriptenInitialized: onEmscriptenInitialized,
         setProfilesPath: setProfilesPath,
+        setReadyCallback: setReadyCallback,
         transmitter: newTransmitter
     };
 })();
