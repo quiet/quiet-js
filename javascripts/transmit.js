@@ -41,8 +41,12 @@ var Transmitter = (function() {
 
             var script_processor = (audio_ctx.createScriptProcessor || audio_ctx.createJavaScriptNode);
             var transmitter = script_processor.call(audio_ctx, sample_len, 1, 2);
-            var sentDone = false;
+            var finished = false;
             transmitter.onaudioprocess = function(e) {
+                if (finished) {
+                    transmitter.disconnect();
+                    return;
+                }
                 var output_offset = 0;
                 var output_l = e.outputBuffer.getChannelData(0);
                 var written = Module.ccall('encode', 'number', ['pointer', 'pointer', 'number'], [encoder, samples, sample_len]);
@@ -51,12 +55,10 @@ var Transmitter = (function() {
                     for (var i = written; i < sample_len; i++) {
                         output_l[i] = 0;
                     }
-                    if (!sentDone) {
-                        if (done !== undefined) {
+                    if (done !== undefined) {
                             done();
-                        }
-                        sentDone = true;
                     }
+                    finished = true;
                 }
             };
             var dummy_osc = audio_ctx.createOscillator();
