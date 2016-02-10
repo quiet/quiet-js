@@ -41,6 +41,7 @@ var Transmitter = (function() {
 
             var script_processor = (audio_ctx.createScriptProcessor || audio_ctx.createJavaScriptNode);
             var transmitter = script_processor.call(audio_ctx, sample_len, 1, 2);
+            var sentDone = false;
             transmitter.onaudioprocess = function(e) {
                 var output_offset = 0;
                 var output_l = e.outputBuffer.getChannelData(0);
@@ -50,8 +51,11 @@ var Transmitter = (function() {
                     for (var i = written; i < sample_len; i++) {
                         output_l[i] = 0;
                     }
-                    if (done !== undefined) {
-                        done();
+                    if (!sentDone) {
+                        if (done !== undefined) {
+                            done();
+                        }
+                        sentDone = true;
                     }
                 }
             };
