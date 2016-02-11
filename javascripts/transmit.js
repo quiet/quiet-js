@@ -214,7 +214,7 @@ var Transmitter = (function() {
     return {
         emscriptenInitialized: onEmscriptenInitialized,
         setProfilesPath: setProfilesPath,
-        setReadyCallback: addReadyCallback,
+        addReadyCallback: addReadyCallback,
         transmitter: newTransmitter,
         receiver: newReceiver
     };
