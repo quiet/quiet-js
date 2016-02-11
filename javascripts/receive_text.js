@@ -8,7 +8,7 @@ var TextReceiver = (function() {
         if (target.firstChild !== null) {
             target.removeChild(target.firstChild);
         }
-        target.appendChild(document.createTextNode(content);
+        target.appendChild(document.createTextNode(content));
     };
 
     function onTransmitterReady() {
