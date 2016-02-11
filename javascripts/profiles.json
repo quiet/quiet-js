@@ -82,7 +82,7 @@
     },
     "robust": {
         "checksum_scheme": "crc32",
-        "inner_fec_scheme": "v27p23",
+        "inner_fec_scheme": "v27",
         "outer_fec_scheme": "rs8",
         "mod_scheme": "psk2",
         "frame_length": 25,
