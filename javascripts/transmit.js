@@ -4,7 +4,11 @@ var Transmitter = (function() {
     var profilesFetched = false;
     var profiles;
     var audio_ctx;
-    var readyCallback;
+    var readyCallbacks = [];
+
+    var gUM;
+    var audioInput;
+    var audioInputReadyCallbacks = [];
 
     function isReady() {
         return emscriptenInitialized && profilesFetched;
@@ -13,8 +17,9 @@ var Transmitter = (function() {
     function start() {
         audio_ctx = new (window.AudioContext || window.webkitAudioContext)();
         console.log(audio_ctx.sampleRate);
-        if (readyCallback !== undefined) {
-            readyCallback();
+        var len = readyCallbacks.length;
+        for (var i = 0; i < len; i++) {
+            readyCallbacks[i]();
         }
     };
 
@@ -69,6 +74,95 @@ var Transmitter = (function() {
         };
     };
 
+    function audioInputReady() {
+        var len = audioInputReadyCallbacks.length;
+        for (var i = 0; i < len; i++) {
+            audioInputReadyCallbacks[i]();
+        }
+    };
+
+    function addAudioInputReadyCallback(c) {
+        if (audioInput instanceof MediaStreamAudioSourceNode) {
+            c();
+            return
+        }
+        audioInputReadyCallbacks.push(c);
+    }
+
+    function createAudioInput() {
+        audioInput = 0; // prevent others from trying to create
+        gUM.call(navigator, {
+                audio: {
+                    optional: [
+                      {googAutoGainControl: false},
+                      {googAutoGainControl2: false},
+                      {googEchoCancellation: false},
+                      {googEchoCancellation2: false},
+                      {googNoiseSuppression: false},
+                      {googNoiseSuppression2: false},
+                      {googHighpassFilter: false},
+                      {googTypingNoiseDetection: false},
+                      {googAudioMirroring: false}
+                    ]
+                }
+            }, function(e) {
+                audioInput = context.createMediaStreamSource(e);
+                window.anti_gc = audioInput;
+                audioInputReady();
+            }, function() {
+                console.log("failed to create an audio source");
+        });
+    };
+
+    function newReceiver(profileName, onReceive) {
+        var c_profiles = Module.intArrayFromString(profiles);
+        var c_profilename = Module.intArrayFromString(profilename);
+        var opt = Module.ccall('get_decoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profilename]);
+        if (gUM === undefined) {
+            gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
+        }
+        if (audioInput === undefined) {
+            createAudioInput()
+        }
+        // TODO investigate if this still needs to be placed on window.
+        // seems this was done to keep it from being collected
+        window.recorder = audio_ctx.createScriptProcessor(16384, 2, 1);
+
+        Module.ccall('decoder_opt_set_sample_rate', 'number', ['pointer', 'number'], [opt, audio_ctx.sampleRate]);
+        var decoder = Module.ccall('create_decoder', 'pointer', ['pointer'], [opt]);
+        var sample_buffer_size = 16384;
+        var sample_buffer = Module.ccall('malloc', 'pointer', ['number'], [4 * sample_buffer_size]);
+        var data_buffer_size = Math.pow(2, 16);
+        var data_buffer = Module.ccall('malloc', 'pointer', ['number'], [data_buffer_size]);
+        window.recorder.onaudioprocess = function(e) {
+            var input = e.inputBuffer.getChannelData(0);
+            var sample_view = Module.HEAPF32.subarray(sample_buffer/4, sample_buffer/4 + sample_buffer_size);
+            sample_view.set(input);
+            var data_buffered = Module.ccall('decode', 'number', ['pointer', 'pointer', 'number'], [decoder, sample_buffer, sample_buffer_size]);
+
+            if (data_buffered > data_buffer_size) {
+                data_buffer = Module.ccall('realloc', 'pointer', ['pointer', 'number'], [data_buffer, data_buffered]);
+                data_buffer_size = data_buffered;
+            }
+
+            if (data_buffered > 0) {
+                Module.ccall('decoder_readbuf', 'number', ['pointer', 'pointer', 'number'], [decoder, data_buffer, data_buffered]);
+                var result = Module.HEAP8.subarray(data_buffer, data_buffer + data_buffered)
+                var result_str = String.fromCharCode.apply(null, new Uint8Array(result));
+                onReceive(result_str);
+            }
+        }
+
+        addAudioInputReadyCallback(function() {
+            audioInput.connect(window.recorder);
+        });
+
+        var fakeGain = audio_ctx.createGain();
+        fakeGain.value = 0;
+        window.recorder.connect(fakeGain);
+        fakeGain.connect(audio_ctx.destination);
+    };
+
     function onProfilesFetch(p) {
         profiles = p;
         profilesFetched = true;
@@ -109,19 +203,20 @@ var Transmitter = (function() {
         });
     };
 
-    function setReadyCallback(c) {
+    function addReadyCallback(c) {
         if (isReady()) {
             c();
             return
         }
-        readyCallback = c;
+        readyCallbacks.push(c);
     }
 
     return {
         emscriptenInitialized: onEmscriptenInitialized,
         setProfilesPath: setProfilesPath,
-        setReadyCallback: setReadyCallback,
-        transmitter: newTransmitter
+        setReadyCallback: addReadyCallback,
+        transmitter: newTransmitter,
+        receiver: newReceiver
     };
 })();
 
