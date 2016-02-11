@@ -101,6 +101,7 @@
             "bandwidth": 0.45,
             "attenuation": 60,
             "filter_bank_size": 64
-        }
+        },
+        "close_frame": true
     }
 }
