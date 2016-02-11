@@ -116,7 +116,7 @@ var Transmitter = (function() {
 
     function newReceiver(profileName, onReceive) {
         var c_profiles = Module.intArrayFromString(profiles);
-        var c_profilename = Module.intArrayFromString(profilename);
+        var c_profilename = Module.intArrayFromString(profileName);
         var opt = Module.ccall('get_decoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profilename]);
         if (gUM === undefined) {
             gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
