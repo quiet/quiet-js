@@ -106,7 +106,7 @@ var Transmitter = (function() {
                     ]
                 }
             }, function(e) {
-                audioInput = context.createMediaStreamSource(e);
+                audioInput = audio_ctx.createMediaStreamSource(e);
                 window.anti_gc = audioInput;
                 audioInputReady();
             }, function() {
