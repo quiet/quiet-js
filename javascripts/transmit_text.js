@@ -1,5 +1,5 @@
 var TextTransmitter = (function() {
-    Transmitter.setProfilesPath("javascripts/profiles.json");
+    Quiet.setProfilesPath("javascripts/profiles.json");
     var btn;
     var textbox;
     var transmit;
@@ -27,16 +27,16 @@ var TextTransmitter = (function() {
         transmit(payload, onTransmitFinish);
     };
 
-    function onTransmitterReady() {
+    function onQuietReady() {
         var profilename = document.querySelector('[data-quiet-profile-name]').getAttribute('data-quiet-profile-name');
-        transmit = Transmitter.transmitter(profilename);
+        transmit = Quiet.transmitter(profilename);
         btn.addEventListener('click', onClick, false);
     };
 
     function onDOMLoad() {
         btn = document.querySelector('[data-quiet-send-button]');
         textbox = document.querySelector('[data-quiet-text-input]');
-        Transmitter.addReadyCallback(onTransmitterReady);
+        Quiet.addReadyCallback(onQuietReady);
     };
 
     document.addEventListener("DOMContentLoaded", onDOMLoad);

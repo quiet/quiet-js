@@ -1,4 +1,4 @@
-var Transmitter = (function() {
+var Quiet = (function() {
     var bufferSize = 16384;
     var emscriptenInitialized = false;
     var profilesFetched = false;
@@ -222,5 +222,5 @@ var Transmitter = (function() {
 
 // extend emscripten Module
 var Module = {
-    onRuntimeInitialized: Transmitter.emscriptenInitialized
+    onRuntimeInitialized: Quiet.emscriptenInitialized
 };

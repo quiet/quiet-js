@@ -1,5 +1,5 @@
 var TextReceiver = (function() {
-    Transmitter.setProfilesPath("javascripts/profiles.json");
+    Quiet.setProfilesPath("javascripts/profiles.json");
     var target;
     var content = "";
 
@@ -11,14 +11,14 @@ var TextReceiver = (function() {
         target.appendChild(document.createTextNode(content));
     };
 
-    function onTransmitterReady() {
+    function onQuietReady() {
         var profilename = document.querySelector('[data-quiet-profile-name]').getAttribute('data-quiet-profile-name');
-        Transmitter.receiver(profilename, onReceive);
+        Quiet.receiver(profilename, onReceive);
     };
 
     function onDOMLoad() {
         target = document.querySelector('[data-quiet-receive-text-target]');
-        Transmitter.addReadyCallback(onTransmitterReady);
+        Quiet.addReadyCallback(onQuietReady);
     };
 
     document.addEventListener("DOMContentLoaded", onDOMLoad);
