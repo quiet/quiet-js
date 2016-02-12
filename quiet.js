@@ -1,5 +1,4 @@
 var Quiet = (function() {
-    var memoryInitializerPrefix = "/";
     var bufferSize = 16384;
     var emscriptenInitialized = false;
     var profilesFetched = false;
@@ -205,7 +204,7 @@ var Quiet = (function() {
     };
 
     function setMemoryInitializerPrefix(prefix) {
-        memoryInitializerPrefix = prefix;
+        Module.memoryInitializerPrefixURL = prefix;
     }
 
     function addReadyCallback(c) {
@@ -217,7 +216,6 @@ var Quiet = (function() {
     }
 
     return {
-        memoryInitializerPrefix: memoryInitializerPrefix,
         emscriptenInitialized: onEmscriptenInitialized,
         setProfilesPath: setProfilesPath,
         setMemoryInitializerPrefix: setMemoryInitializerPrefix,
@@ -230,5 +228,5 @@ var Quiet = (function() {
 // extend emscripten Module
 var Module = {
     onRuntimeInitialized: Quiet.emscriptenInitialized,
-    memoryInitializerPrefixURL: Quiet.memoryInitializerPrefix
+    memoryInitializerPrefixURL: ""
 };
