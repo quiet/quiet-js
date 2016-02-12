@@ -35,6 +35,7 @@ var Quiet = (function() {
         var opt = Module.ccall('get_encoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profilename]);
         Module.ccall('encoder_opt_set_sample_rate', 'number', ['pointer', 'number'], [opt, audio_ctx.sampleRate]);
         var encoder = Module.ccall('create_encoder', 'pointer', ['pointer'], [opt]);
+        Module.ccall('encoder_clamp_frame_len', null, ['pointer', 'number'], [encoder, bufferSize]);
 
         return function(payloadStr, done) {
             var payload = allocate(Module.intArrayFromString(payloadStr), 'i8', ALLOC_NORMAL);
