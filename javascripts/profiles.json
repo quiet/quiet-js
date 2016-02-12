@@ -87,10 +87,10 @@
         "mod_scheme": "psk2",
         "frame_length": 25,
         "modulation": {
-            "samples_per_symbol": 40,
+            "samples_per_symbol": 10,
             "symbol_delay": 4,
             "excess_bandwidth": 0.35,
-            "center_radians": 2.2,
+            "center_radians": 2.581,
             "gain": 0.15
         },
         "encoder_filters": {
