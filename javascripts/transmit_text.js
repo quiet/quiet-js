@@ -1,5 +1,6 @@
 var TextTransmitter = (function() {
     Quiet.setProfilesPath("javascripts/profiles.json");
+    Quiet.setMemoryInitializerPrefix("javascripts/");
     var btn;
     var textbox;
     var transmit;
