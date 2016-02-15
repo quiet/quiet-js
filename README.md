@@ -21,4 +21,4 @@ For a complete example demonstrating ultrasonic text transmission and reception,
 
 License
 --------
-Quiet and Quiet-js are licensed under 3-clause BSD. Please note that Quiet-js's emscripten-compiled output includes a statically-linked copy of [libfec](http://www.ka9q.net/code/fec/) which is licensed under LGPL. For more information on Quiet-js's 3rd party licenses, consult [LICENSE-3RD-PARTY](https://github.com/brian-armstrong/quiet-js/blob/master/LICENSE-3RD-PARTY.txt).
+Quiet and Quiet-js are licensed under 3-clause BSD. Please note that Quiet-js's emscripten-compiled output includes a statically-linked copy of [libfec](http://www.ka9q.net/code/fec/) which is licensed under LGPL. For more information on Quiet-js's 3rd party licenses, consult [LICENSE-3RD-PARTY](https://github.com/brian-armstrong/quiet-js/blob/master/LICENSE-3RD-PARTY).
