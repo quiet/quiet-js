@@ -1,4 +1,4 @@
-Quiet-js
+Quiet.js
 ===========
 This is a javascript binding for [libquiet](https://github.com/brian-armstrong/quiet), a library for sending and receiving data via sound card. It can function either via speaker or cable (e.g., 3.5mm). Quiet comes included with a few transmissions profiles which can be selected for the intended use. For speaker transmission, there is a profile which transmits around the 19kHz range, which is essentially imperceptible to people.
 
