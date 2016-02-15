@@ -30,40 +30,12 @@
         <h1>
 <a id="quiet" class="anchor" href="#quiet" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Quiet</h1>
 
-<p>This library uses liquid SDR to encode and decode data through 44.1kHz. This makes it suitable for sending data across a 3.5mm headphone jack from one device to another. It can also be built using emscripten to generate a .js file which can do transmission and reception from the browser.</p>
+<p>This is a javascript binding for [libquiet](https://github.com/brian-armstrong/quiet), a library for sending and receiving data via sound card. It can function either via speaker or cable (e.g., 3.5mm). Quiet comes included with a few transmissions profiles which can be selected for the intended use. For speaker transmission, there is a profile which transmits around the 19kHz range, which is essentially imperceptible to people.</p>
 
-<h2>
-<a id="build" class="anchor" href="#build" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Build</h2>
+<p>Quiet uses the Web Audio functionality in order to send and receive sound. This depends on `getUserMedia` which presently only works on Chrome and Firefox. Further, Firefox's implementation limits all audio received to 16kHz and below, which means the ultrasonic profile cannot be used for Firefox receivers. For the most recent information on this limitation, refer to [Bug 953265](https://bugzilla.mozilla.org/show_bug.cgi?id=953265).</p>
 
-<p>Building this project on a modern computer is somewhat tricky as libfec does not know about 64-bit architectures. I have a customized version which can handle this case which should be coming soon.</p>
+<p>Try it out in this example or browse the <a href="docs/">documentation</a>.</p>
 
-<p>Once the dependencies are installed, <code>cd</code> to this project's dir and run <code>cmake .</code> and <code>make</code>.</p>
-
-<h2>
-<a id="javascript" class="anchor" href="#javascript" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Javascript</h2>
-
-<p>Generating the emscripten build requires that all dependencies be built with emscripten (e.g. <code>emconfigure ./configure; emmake make; make install</code>) for each dependency. After the emscripten-compiled dependencies are installed, run this project's <code>./build_js</code>.</p>
-
-<p>Alternately, you may use the precompiled <code>web/encode.js</code> provided by this project. Be sure to include the third party license information in <code>web/LICENSE-3RD-PARTY.txt</code>.</p>
-
-<h2>
-<a id="profiles" class="anchor" href="#profiles" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Profiles</h2>
-
-<p>The encoding and decoding process are controlled by the profiles in <code>web/profiles.json</code>. Each profile contains a complete set of parameters such as modem type and error correction. This project uses libjansson to read the profiles and then select one based on a given profile name.</p>
-
-<h2>
-<a id="ultrasonic" class="anchor" href="#ultrasonic" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Ultrasonic</h2>
-
-<p>The <code>highfreq</code> profile encodes data into a very low bitrate, but the audio content falls entirely between 18.5kHz and 19.5kHz, which should pass through audio equipment relatively well while being inaudible to the average person. This is a good option for sending data through a channel where you would prefer not to disrupt or notify human listeners.</p>
-
-<h2>
-<a id="dependencies" class="anchor" href="#dependencies" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dependencies</h2>
-
-<ul>
-<li><a href="https://github.com/jgaeddert/liquid-dsp">Liquid DSP</a></li>
-<li><a href="http://www.ka9q.net/code/fec/">libfec</a></li>
-<li><a href="https://github.com/akheron/jansson">Jansson</a></li>
-</ul>
       </section>
     </div>
     <footer>
