@@ -104,7 +104,7 @@
     
     
     <div class="description">
-        Add a callback to be called when Quiet is ready for use, e.g. when Transmitters and Receivers can be created.
+        Add a callback to be called when Quiet is ready for use, e.g. when transmitters and receivers can be created.
     </div>
     
 
@@ -218,7 +218,7 @@
         
             
 <dt>
-    <h4 class="name" id="newReceiver"><span class="type-signature">&lt;static> </span>newReceiver<span class="signature">(profileName, onRecieve)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="receiver"><span class="type-signature">&lt;static> </span>receiver<span class="signature">(profile, onRecieve)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -226,7 +226,7 @@
     
     
     <div class="description">
-        Create a new receiver with the profile specified by profileName (should match profile of transmitter).
+        Create a new receiver with the profile specified by profile (should match profile of transmitter).
     </div>
     
 
@@ -260,7 +260,7 @@
 	
         <tr>
             
-                <td class="name"><code>profileName</code></td>
+                <td class="name"><code>profile</code></td>
             
             
             <td class="type">
@@ -355,152 +355,7 @@
     
         <h5>Example</h5>
         
-    <pre class="prettyprint"><code>newReceiver("robust", function(payload) { console.log("received chunk of data: " + payload); });</code></pre>
-
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="newTransmitter"><span class="type-signature">&lt;static> </span>newTransmitter<span class="signature">(profileName)</span><span class="type-signature"> &rarr; {transmit}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Create a new Transmitter configured by the given profile name.
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>profileName</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">name of profile to use, must be a key in quiet-profiles.json</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line142">line 142</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    transmit - transmit callback which user calls to start transmission
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">transmit</span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-        <h5>Example</h5>
-        
-    <pre class="prettyprint"><code>var transmit = newTransmitter("robust");
-transmit("Hello, World!", function() { console.log("transmission complete"); });</code></pre>
+    <pre class="prettyprint"><code>receiver("robust", function(payload) { console.log("received chunk of data: " + payload); });</code></pre>
 
     
 </dd>
@@ -643,9 +498,9 @@ If it is not called first, then emscripten will default to a prefix of "".
     
     <div class="description">
         Set the path prefix of quiet-profiles.json and do an async fetch of that path.
-This file is used to configure Transmitter and Receiver parameters.
+This file is used to configure transmitter and receiver parameters.
 <br><br>
-This function must be called before creating a Transmitter or Receiver.
+This function must be called before creating a transmitter or receiver.
     </div>
     
 
@@ -752,6 +607,151 @@ This function must be called before creating a Transmitter or Receiver.
         <h5>Example</h5>
         
     <pre class="prettyprint"><code>setProfilesPrefix("/js/");  // fetches /js/quiet-profiles.json</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="transmitter"><span class="type-signature">&lt;static> </span>transmitter<span class="signature">(profile)</span><span class="type-signature"> &rarr; {transmit}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Create a new transmitter configured by the given profile name.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>profile</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">name of profile to use, must be a key in quiet-profiles.json</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line142">line 142</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    transmit - transmit callback which user calls to start transmission
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">transmit</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>var transmit = transmitter("robust");
+transmit("Hello, World!", function() { console.log("transmission complete"); });</code></pre>
 
     
 </dd>
@@ -1135,7 +1135,7 @@ This callback may be used multiple times, but the user must wait for the finishe
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Sun Feb 14 2016 20:02:25 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Mon Feb 15 2016 00:48:51 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>

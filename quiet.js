@@ -61,9 +61,9 @@ var Quiet = (function() {
 
     /**
      * Set the path prefix of quiet-profiles.json and do an async fetch of that path.
-     * This file is used to configure Transmitter and Receiver parameters.
+     * This file is used to configure transmitter and receiver parameters.
      * <br><br>
-     * This function must be called before creating a Transmitter or Receiver.
+     * This function must be called before creating a transmitter or receiver.
      * @function setProfilesPrefix
      * @memberof Quiet
      * @param {string} prefix - The path prefix where Quiet will fetch quiet-profiles.json
@@ -120,7 +120,7 @@ var Quiet = (function() {
     }
 
     /**
-     * Add a callback to be called when Quiet is ready for use, e.g. when Transmitters and Receivers can be created.
+     * Add a callback to be called when Quiet is ready for use, e.g. when transmitters and receivers can be created.
      * @function addReadyCallback
      * @memberof Quiet
      * @param {function} c - The user function which will be called
@@ -154,20 +154,20 @@ var Quiet = (function() {
      */
 
     /**
-     * Create a new Transmitter configured by the given profile name.
-     * @function newTransmitter
+     * Create a new transmitter configured by the given profile name.
+     * @function transmitter
      * @memberof Quiet
-     * @param {string} profileName - name of profile to use, must be a key in quiet-profiles.json
+     * @param {string} profile - name of profile to use, must be a key in quiet-profiles.json
      * @returns {transmit} transmit - transmit callback which user calls to start transmission
      * @example
-     * var transmit = newTransmitter("robust");
+     * var transmit = transmitter("robust");
      * transmit("Hello, World!", function() { console.log("transmission complete"); });
      */
-    function newTransmitter(profilename) {
+    function transmitter(profile) {
         // get an encoder_options object for our quiet-profiles.json and profile key
         var c_profiles = Module.intArrayFromString(profiles);
-        var c_profilename = Module.intArrayFromString(profilename);
-        var opt = Module.ccall('get_encoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profilename]);
+        var c_profile = Module.intArrayFromString(profile);
+        var opt = Module.ccall('get_encoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
 
         // libquiet internally works at 44.1kHz but the local sound card may be a different rate. we inform quiet about that here
         Module.ccall('encoder_opt_set_sample_rate', 'number', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
@@ -283,18 +283,18 @@ var Quiet = (function() {
      */
 
     /**
-     * Create a new receiver with the profile specified by profileName (should match profile of transmitter).
-     * @function newReceiver
+     * Create a new receiver with the profile specified by profile (should match profile of transmitter).
+     * @function receiver
      * @memberof Quiet
-     * @param {string} profileName - name of profile to use, must be a key in quiet-profiles.json
+     * @param {string} profile - name of profile to use, must be a key in quiet-profiles.json
      * @param {onReceive} onRecieve - callback which receiver will call to send user received data
      * @example
-     * newReceiver("robust", function(payload) { console.log("received chunk of data: " + payload); });
+     * receiver("robust", function(payload) { console.log("received chunk of data: " + payload); });
      */
-    function newReceiver(profileName, onReceive) {
+    function receiver(profile, onReceive) {
         var c_profiles = Module.intArrayFromString(profiles);
-        var c_profilename = Module.intArrayFromString(profileName);
-        var opt = Module.ccall('get_decoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profilename]);
+        var c_profile = Module.intArrayFromString(profile);
+        var opt = Module.ccall('get_decoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
 
         // quiet creates audioCtx when it starts but it does not create an audio input
         // getting microphone access requires a permission dialog so only ask for it if we need it
@@ -365,8 +365,8 @@ var Quiet = (function() {
         setProfilesPrefix: setProfilesPrefix,
         setMemoryInitializerPrefix: setMemoryInitializerPrefix,
         addReadyCallback: addReadyCallback,
-        transmitter: newTransmitter,
-        receiver: newReceiver
+        transmitter: transmitter,
+        receiver: receiver
     };
 })();
 
