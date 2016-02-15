@@ -30,9 +30,9 @@
         <h1>
 <a id="quiet" class="anchor" href="#quiet" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Quiet</h1>
 
-<p>This is a javascript binding for [libquiet](https://github.com/brian-armstrong/quiet), a library for sending and receiving data via sound card. It can function either via speaker or cable (e.g., 3.5mm). Quiet comes included with a few transmissions profiles which can be selected for the intended use. For speaker transmission, there is a profile which transmits around the 19kHz range, which is essentially imperceptible to people.</p>
+<p>This is a javascript binding for <a href="https://github.com/brian-armstrong/quiet">libquiet</a>, a library for sending and receiving data via sound card. It can function either via speaker or cable (e.g., 3.5mm). Quiet comes included with a few transmissions profiles which can be selected for the intended use. For speaker transmission, there is a profile which transmits around the 19kHz range, which is essentially imperceptible to people.</p>
 
-<p>Quiet uses the Web Audio functionality in order to send and receive sound. This depends on `getUserMedia` which presently only works on Chrome and Firefox. Further, Firefox's implementation limits all audio received to 16kHz and below, which means the ultrasonic profile cannot be used for Firefox receivers. For the most recent information on this limitation, refer to [Bug 953265](https://bugzilla.mozilla.org/show_bug.cgi?id=953265).</p>
+<p>Quiet uses the Web Audio functionality in order to send and receive sound. Although sending data is supported by many browsers, reception is presently only support by Chrome. Support for reception by Firefox will be coming soon.</p>
 
 <p>Try it out in this example or browse the <a href="docs/">documentation</a>.</p>
 
