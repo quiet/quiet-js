@@ -1,5 +1,5 @@
 var TextReceiver = (function() {
-    Quiet.setProfilesPath("/profiles.json");
+    Quiet.setProfilesPrefix("/");
     Quiet.setMemoryInitializerPrefix("/");
     var target;
     var content = "";
