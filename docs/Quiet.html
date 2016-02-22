@@ -96,7 +96,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="addReadyCallback"><span class="type-signature">&lt;static> </span>addReadyCallback<span class="signature">(c)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="addReadyCallback"><span class="type-signature">&lt;static> </span>addReadyCallback<span class="signature">(c, <span class="optional">onError</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -126,6 +126,8 @@
 		<th>Type</th>
 		
 		
+		<th>Argument</th>
+		
 		
 		
 		
@@ -151,10 +153,51 @@
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
             
             
             
             <td class="description last">The user function which will be called</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>onError</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">User errback function</td>
         </tr>
 	
 	
@@ -185,7 +228,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line122">line 122</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line138">line 138</a>
     </li></ul></dd>
     
     
@@ -218,7 +261,7 @@
         
             
 <dt>
-    <h4 class="name" id="receiver"><span class="type-signature">&lt;static> </span>receiver<span class="signature">(profile, onRecieve)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="receiver"><span class="type-signature">&lt;static> </span>receiver<span class="signature">(profile, onRecieve, <span class="optional">onCreateFail</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -248,6 +291,8 @@
 		<th>Type</th>
 		
 		
+		<th>Argument</th>
+		
 		
 		
 		
@@ -273,6 +318,14 @@
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
             
             
             
@@ -296,10 +349,51 @@
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
             
             
             
             <td class="description last">callback which receiver will call to send user received data</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>onCreateFail</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">callback to notify user that receiver could not be created</td>
         </tr>
 	
 	
@@ -330,7 +424,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line279">line 279</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line318">line 318</a>
     </li></ul></dd>
     
     
@@ -456,7 +550,7 @@ If it is not called first, then emscripten will default to a prefix of "".
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line106">line 106</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line122">line 122</a>
     </li></ul></dd>
     
     
@@ -581,7 +675,7 @@ This function must be called before creating a transmitter or receiver.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line62">line 62</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line78">line 78</a>
     </li></ul></dd>
     
     
@@ -703,7 +797,7 @@ This function must be called before creating a transmitter or receiver.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line142">line 142</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line166">line 166</a>
     </li></ul></dd>
     
     
@@ -854,7 +948,7 @@ transmit("Hello, World!", function() { console.log("transmission complete"); });
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line277">line 277</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line316">line 316</a>
     </li></ul></dd>
     
     
@@ -923,7 +1017,7 @@ transmit("Hello, World!", function() { console.log("transmission complete"); });
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line138">line 138</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line162">line 162</a>
     </li></ul></dd>
     
     
@@ -1085,7 +1179,7 @@ This callback may be used multiple times, but the user must wait for the finishe
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line140">line 140</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line164">line 164</a>
     </li></ul></dd>
     
     
@@ -1135,7 +1229,7 @@ This callback may be used multiple times, but the user must wait for the finishe
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Mon Feb 15 2016 00:48:51 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Mon Feb 22 2016 15:01:36 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>
