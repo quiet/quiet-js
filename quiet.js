@@ -22,6 +22,7 @@ var Quiet = (function() {
     var gUM;
     var audioInput;
     var audioInputReadyCallbacks = [];
+    var audioInputFailedCallbacks = [];
     var payloadBufferDefaultSize = Math.pow(2, 16);
 
     // isReady tells us if we can start creating transmitters and receivers
@@ -238,12 +239,26 @@ var Quiet = (function() {
         }
     };
 
-    function addAudioInputReadyCallback(c) {
+    function audioInputFailed() {
+        var len = audioInputFailedCallbacks.length;
+        for (var i = 0; i < len; i++) {
+            audioInputFailedCallbacks[i]();
+        }
+    };
+
+    function addAudioInputReadyCallback(c, errback) {
         if (audioInput instanceof MediaStreamAudioSourceNode) {
             c();
             return
         }
         audioInputReadyCallbacks.push(c);
+        if (errback !== undefined) {
+            if (audioInput === "Failed") {
+                errback();
+                return
+            }
+            audioInputFailedCallbacks.push(errback);
+        }
     }
 
     function createAudioInput() {
@@ -270,7 +285,8 @@ var Quiet = (function() {
 
                 audioInputReady();
             }, function() {
-                console.log("failed to create an audio source");
+                audioInput = "Failed";
+                audioInputFailed();
         });
     };
 
@@ -280,7 +296,7 @@ var Quiet = (function() {
      * @callback onReceive
      * @memberof Quiet
      * @param {string} payload - chunk of data received
-     */
+    */
 
     /**
      * Create a new receiver with the profile specified by profile (should match profile of transmitter).
@@ -288,10 +304,11 @@ var Quiet = (function() {
      * @memberof Quiet
      * @param {string} profile - name of profile to use, must be a key in quiet-profiles.json
      * @param {onReceive} onRecieve - callback which receiver will call to send user received data
+     * @param {function} [onCreateFail] - callback to notify user that receiver could not be created
      * @example
      * receiver("robust", function(payload) { console.log("received chunk of data: " + payload); });
      */
-    function receiver(profile, onReceive) {
+    function receiver(profile, onReceive, onCreateFail) {
         var c_profiles = Module.intArrayFromString(profiles);
         var c_profile = Module.intArrayFromString(profile);
         var opt = Module.ccall('quiet_decoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
@@ -301,6 +318,15 @@ var Quiet = (function() {
         if (gUM === undefined) {
             gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia);
         }
+
+        if (gUM === undefined) {
+            // we couldn't find a suitable getUserMedia, so fail fast
+            if (onCreateFail !== undefined) {
+                onCreateFail();
+            }
+            return;
+        }
+
         if (audioInput === undefined) {
             createAudioInput()
         }
@@ -351,7 +377,7 @@ var Quiet = (function() {
         // if this is the first receiver object created, wait for our input node to be created
         addAudioInputReadyCallback(function() {
             audioInput.connect(window.recorder);
-        });
+        }, onCreateFail);
 
         // more unused nodes in the graph that some browsers insist on having
         var fakeGain = audioCtx.createGain();
