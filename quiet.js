@@ -326,7 +326,7 @@ var Quiet = (function() {
      * @function receiver
      * @memberof Quiet
      * @param {string} profile - name of profile to use, must be a key in quiet-profiles.json
-     * @param {onReceive} onRecieve - callback which receiver will call to send user received data
+     * @param {onReceive} onReceive - callback which receiver will call to send user received data
      * @param {function} [onCreateFail] - callback to notify user that receiver could not be created
      * @example
      * receiver("robust", function(payload) { console.log("received chunk of data: " + payload); });
