@@ -285,9 +285,9 @@ var Quiet = (function() {
         audioInputReadyCallbacks.push(c);
     }
 
-    function createAudioInput() {
-        audioInput = 0; // prevent others from trying to create
-        gUM.call(navigator, {
+    function gUMConstraints() {
+        if (navigator.webkitGetUserMedia !== undefined) {
+            return {
                 audio: {
                     optional: [
                       {googAutoGainControl: false},
@@ -301,7 +301,20 @@ var Quiet = (function() {
                       {googAudioMirroring: false}
                     ]
                 }
-            }, function(e) {
+            };
+        }
+        return {
+            audio: {
+                echoCancellation: false
+            }
+        };
+    };
+
+
+    function createAudioInput() {
+        audioInput = 0; // prevent others from trying to create
+        gUM.call(navigator, gUMConstraints(),
+            function(e) {
                 audioInput = audioCtx.createMediaStreamSource(e);
 
                 // stash a very permanent reference so this isn't collected
