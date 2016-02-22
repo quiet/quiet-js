@@ -167,24 +167,24 @@ var Quiet = (function() {
         // get an encoder_options object for our quiet-profiles.json and profile key
         var c_profiles = Module.intArrayFromString(profiles);
         var c_profile = Module.intArrayFromString(profile);
-        var opt = Module.ccall('get_encoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
+        var opt = Module.ccall('quiet_encoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
 
         // libquiet internally works at 44.1kHz but the local sound card may be a different rate. we inform quiet about that here
-        Module.ccall('encoder_opt_set_sample_rate', 'number', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
+        Module.ccall('quiet_encoder_opt_set_sample_rate', 'number', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
 
-        var encoder = Module.ccall('create_encoder', 'pointer', ['pointer'], [opt]);
+        var encoder = Module.ccall('quiet_encoder_create', 'pointer', ['pointer'], [opt]);
 
         // some profiles have an option called close_frame which prevents data frames from overlapping multiple
         //     sample buffers. this is very convenient if our system is not fast enough to feed the sound card
         //     without any gaps between subsequent buffers due to e.g. gc pause. inform quiet about our
         //     sample buffer size here so that it can reduce the frame length if this profile has close_frame enabled.
-        Module.ccall('encoder_clamp_frame_len', null, ['pointer', 'number'], [encoder, sampleBufferSize]);
+        Module.ccall('quiet_encoder_clamp_frame_len', null, ['pointer', 'number'], [encoder, sampleBufferSize]);
         var samples = Module.ccall('malloc', 'pointer', ['number'], [4 * sampleBufferSize]);
 
         // return user transmit function
         return function(payloadStr, done) {
             var payload = allocate(Module.intArrayFromString(payloadStr), 'i8', ALLOC_NORMAL);
-            Module.ccall('encoder_set_payload', 'number', ['pointer', 'pointer', 'number'], [encoder, payload, payloadStr.length]);
+            Module.ccall('quiet_encoder_set_payload', 'number', ['pointer', 'pointer', 'number'], [encoder, payload, payloadStr.length]);
 
             // yes, this is pointer arithmetic, in javascript :)
             var sample_view = Module.HEAPF32.subarray((samples/4), (samples/4) + sampleBufferSize);
@@ -200,7 +200,7 @@ var Quiet = (function() {
                 }
 
                 var output_l = e.outputBuffer.getChannelData(0);
-                var written = Module.ccall('encode', 'number', ['pointer', 'pointer', 'number'], [encoder, samples, sampleBufferSize]);
+                var written = Module.ccall('quiet_encoder_emit', 'number', ['pointer', 'pointer', 'number'], [encoder, samples, sampleBufferSize]);
                 output_l.set(sample_view);
 
                 // libquiet notifies us that the payload is finished by returning written < number of samples we asked for
@@ -294,7 +294,7 @@ var Quiet = (function() {
     function receiver(profile, onReceive) {
         var c_profiles = Module.intArrayFromString(profiles);
         var c_profile = Module.intArrayFromString(profile);
-        var opt = Module.ccall('get_decoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
+        var opt = Module.ccall('quiet_decoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
 
         // quiet creates audioCtx when it starts but it does not create an audio input
         // getting microphone access requires a permission dialog so only ask for it if we need it
@@ -310,9 +310,9 @@ var Quiet = (function() {
         window.recorder = audioCtx.createScriptProcessor(16384, 2, 1);
 
         // inform quiet about our local sound card's sample rate so that it can resample to its internal sample rate
-        Module.ccall('decoder_opt_set_sample_rate', 'number', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
+        Module.ccall('quiet_decoder_opt_set_sample_rate', 'number', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
 
-        var decoder = Module.ccall('create_decoder', 'pointer', ['pointer'], [opt]);
+        var decoder = Module.ccall('quiet_decoder_create', 'pointer', ['pointer'], [opt]);
 
         var samples = Module.ccall('malloc', 'pointer', ['number'], [4 * sampleBufferSize]);
 
@@ -326,7 +326,7 @@ var Quiet = (function() {
             sample_view.set(input);
 
             // quiet tells us how many bytes are stored in its internal payload buffer
-            var payloadBuffered = Module.ccall('decode', 'number', ['pointer', 'pointer', 'number'], [decoder, samples, sampleBufferSize]);
+            var payloadBuffered = Module.ccall('quiet_decoder_recv', 'number', ['pointer', 'pointer', 'number'], [decoder, samples, sampleBufferSize]);
 
             // resize our buffer if we need to receive more payload than can fit
             if (payloadBuffered > payloadBufferSize) {
@@ -337,7 +337,7 @@ var Quiet = (function() {
             // if anything was received, copy it out and pass it to user
             if (payloadBuffered > 0) {
                 // retrieve every byte
-                Module.ccall('decoder_readbuf', 'number', ['pointer', 'pointer', 'number'], [decoder, payload, payloadBuffered]);
+                Module.ccall('quiet_decoder_readbuf', 'number', ['pointer', 'pointer', 'number'], [decoder, payload, payloadBuffered]);
 
                 // convert from emscripten bytes to js string. more pointer arithmetic.
                 var payloadArray = Module.HEAP8.subarray(payload, payload + payloadBuffered)
