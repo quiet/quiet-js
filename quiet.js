@@ -17,10 +17,13 @@ var Quiet = (function() {
 
     // consumer callbacks. these fire once quiet is ready to create transmitter/receiver
     var readyCallbacks = [];
+    var readyErrbacks = [];
+    var failReason = "";
 
     // these are used for receiver only
     var gUM;
     var audioInput;
+    var audioInputFailedReason = "";
     var audioInputReadyCallbacks = [];
     var audioInputFailedCallbacks = [];
     var payloadBufferDefaultSize = Math.pow(2, 16);
@@ -30,7 +33,11 @@ var Quiet = (function() {
     // async fetch of the profiles to be completed
     function isReady() {
         return emscriptenInitialized && profilesFetched;
-    }
+    };
+
+    function isFailed() {
+        return failReason !== "";
+    };
 
     // start gets our AudioContext and notifies consumers that quiet can be used
     function start() {
@@ -39,6 +46,14 @@ var Quiet = (function() {
         var len = readyCallbacks.length;
         for (var i = 0; i < len; i++) {
             readyCallbacks[i]();
+        }
+    };
+
+    function fail(reason) {
+        failReason = reason;
+        var len = readyErrbacks.length;
+        for (var i = 0; i < len; i++) {
+            readyErrbacks[i](reason);
         }
     };
 
@@ -100,7 +115,7 @@ var Quiet = (function() {
         fetch.then(function(body) {
             onProfilesFetch(body);
         }, function(err) {
-            console.log(err);
+            fail("fetch of quiet-profiles.json failed: " + err);
         });
     };
 
@@ -125,15 +140,23 @@ var Quiet = (function() {
      * @function addReadyCallback
      * @memberof Quiet
      * @param {function} c - The user function which will be called
+     * @param {function} [onError] - User errback function
      * @example
      * addReadyCallback(function() { console.log("ready!"); });
      */
-    function addReadyCallback(c) {
+    function addReadyCallback(c, errback) {
         if (isReady()) {
             c();
-            return
+            return;
         }
         readyCallbacks.push(c);
+        if (errback !== undefined) {
+            if (isFailed()) {
+                errback(failReason);
+                return;
+            }
+            readyErrbacks.push(errback);
+        }
     }
 
     /**
@@ -239,26 +262,27 @@ var Quiet = (function() {
         }
     };
 
-    function audioInputFailed() {
+    function audioInputFailed(reason) {
+        audioInputFailedReason = reason;
         var len = audioInputFailedCallbacks.length;
         for (var i = 0; i < len; i++) {
-            audioInputFailedCallbacks[i]();
+            audioInputFailedCallbacks[i](audioInputFailedReason);
         }
     };
 
     function addAudioInputReadyCallback(c, errback) {
+        if (errback !== undefined) {
+            if (audioInputFailedReason !== "") {
+                errback(audioInputFailedReason);
+                return
+            }
+            audioInputFailedCallbacks.push(errback);
+        }
         if (audioInput instanceof MediaStreamAudioSourceNode) {
             c();
             return
         }
         audioInputReadyCallbacks.push(c);
-        if (errback !== undefined) {
-            if (audioInput === "Failed") {
-                errback();
-                return
-            }
-            audioInputFailedCallbacks.push(errback);
-        }
     }
 
     function createAudioInput() {
@@ -284,9 +308,8 @@ var Quiet = (function() {
                 window.quiet_receiver_anti_gc = audioInput;
 
                 audioInputReady();
-            }, function() {
-                audioInput = "Failed";
-                audioInputFailed();
+            }, function(reason) {
+                audioInputFailed(reason.name);
         });
     };
 
@@ -322,7 +345,7 @@ var Quiet = (function() {
         if (gUM === undefined) {
             // we couldn't find a suitable getUserMedia, so fail fast
             if (onCreateFail !== undefined) {
-                onCreateFail();
+                onCreateFail("getUserMedia undefined (mic not supported by browser)");
             }
             return;
         }

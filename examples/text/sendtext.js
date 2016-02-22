@@ -34,10 +34,14 @@ var TextTransmitter = (function() {
         btn.addEventListener('click', onClick, false);
     };
 
+    function onQuietFail(reason) {
+        console.log("quiet failed to initialize: " + reason);
+    }
+
     function onDOMLoad() {
         btn = document.querySelector('[data-quiet-send-button]');
         textbox = document.querySelector('[data-quiet-text-input]');
-        Quiet.addReadyCallback(onQuietReady);
+        Quiet.addReadyCallback(onQuietReady, onQuietFail);
     };
 
     document.addEventListener("DOMContentLoaded", onDOMLoad);
