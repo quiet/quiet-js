@@ -1,6 +1,7 @@
 var TextTransmitter = (function() {
     Quiet.setProfilesPrefix("javascripts/");
     Quiet.setMemoryInitializerPrefix("javascripts/");
+    Quiet.setLibfecPrefix("javascripts/");
     var btn;
     var textbox;
     var transmit;

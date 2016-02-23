@@ -17,11 +17,15 @@ var Quiet = (function() {
 
     // consumer callbacks. these fire once quiet is ready to create transmitter/receiver
     var readyCallbacks = [];
+    var readyErrbacks = [];
+    var failReason = "";
 
     // these are used for receiver only
     var gUM;
     var audioInput;
+    var audioInputFailedReason = "";
     var audioInputReadyCallbacks = [];
+    var audioInputFailedCallbacks = [];
     var payloadBufferDefaultSize = Math.pow(2, 16);
 
     // isReady tells us if we can start creating transmitters and receivers
@@ -29,7 +33,11 @@ var Quiet = (function() {
     // async fetch of the profiles to be completed
     function isReady() {
         return emscriptenInitialized && profilesFetched;
-    }
+    };
+
+    function isFailed() {
+        return failReason !== "";
+    };
 
     // start gets our AudioContext and notifies consumers that quiet can be used
     function start() {
@@ -38,6 +46,14 @@ var Quiet = (function() {
         var len = readyCallbacks.length;
         for (var i = 0; i < len; i++) {
             readyCallbacks[i]();
+        }
+    };
+
+    function fail(reason) {
+        failReason = reason;
+        var len = readyErrbacks.length;
+        for (var i = 0; i < len; i++) {
+            readyErrbacks[i](reason);
         }
     };
 
@@ -99,7 +115,7 @@ var Quiet = (function() {
         fetch.then(function(body) {
             onProfilesFetch(body);
         }, function(err) {
-            console.log(err);
+            fail("fetch of quiet-profiles.json failed: " + err);
         });
     };
 
@@ -120,19 +136,44 @@ var Quiet = (function() {
     }
 
     /**
+     * Set the path prefix of libfec.js.
+     * Although not strictly required, it is highly recommended to include this library.
+     * <br><br>
+     * This function, if used, must be called before quiet-emscripten.js has started loading.
+     * If it is not called first, then emscripten will not load libfec.js.
+     * @function setLibfecPrefix
+     * @memberof Quiet
+     * @param {string} prefix - The path prefix where emscripten will fetch libfec.js
+     * @example
+     * setLibfecPrefix("/");  // fetches /libfec.js
+     */
+    function setLibfecPrefix(prefix) {
+        Module.dynamicLibraries = Module.dynamicLibraries || [];
+        Module.dynamicLibraries.push(prefix + "libfec.js");
+    }
+
+    /**
      * Add a callback to be called when Quiet is ready for use, e.g. when transmitters and receivers can be created.
      * @function addReadyCallback
      * @memberof Quiet
      * @param {function} c - The user function which will be called
+     * @param {function} [onError] - User errback function
      * @example
      * addReadyCallback(function() { console.log("ready!"); });
      */
-    function addReadyCallback(c) {
+    function addReadyCallback(c, errback) {
         if (isReady()) {
             c();
-            return
+            return;
         }
         readyCallbacks.push(c);
+        if (errback !== undefined) {
+            if (isFailed()) {
+                errback(failReason);
+                return;
+            }
+            readyErrbacks.push(errback);
+        }
     }
 
     /**
@@ -238,7 +279,22 @@ var Quiet = (function() {
         }
     };
 
-    function addAudioInputReadyCallback(c) {
+    function audioInputFailed(reason) {
+        audioInputFailedReason = reason;
+        var len = audioInputFailedCallbacks.length;
+        for (var i = 0; i < len; i++) {
+            audioInputFailedCallbacks[i](audioInputFailedReason);
+        }
+    };
+
+    function addAudioInputReadyCallback(c, errback) {
+        if (errback !== undefined) {
+            if (audioInputFailedReason !== "") {
+                errback(audioInputFailedReason);
+                return
+            }
+            audioInputFailedCallbacks.push(errback);
+        }
         if (audioInput instanceof MediaStreamAudioSourceNode) {
             c();
             return
@@ -246,9 +302,9 @@ var Quiet = (function() {
         audioInputReadyCallbacks.push(c);
     }
 
-    function createAudioInput() {
-        audioInput = 0; // prevent others from trying to create
-        gUM.call(navigator, {
+    function gUMConstraints() {
+        if (navigator.webkitGetUserMedia !== undefined) {
+            return {
                 audio: {
                     optional: [
                       {googAutoGainControl: false},
@@ -262,15 +318,28 @@ var Quiet = (function() {
                       {googAudioMirroring: false}
                     ]
                 }
-            }, function(e) {
+            };
+        }
+        return {
+            audio: {
+                echoCancellation: false
+            }
+        };
+    };
+
+
+    function createAudioInput() {
+        audioInput = 0; // prevent others from trying to create
+        gUM.call(navigator, gUMConstraints(),
+            function(e) {
                 audioInput = audioCtx.createMediaStreamSource(e);
 
                 // stash a very permanent reference so this isn't collected
                 window.quiet_receiver_anti_gc = audioInput;
 
                 audioInputReady();
-            }, function() {
-                console.log("failed to create an audio source");
+            }, function(reason) {
+                audioInputFailed(reason.name);
         });
     };
 
@@ -280,18 +349,19 @@ var Quiet = (function() {
      * @callback onReceive
      * @memberof Quiet
      * @param {string} payload - chunk of data received
-     */
+    */
 
     /**
      * Create a new receiver with the profile specified by profile (should match profile of transmitter).
      * @function receiver
      * @memberof Quiet
      * @param {string} profile - name of profile to use, must be a key in quiet-profiles.json
-     * @param {onReceive} onRecieve - callback which receiver will call to send user received data
+     * @param {onReceive} onReceive - callback which receiver will call to send user received data
+     * @param {function} [onCreateFail] - callback to notify user that receiver could not be created
      * @example
      * receiver("robust", function(payload) { console.log("received chunk of data: " + payload); });
      */
-    function receiver(profile, onReceive) {
+    function receiver(profile, onReceive, onCreateFail) {
         var c_profiles = Module.intArrayFromString(profiles);
         var c_profile = Module.intArrayFromString(profile);
         var opt = Module.ccall('quiet_decoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
@@ -299,8 +369,17 @@ var Quiet = (function() {
         // quiet creates audioCtx when it starts but it does not create an audio input
         // getting microphone access requires a permission dialog so only ask for it if we need it
         if (gUM === undefined) {
-            gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
+            gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia);
         }
+
+        if (gUM === undefined) {
+            // we couldn't find a suitable getUserMedia, so fail fast
+            if (onCreateFail !== undefined) {
+                onCreateFail("getUserMedia undefined (mic not supported by browser)");
+            }
+            return;
+        }
+
         if (audioInput === undefined) {
             createAudioInput()
         }
@@ -351,7 +430,7 @@ var Quiet = (function() {
         // if this is the first receiver object created, wait for our input node to be created
         addAudioInputReadyCallback(function() {
             audioInput.connect(window.recorder);
-        });
+        }, onCreateFail);
 
         // more unused nodes in the graph that some browsers insist on having
         var fakeGain = audioCtx.createGain();
@@ -364,6 +443,7 @@ var Quiet = (function() {
         emscriptenInitialized: onEmscriptenInitialized,
         setProfilesPrefix: setProfilesPrefix,
         setMemoryInitializerPrefix: setMemoryInitializerPrefix,
+        setLibfecPrefix: setLibfecPrefix,
         addReadyCallback: addReadyCallback,
         transmitter: transmitter,
         receiver: receiver
