@@ -16,9 +16,13 @@ Quiet-js includes a blob of libquiet compiled by emscripten as well as a javascr
 
 Additionally, the emscripten compiled portion requires a memory initializer, `quiet-emscripten.js.mem`. This is loaded asynchronously by `quiet-emscripten.js`.
 
+**It is strongly recommended to also include libfec.js. An emscripten-compiled version of libfec may be found [here](https://github.com/brian-armstrong/libfec/releases).** If libfec is not included, then quiet.js will not be able to use any profiles which use convolutional codes or Reed-Solomon error correction.
+
 For a complete example demonstrating ultrasonic text transmission and reception, see [this example](https://github.com/brian-armstrong/quiet-js/tree/master/examples/text).
 
 
 License
 --------
-Quiet and Quiet-js are licensed under 3-clause BSD. Please note that Quiet-js's emscripten-compiled output includes a statically-linked copy of [libfec](http://www.ka9q.net/code/fec/) which is licensed under LGPL. For more information on Quiet-js's 3rd party licenses, consult [LICENSE-3RD-PARTY](https://github.com/brian-armstrong/quiet-js/blob/master/LICENSE-3RD-PARTY).
+Quiet and Quiet-js are licensed under 3-clause BSD. Quiet-js's emscripten-compiled output includes a statically-linked copies of [liquid dsp](http://liquidsdr.org/) and [libjansson](http://www.digip.org/jansson/), both of which are licensed under the MIT license. For more information on Quiet-js's 3rd party licenses, consult [LICENSE-3RD-PARTY](https://github.com/brian-armstrong/quiet-js/blob/master/LICENSE-3RD-PARTY).
+
+Additionally, it is strongly recommended to link [libfec](http://www.ka9q.net/code/fec/). libfec is licensed under LGPL. It is the intention of this project to adhere to the provisions of LGPL by dynamically linking libfec. However, neither this statement nor any other statements in these projects may be construed as legal advice from the author. It is solely the user's responsibility to ensure their own compliance with all applicable licenses.
