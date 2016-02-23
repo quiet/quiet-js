@@ -1,6 +1,7 @@
 var TextReceiver = (function() {
     Quiet.setProfilesPrefix("/");
     Quiet.setMemoryInitializerPrefix("/");
+    Quiet.setLibfecPrefix("/");
     var target;
     var content = "";
 

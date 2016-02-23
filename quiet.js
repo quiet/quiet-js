@@ -136,6 +136,23 @@ var Quiet = (function() {
     }
 
     /**
+     * Set the path prefix of libfec.js.
+     * Although not strictly required, it is highly recommended to include this library.
+     * <br><br>
+     * This function, if used, must be called before quiet-emscripten.js has started loading.
+     * If it is not called first, then emscripten will not load libfec.js.
+     * @function setLibfecPrefix
+     * @memberof Quiet
+     * @param {string} prefix - The path prefix where emscripten will fetch libfec.js
+     * @example
+     * setLibfecPrefix("/");  // fetches /libfec.js
+     */
+    function setLibfecPrefix(prefix) {
+        Module.dynamicLibraries = Module.dynamicLibraries || [];
+        Module.dynamicLibraries.push(prefix + "libfec.js");
+    }
+
+    /**
      * Add a callback to be called when Quiet is ready for use, e.g. when transmitters and receivers can be created.
      * @function addReadyCallback
      * @memberof Quiet
@@ -426,6 +443,7 @@ var Quiet = (function() {
         emscriptenInitialized: onEmscriptenInitialized,
         setProfilesPrefix: setProfilesPrefix,
         setMemoryInitializerPrefix: setMemoryInitializerPrefix,
+        setLibfecPrefix: setLibfecPrefix,
         addReadyCallback: addReadyCallback,
         transmitter: transmitter,
         receiver: receiver
