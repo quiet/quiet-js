@@ -4,6 +4,7 @@ var TextTransmitter = (function() {
     Quiet.setLibfecPrefix("javascripts/");
     var btn;
     var textbox;
+    var warningbox;
     var transmit;
 
     function onTransmitFinish() {
@@ -35,10 +36,17 @@ var TextTransmitter = (function() {
         btn.addEventListener('click', onClick, false);
     };
 
+    function onQuietFail(reason) {
+        console.log("quiet failed to initialize: " + reason);
+        warningbox.classList.remove("hidden");
+        warningbox.textContent = "Sorry, it looks like there was a problem with this example (" + reason + ")";
+    };
+
     function onDOMLoad() {
         btn = document.querySelector('[data-quiet-send-button]');
         textbox = document.querySelector('[data-quiet-text-input]');
-        Quiet.addReadyCallback(onQuietReady);
+        warningbox = document.querySelector('[data-quite-warning]');
+        Quiet.addReadyCallback(onQuietReady, onQuietFail);
     };
 
     document.addEventListener("DOMContentLoaded", onDOMLoad);
