@@ -228,7 +228,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line155">line 155</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line156">line 156</a>
     </li></ul></dd>
     
     
@@ -261,7 +261,7 @@
         
             
 <dt>
-    <h4 class="name" id="receiver"><span class="type-signature">&lt;static> </span>receiver<span class="signature">(profile, onReceive, <span class="optional">onCreateFail</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="receiver"><span class="type-signature">&lt;static> </span>receiver<span class="signature">(profile, onReceive, <span class="optional">onCreateFail</span>, <span class="optional">onReceiveFail</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -397,6 +397,39 @@
         </tr>
 	
 	
+	
+        <tr>
+            
+                <td class="name"><code>onReceiveFail</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">callback to notify user that receiver received corrupted data</td>
+        </tr>
+	
+	
 	</tbody>
 </table>
     
@@ -424,7 +457,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line348">line 348</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line349">line 349</a>
     </li></ul></dd>
     
     
@@ -550,7 +583,7 @@ If it is not called first, then emscripten will not load libfec.js.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line138">line 138</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line139">line 139</a>
     </li></ul></dd>
     
     
@@ -676,7 +709,7 @@ If it is not called first, then emscripten will default to a prefix of "".
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line122">line 122</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line123">line 123</a>
     </li></ul></dd>
     
     
@@ -801,7 +834,7 @@ This function must be called before creating a transmitter or receiver.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line78">line 78</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line79">line 79</a>
     </li></ul></dd>
     
     
@@ -923,7 +956,7 @@ This function must be called before creating a transmitter or receiver.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line183">line 183</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line184">line 184</a>
     </li></ul></dd>
     
     
@@ -1074,7 +1107,7 @@ transmit("Hello, World!", function() { console.log("transmission complete"); });
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line346">line 346</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line347">line 347</a>
     </li></ul></dd>
     
     
@@ -1143,7 +1176,7 @@ transmit("Hello, World!", function() { console.log("transmission complete"); });
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line179">line 179</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line180">line 180</a>
     </li></ul></dd>
     
     
@@ -1305,7 +1338,7 @@ This callback may be used multiple times, but the user must wait for the finishe
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line181">line 181</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line182">line 182</a>
     </li></ul></dd>
     
     
@@ -1355,7 +1388,7 @@ This callback may be used multiple times, but the user must wait for the finishe
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 23 2016 15:04:57 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 23 2016 19:41:45 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>
