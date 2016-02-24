@@ -17,7 +17,7 @@ var TextReceiver = (function() {
     function onReceiverCreateFail(reason) {
         console.log("failed to create quiet receiver: " + reason);
         warningbox.classList.remove("hidden");
-        warningbox.textContent = "Sorry, it looks like this example is not supported by your browser. Please try again in Google Chrome or Microsoft Edge."
+        warningbox.textContent = "Sorry, it looks like this example is not supported by your browser. Please give permission to use the microphone or try again in Google Chrome or Microsoft Edge."
     };
 
     function onReceiveFail(num_fails) {
@@ -34,11 +34,11 @@ var TextReceiver = (function() {
         console.log("quiet failed to initialize: " + reason);
         warningbox.classList.remove("hidden");
         warningbox.textContent = "Sorry, it looks like there was a problem with this example (" + reason + ")";
-    }
+    };
 
     function onDOMLoad() {
         target = document.querySelector('[data-quiet-receive-text-target]');
-        warningbox = document.querySelector('[data-quite-warning]');
+        warningbox = document.querySelector('[data-quiet-warning]');
         Quiet.addReadyCallback(onQuietReady, onQuietFail);
     };
 
