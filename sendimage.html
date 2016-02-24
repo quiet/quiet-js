@@ -23,10 +23,12 @@
     <div class="hidden" data-quiet-profile-name="main"></div>
     <div class="wrapper">
       <header>
-        <h1>Send File</h1>
+        <h1>Send Image</h1>
       </header>
       <section>
-      <input type="file" id="file_input" name="file_input" data-quiet-file-input />
+      <span class="btn btn-default" style="width:100%; position: relative; margin-bottom: 20px">
+          Choose an image<input type="file" id="file_input" name="file_input" data-quiet-file-input="" style="min-width: 100%; min-height: 100%; opacity: 0; position: absolute; top: 0; left: 0">
+      </span>
       <button type="button" class="btn btn-default" style="width:100%" data-quiet-send-button data-quiet-sending-text="Sending...">Send</button>
       </section>
     </div>
