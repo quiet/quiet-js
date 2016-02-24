@@ -4,6 +4,7 @@ var TextTransmitter = (function() {
     Quiet.setLibfecPrefix("/");
     var btn;
     var textbox;
+    var warningbox;
     var transmit;
 
     function onTransmitFinish() {
@@ -37,11 +38,14 @@ var TextTransmitter = (function() {
 
     function onQuietFail(reason) {
         console.log("quiet failed to initialize: " + reason);
+        warningbox.classList.remove("hidden");
+        warningbox.textContent = "Sorry, it looks like there was a problem with this example (" + reason + ")";
     }
 
     function onDOMLoad() {
         btn = document.querySelector('[data-quiet-send-button]');
         textbox = document.querySelector('[data-quiet-text-input]');
+        warningbox = document.querySelect('[data-quiet-warning]');
         Quiet.addReadyCallback(onQuietReady, onQuietFail);
     };
 
