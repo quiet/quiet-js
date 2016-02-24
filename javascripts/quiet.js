@@ -27,6 +27,7 @@ var Quiet = (function() {
     var audioInputReadyCallbacks = [];
     var audioInputFailedCallbacks = [];
     var payloadBufferDefaultSize = Math.pow(2, 16);
+    var lastChecksumFailCount = 0;
 
     // isReady tells us if we can start creating transmitters and receivers
     // we need the emscripten portion to be running and we need our
@@ -362,10 +363,11 @@ var Quiet = (function() {
      * @param {string} profile - name of profile to use, must be a key in quiet-profiles.json
      * @param {onReceive} onReceive - callback which receiver will call to send user received data
      * @param {function} [onCreateFail] - callback to notify user that receiver could not be created
+     * @param {function} [onReceiveFail] - callback to notify user that receiver received corrupted data
      * @example
      * receiver("robust", function(payload) { console.log("received chunk of data: " + payload); });
      */
-    function receiver(profile, onReceive, onCreateFail) {
+    function receiver(profile, onReceive, onCreateFail, onReceiveFail) {
         var c_profiles = Module.intArrayFromString(profiles);
         var c_profile = Module.intArrayFromString(profile);
         var opt = Module.ccall('quiet_decoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
@@ -429,6 +431,12 @@ var Quiet = (function() {
                 // call user callback with the payload
                 onReceive(payloadStr);
             }
+
+            var currentChecksumFailCount = Module.ccall('quiet_decoder_checksum_fails', 'number', ['pointer'], [decoder]);
+            if ((onReceiveFail !== undefined) && (currentChecksumFailCount > lastChecksumFailCount)) {
+                onReceiveFail(currentChecksumFailCount);
+            }
+            lastChecksumFailCount = currentChecksumFailCount;
         }
 
         // if this is the first receiver object created, wait for our input node to be created
