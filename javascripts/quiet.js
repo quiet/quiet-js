@@ -235,11 +235,15 @@ var Quiet = (function() {
 
             var finished = false;
             transmitter.onaudioprocess = function(e) {
+                var output_l = e.outputBuffer.getChannelData(0);
+
                 if (finished) {
+                    for (var i = 0; i < sampleBufferSize; i++) {
+                        output_l[i] = 0;
+                    }
                     return;
                 }
 
-                var output_l = e.outputBuffer.getChannelData(0);
                 var written = Module.ccall('quiet_encoder_emit', 'number', ['pointer', 'pointer', 'number'], [encoder, samples, sampleBufferSize]);
                 output_l.set(sample_view);
 
