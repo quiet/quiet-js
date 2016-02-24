@@ -1,6 +1,6 @@
 var TextReceiver = (function() {
-    Quiet.setProfilesPrefix("javascripts/");
-    Quiet.setMemoryInitializerPrefix("javascript/");
+    Quiet.setProfilesPrefix("javascript/");
+    Quiet.setMemoryInitializerPrefix("javascripts/");
     Quiet.setLibfecPrefix("javascripts/");
     var target;
     var content = "";
