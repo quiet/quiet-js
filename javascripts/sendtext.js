@@ -45,7 +45,7 @@ var TextTransmitter = (function() {
     function onDOMLoad() {
         btn = document.querySelector('[data-quiet-send-button]');
         textbox = document.querySelector('[data-quiet-text-input]');
-        warningbox = document.querySelector('[data-quite-warning]');
+        warningbox = document.querySelector('[data-quiet-warning]');
         Quiet.addReadyCallback(onQuietReady, onQuietFail);
     };
 

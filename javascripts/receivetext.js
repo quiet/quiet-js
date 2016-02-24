@@ -38,7 +38,7 @@ var TextReceiver = (function() {
 
     function onDOMLoad() {
         target = document.querySelector('[data-quiet-receive-text-target]');
-        warningbox = document.querySelector('[data-quite-warning]');
+        warningbox = document.querySelector('[data-quiet-warning]');
         Quiet.addReadyCallback(onQuietReady, onQuietFail);
     };
 
