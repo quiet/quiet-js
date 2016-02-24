@@ -41,6 +41,7 @@ var ImageTransmitter = (function() {
     function onQuietReady() {
         var profilename = document.querySelector('[data-quiet-profile-name]').getAttribute('data-quiet-profile-name');
         transmit = Quiet.transmitter(profilename);
+        btn.addEventListener('click', onClick, false);
         fileinput.addEventListener('change', onFileSelect, false);
     };
 
