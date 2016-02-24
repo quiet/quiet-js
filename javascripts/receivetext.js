@@ -12,6 +12,7 @@ var TextReceiver = (function() {
             target.removeChild(target.firstChild);
         }
         target.appendChild(document.createTextNode(content));
+        warningbox.classList.add("hidden");
     };
 
     function onReceiverCreateFail(reason) {
