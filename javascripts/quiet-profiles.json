@@ -11,7 +11,7 @@
         "inner_fec_scheme": "v27p23",
         "outer_fec_scheme": "rs8",
         "mod_scheme": "qam256",
-        "frame_length": 400,
+        "frame_length": 1200,
         "modulation": {
             "samples_per_symbol": 2,
             "symbol_delay": 4,
