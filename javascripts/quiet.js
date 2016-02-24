@@ -236,7 +236,6 @@ var Quiet = (function() {
             var finished = false;
             transmitter.onaudioprocess = function(e) {
                 if (finished) {
-                    transmitter.disconnect();
                     return;
                 }
 
@@ -256,6 +255,7 @@ var Quiet = (function() {
                             done();
                     }
                     finished = true;
+                    window.setTimeout(function() { transmitter.disconnect(); }, 1500);
                 }
             };
 
