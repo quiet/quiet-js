@@ -6,15 +6,17 @@ Compatibility
 --------
 | Browser           | Transmitter     | Receiver        |
 | ------------------|-----------------|-----------------|
-| Chrome            | *Supported*     | *Supported*     |
+| Chrome            | *Supported*<sup>1</sup> | *Supported*     |
 | Edge              | *Supported*     | *Supported*     |
-| Firefox           | *Supported*     | _Coming Soon_<sup>1</sup>|
+| Firefox           | *Supported*     | _Coming Soon_<sup>2</sup>|
 | Internet Explorer | *Not Supported* | *Not Supported* |
-| Safari            | *Supported*     | *Not Supported*<sup>2</sup>|
+| Safari            | *Supported*     | *Not Supported*<sup>3</sup>|
 
-[1]: Firefox's WebAudio implementation resamples audio input to 32kHz, which limits all audio received to 16kHz and below. This means the ultrasonic profile cannot be used for Firefox receivers. Additionally, the resampler used by Firefox produces strong audio distortion, which makes reception by other profiles very difficult. For the most recent information on this limitation, refer to [Bug 953265](https://bugzilla.mozilla.org/show_bug.cgi?id=953265).
+[1]: For Chrome receivers, the page *must* be delivered via https. Chrome does not support microphone input without TLS.
 
-[2]: Safari does not support `getUserMedia` or microphone input in any capacity.
+[2]: Firefox's WebAudio implementation resamples audio input to 32kHz, which limits all audio received to 16kHz and below. This means the ultrasonic profile cannot be used for Firefox receivers. Additionally, the resampler used by Firefox produces strong audio distortion, which makes reception by other profiles very difficult. For the most recent information on this limitation, refer to [Bug 953265](https://bugzilla.mozilla.org/show_bug.cgi?id=953265).
+
+[2]3 Safari does not support `getUserMedia` or microphone input in any capacity.
 
 Usage
 --------
