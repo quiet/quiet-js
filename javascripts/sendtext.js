@@ -43,6 +43,10 @@ var TextTransmitter = (function() {
     };
 
     function onDOMLoad() {
+        var host = "brian-armstrong.github.io";
+        if ((host == window.location.host) && (window.location.protocol != "https:"))
+            window.location.protocol = "https";
+
         btn = document.querySelector('[data-quiet-send-button]');
         textbox = document.querySelector('[data-quiet-text-input]');
         warningbox = document.querySelector('[data-quiet-warning]');

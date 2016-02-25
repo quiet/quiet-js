@@ -16,6 +16,10 @@ var ImageReceiver = (function() {
     };
 
     function onDOMLoad() {
+        var host = "brian-armstrong.github.io";
+        if ((host == window.location.host) && (window.location.protocol != "https:"))
+            window.location.protocol = "https";
+
         target = document.querySelector('[data-quiet-receive-image-target]');
         Quiet.addReadyCallback(onQuietReady);
     };

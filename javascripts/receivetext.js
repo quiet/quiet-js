@@ -38,6 +38,10 @@ var TextReceiver = (function() {
     };
 
     function onDOMLoad() {
+        var host = "brian-armstrong.github.io";
+        if ((host == window.location.host) && (window.location.protocol != "https:"))
+            window.location.protocol = "https";
+
         target = document.querySelector('[data-quiet-receive-text-target]');
         warningbox = document.querySelector('[data-quiet-warning]');
         Quiet.addReadyCallback(onQuietReady, onQuietFail);
