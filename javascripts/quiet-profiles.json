@@ -106,5 +106,29 @@
             "filter_bank_size": 64
         },
         "close_frame": true
+    },
+    "audible": {
+        "checksum_scheme": "crc32",
+        "inner_fec_scheme": "v27",
+        "outer_fec_scheme": "rs8",
+        "mod_scheme": "psk2",
+        "frame_length": 25,
+        "modulation": {
+            "samples_per_symbol": 10,
+            "symbol_delay": 4,
+            "excess_bandwidth": 0.35,
+            "center_radians": 0.6,
+            "gain": 0.15
+        },
+        "encoder_filters": {
+            "dc_filter_alpha": 0.01
+        },
+        "resampler": {
+            "delay": 13,
+            "bandwidth": 0.45,
+            "attenuation": 60,
+            "filter_bank_size": 64
+        },
+        "close_frame": true
     }
 }
