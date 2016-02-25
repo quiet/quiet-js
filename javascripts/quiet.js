@@ -375,7 +375,7 @@ var Quiet = (function() {
         // quiet creates audioCtx when it starts but it does not create an audio input
         // getting microphone access requires a permission dialog so only ask for it if we need it
         if (gUM === undefined) {
-            gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia);
+            gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
         }
 
         if (gUM === undefined) {
