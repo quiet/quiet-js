@@ -82,7 +82,7 @@
     "audible": {
         "checksum_scheme": "crc32",
         "inner_fec_scheme": "v27",
-        "outer_fec_scheme": "rs8",
+        "outer_fec_scheme": "none",
         "mod_scheme": "psk2",
         "frame_length": 25,
         "modulation": {
