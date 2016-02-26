@@ -212,9 +212,7 @@ var Quiet = (function() {
         var opt = Module.ccall('quiet_encoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
 
         // libquiet internally works at 44.1kHz but the local sound card may be a different rate. we inform quiet about that here
-        Module.ccall('quiet_encoder_opt_set_sample_rate', 'number', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
-
-        var encoder = Module.ccall('quiet_encoder_create', 'pointer', ['pointer'], [opt]);
+        var encoder = Module.ccall('quiet_encoder_create', 'pointer', ['pointer'], [opt, audioCtx.sampleRate]);
 
         // some profiles have an option called close_frame which prevents data frames from overlapping multiple
         //     sample buffers. this is very convenient if our system is not fast enough to feed the sound card
@@ -395,9 +393,7 @@ var Quiet = (function() {
         window.recorder = audioCtx.createScriptProcessor(16384, 2, 1);
 
         // inform quiet about our local sound card's sample rate so that it can resample to its internal sample rate
-        Module.ccall('quiet_decoder_opt_set_sample_rate', 'number', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
-
-        var decoder = Module.ccall('quiet_decoder_create', 'pointer', ['pointer'], [opt]);
+        var decoder = Module.ccall('quiet_decoder_create', 'pointer', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
 
         var samples = Module.ccall('malloc', 'pointer', ['number'], [4 * sampleBufferSize]);
 
