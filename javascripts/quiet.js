@@ -212,7 +212,7 @@ var Quiet = (function() {
         var opt = Module.ccall('quiet_encoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
 
         // libquiet internally works at 44.1kHz but the local sound card may be a different rate. we inform quiet about that here
-        var encoder = Module.ccall('quiet_encoder_create', 'pointer', ['pointer'], [opt, audioCtx.sampleRate]);
+        var encoder = Module.ccall('quiet_encoder_create', 'pointer', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
 
         // some profiles have an option called close_frame which prevents data frames from overlapping multiple
         //     sample buffers. this is very convenient if our system is not fast enough to feed the sound card
