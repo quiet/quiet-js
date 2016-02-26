@@ -13,11 +13,13 @@
         "mod_scheme": "qam1024",
         "frame_length": 2200,
         "modulation": {
+            "center_frequency": 11025,
+            "gain": 0.15
+        },
+        "interpolation": {
             "samples_per_symbol": 2,
             "symbol_delay": 4,
-            "excess_bandwidth": 0.35,
-            "center_radians": 1.5708,
-            "gain": 0.15
+            "excess_bandwidth": 0.35
         },
         "encoder_filters": {
             "dc_filter_alpha": 0.1
@@ -28,37 +30,6 @@
             "attenuation": 60,
             "filter_bank_size": 64
         }
-    },
-    "main_close_frame": {
-        "ofdm": {
-            "num_subcarriers": 128,
-            "cyclic_prefix_length": 16,
-            "taper_length": 8,
-            "left_band": 0,
-            "right_band": 9
-        },
-        "checksum_scheme": "crc32",
-        "inner_fec_scheme": "v27p23",
-        "outer_fec_scheme": "rs8",
-        "mod_scheme": "qam256",
-        "frame_length": 9001,
-        "modulation": {
-            "samples_per_symbol": 2,
-            "symbol_delay": 4,
-            "excess_bandwidth": 0.35,
-            "center_radians": 1.5708,
-            "gain": 0.15
-        },
-        "encoder_filters": {
-            "dc_filter_alpha": 0.1
-        },
-        "resampler": {
-            "delay": 13,
-            "bandwidth": 0.45,
-            "attenuation": 60,
-            "filter_bank_size": 64
-        },
-        "close_frame": true
     },
     "modem": {
         "checksum_scheme": "crc32",
@@ -90,11 +61,13 @@
         "mod_scheme": "psk2",
         "frame_length": 25,
         "modulation": {
+            "center_frequency": 18115,
+            "gain": 0.15
+        },
+        "interpolation": {
             "samples_per_symbol": 10,
             "symbol_delay": 4,
-            "excess_bandwidth": 0.35,
-            "center_radians": 2.581,
-            "gain": 0.15
+            "excess_bandwidth": 0.35
         },
         "encoder_filters": {
             "dc_filter_alpha": 0.01
@@ -104,8 +77,7 @@
             "bandwidth": 0.45,
             "attenuation": 60,
             "filter_bank_size": 64
-        },
-        "close_frame": true
+        }
     },
     "audible": {
         "checksum_scheme": "crc32",
@@ -114,11 +86,13 @@
         "mod_scheme": "psk2",
         "frame_length": 25,
         "modulation": {
+            "center_frequency": 4200,
+            "gain": 0.15
+        },
+        "interpolation": {
             "samples_per_symbol": 10,
             "symbol_delay": 4,
-            "excess_bandwidth": 0.35,
-            "center_radians": 0.6,
-            "gain": 0.15
+            "excess_bandwidth": 0.35
         },
         "encoder_filters": {
             "dc_filter_alpha": 0.01
@@ -128,7 +102,6 @@
             "bandwidth": 0.45,
             "attenuation": 60,
             "filter_bank_size": 64
-        },
-        "close_frame": true
+        }
     }
 }
