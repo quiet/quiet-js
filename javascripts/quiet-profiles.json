@@ -9,9 +9,9 @@
         },
         "checksum_scheme": "crc32",
         "inner_fec_scheme": "v27p23",
-        "outer_fec_scheme": "rs8",
+        "outer_fec_scheme": "none",
         "mod_scheme": "qam1024",
-        "frame_length": 2200,
+        "frame_length": 5000,
         "modulation": {
             "center_frequency": 11025,
             "gain": 0.15
