@@ -323,6 +323,16 @@ var Quiet = (function() {
                 }
             };
         }
+        if (navigator.mozGetUserMedia !== undefined) {
+            return {
+                audio: {
+                    echoCancellation: false,
+                    mozAutoGainControl: false,
+                    mozNoiseSuppression: false
+                }
+            };
+
+        }
         return {
             audio: {
                 echoCancellation: false
