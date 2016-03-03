@@ -312,8 +312,10 @@ var Quiet = (function() {
                     optional: [
                       {googAutoGainControl: false},
                       {googAutoGainControl2: false},
+                      {echoCancellation: false},
                       {googEchoCancellation: false},
                       {googEchoCancellation2: false},
+                      {googDAEchoCancellation: false},
                       {googNoiseSuppression: false},
                       {googNoiseSuppression2: false},
                       {googHighpassFilter: false},
