@@ -58,7 +58,7 @@
         "checksum_scheme": "crc32",
         "inner_fec_scheme": "v27",
         "outer_fec_scheme": "none",
-        "mod_scheme": "psk2",
+        "mod_scheme": "gmsk",
         "frame_length": 25,
         "modulation": {
             "center_frequency": 18115,
@@ -83,7 +83,7 @@
         "checksum_scheme": "crc32",
         "inner_fec_scheme": "v27",
         "outer_fec_scheme": "none",
-        "mod_scheme": "psk2",
+        "mod_scheme": "gmsk",
         "frame_length": 25,
         "modulation": {
             "center_frequency": 4200,
