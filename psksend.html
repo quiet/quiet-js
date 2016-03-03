@@ -1,4 +1,4 @@
-!doctype html>
+<!doctype html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="stylesheets/github-dark.css">
     <script src="javascripts/scale.fix.js"></script>
     <script type="text/javascript" src="javascripts/quiet.js"></script>
-    <script type="text/javascript" src="javascripts/receivetext.js"></script>
+    <script type="text/javascript" src="javascripts/sendtext.js"></script>
     <script async type="text/javascript" src="javascripts/quiet-emscripten.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
@@ -22,11 +22,14 @@
     <div class="hidden" data-quiet-profile-name="audible-psk"></div>
     <div class="wrapper">
       <header>
-        <h1>Receive Text</h1>
+        <h1>Send Text</h1>
       </header>
       <section>
       <div class="alert alert-danger hidden" data-quiet-warning></div>
-      <p data-quiet-receive-text-target>Your received text will show up here. Waiting...</p>
+      <div class="form-group">
+        <textarea autofocus="true" autocapitalize="none" autocomplete="off" spellcheck="off" class="form-control" style="resize:none" rows="5" data-quiet-text-input></textarea>
+      </div>
+      <button type="button" class="btn btn-default" style="width:100%" data-quiet-send-button data-quiet-sending-text="Sending...">Send</button>
       </section>
     </div>
     <footer>
