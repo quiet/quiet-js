@@ -8,10 +8,7 @@ var TextReceiver = (function() {
 
     function onReceive(recvPayload) {
         content += recvPayload;
-        if (target.firstChild !== null) {
-            target.removeChild(target.firstChild);
-        }
-        target.appendChild(document.createTextNode(content));
+        target.textContent = content;
         warningbox.classList.add("hidden");
     };
 
