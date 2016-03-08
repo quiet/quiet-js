@@ -7,7 +7,7 @@ var TextReceiver = (function() {
     var warningbox;
 
     function onReceive(recvPayload) {
-        var tmp = new Uint8Array(content.length + recvPayload.length);
+        var tmp = new Uint8Array(content.byteLength + recvPayload.byteLength);
         tmp.set(new Uint8Array(content), 0);
         tmp.set(new Uint8Array(recvPayload), content.byteLength);
         content = tmp.buffer;
