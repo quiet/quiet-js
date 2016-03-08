@@ -238,6 +238,7 @@ var Quiet = (function() {
                         break;
                     }
                     payloadOffset += frame.length;
+                    i += frame.length;
                 }
             };
 
@@ -431,7 +432,7 @@ var Quiet = (function() {
 
         var readbuf = function() {
             while (true) {
-                var read = Module.ccall('quiet_decoder_recv', 'number', ['pointer', 'pointer', 'number'], [encoder, frame, frameBufferSize]);
+                var read = Module.ccall('quiet_decoder_recv', 'number', ['pointer', 'pointer', 'number'], [decoder, frame, frameBufferSize]);
                 if (read === -1) {
                     break;
                 }
@@ -442,12 +443,7 @@ var Quiet = (function() {
             }
         };
 
-        window.recorder.onaudioprocess = function(e) {
-            var input = e.inputBuffer.getChannelData(0);
-            var sample_view = Module.HEAPF32.subarray(samples/4, samples/4 + sampleBufferSize);
-            sample_view.set(input);
-
-            // quiet tells us how many bytes are stored in its internal payload buffer
+        var consume = function() {
             Module.ccall('quiet_decoder_consume', 'number', ['pointer', 'pointer', 'number'], [decoder, samples, sampleBufferSize]);
 
             window.setTimeout(readbuf, 0);
@@ -457,6 +453,15 @@ var Quiet = (function() {
                 window.setTimeout(function() { onReceiveFail(currentChecksumFailCount); }, 0);
             }
             lastChecksumFailCount = currentChecksumFailCount;
+        }
+
+
+        window.recorder.onaudioprocess = function(e) {
+            var input = e.inputBuffer.getChannelData(0);
+            var sample_view = Module.HEAPF32.subarray(samples/4, samples/4 + sampleBufferSize);
+            sample_view.set(input);
+
+            window.setTimeout(consume, 0);
         }
 
         // if this is the first receiver object created, wait for our input node to be created
