@@ -7,7 +7,7 @@ var TextReceiver = (function() {
     var warningbox;
 
     function onReceive(recvPayload) {
-        content += recvPayload;
+        content += Quiet.ab2str(recvPayload);
         target.textContent = content;
         warningbox.classList.add("hidden");
     };

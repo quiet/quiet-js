@@ -27,7 +27,7 @@ var TextTransmitter = (function() {
             onTransmitFinish();
             return;
         }
-        transmit(payload, onTransmitFinish);
+        transmit(Quiet.str2ab(payload), onTransmitFinish);
     };
 
     function onQuietReady() {

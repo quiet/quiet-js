@@ -222,8 +222,8 @@ var Quiet = (function() {
         var samples = Module.ccall('malloc', 'pointer', ['number'], [4 * sampleBufferSize]);
 
         // return user transmit function
-        return function(payloadStr, done) {
-            var payload = Module.intArrayFromString(payloadStr);
+        return function(buf, done) {
+            var payload = new Uint8Array(buf);
             var payloadOffset = 0;
 
             // fill as much of quiet's transmit queue as possible
@@ -437,9 +437,8 @@ var Quiet = (function() {
                     break;
                 }
                 // convert from emscripten bytes to js string. more pointer arithmetic.
-                var frameArray = Module.HEAP8.subarray(frame, frame + read);
-                var frameStr = String.fromCharCode.apply(null, new Uint8Array(frameArray));
-                onReceive(frameStr);
+                var frameArray = Module.HEAP8.slice(frame, frame + read);
+                onReceive(frameArray);
             }
         };
 
@@ -476,6 +475,19 @@ var Quiet = (function() {
         fakeGain.connect(audioCtx.destination);
     };
 
+    function str2ab(s) {
+        var buf = new ArrayBuffer(s.length*2);
+        var bufView = new Uint16Array(buf);
+        for (var i = 0; i < s.length; i++) {
+            bufView[i] = s.charCodeAt(i);
+        }
+        return buf;
+    };
+
+    function ab2str(ab) {
+        return String.fromCharCode.apply(null, new Uint16Array(ab));
+    };
+
     return {
         emscriptenInitialized: onEmscriptenInitialized,
         setProfilesPrefix: setProfilesPrefix,
@@ -483,7 +495,9 @@ var Quiet = (function() {
         setLibfecPrefix: setLibfecPrefix,
         addReadyCallback: addReadyCallback,
         transmitter: transmitter,
-        receiver: receiver
+        receiver: receiver,
+        str2ab: str2ab,
+        ab2str: ab2str
     };
 })();
 
