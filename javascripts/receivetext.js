@@ -9,7 +9,7 @@ var TextReceiver = (function() {
     function onReceive(recvPayload) {
         var tmp = new Uint8Array(content.length + recvPayload.length);
         tmp.set(new Uint8Array(content), 0);
-        tmp.set(new Uint8Array(recvPayload), payload.byteLength);
+        tmp.set(new Uint8Array(recvPayload), content.byteLength);
         content = tmp.buffer;
         target.textContent = Quiet.ab2str(content);
         warningbox.classList.add("hidden");
