@@ -431,7 +431,7 @@ var Quiet = (function() {
 
         var readbuf = function() {
             while (true) {
-                var read = Module.ccall('quiet_decoder_recv', 'number', ['pointer', 'pointer', 'number'], [encoder, frame, frameBufferSize]);
+                var read = Module.ccall('quiet_decoder_recv', 'number', ['pointer', 'pointer', 'number'], [decoder, frame, frameBufferSize]);
                 if (read === -1) {
                     break;
                 }
