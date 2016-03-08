@@ -485,7 +485,18 @@ var Quiet = (function() {
     };
 
     function ab2str(ab) {
+        if (ab.byteLength % 2) {
+            // odd number of bytes -> drop last byte
+            return String.fromCharCode.apply(null, new Uint16Array(new DataView(ab, 0, ab.byteLength - 1)));
+        }
         return String.fromCharCode.apply(null, new Uint16Array(ab));
+    };
+
+    function mergeab(ab1, ab2) {
+        var tmp = new Uint8Array(ab1.byteLength + ab2.byteLength);
+        tmp.set(new Uint8Array(ab1), 0);
+        tmp.set(new Uint8Array(ab2), ab1.byteLength);
+        return tmp.buffer;
     };
 
     return {
@@ -497,7 +508,8 @@ var Quiet = (function() {
         transmitter: transmitter,
         receiver: receiver,
         str2ab: str2ab,
-        ab2str: ab2str
+        ab2str: ab2str,
+        mergeab: mergeab
     };
 })();
 
