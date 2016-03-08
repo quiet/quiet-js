@@ -238,6 +238,7 @@ var Quiet = (function() {
                         break;
                     }
                     payloadOffset += frame.length;
+                    i += frame.length;
                 }
             };
 
