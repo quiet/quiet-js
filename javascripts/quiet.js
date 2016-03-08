@@ -26,7 +26,7 @@ var Quiet = (function() {
     var audioInputFailedReason = "";
     var audioInputReadyCallbacks = [];
     var audioInputFailedCallbacks = [];
-    var payloadBufferDefaultSize = Math.pow(2, 16);
+    var frameBufferSize = Math.pow(2, 14);
     var lastChecksumFailCount = 0;
 
     // isReady tells us if we can start creating transmitters and receivers
@@ -218,13 +218,30 @@ var Quiet = (function() {
         //     sample buffers. this is very convenient if our system is not fast enough to feed the sound card
         //     without any gaps between subsequent buffers due to e.g. gc pause. inform quiet about our
         //     sample buffer size here so that it can reduce the frame length if this profile has close_frame enabled.
-        Module.ccall('quiet_encoder_clamp_frame_len', null, ['pointer', 'number'], [encoder, sampleBufferSize]);
+        var frame_len = Module.ccall('quiet_encoder_clamp_frame_len', 'number', ['pointer', 'number'], [encoder, sampleBufferSize]);
         var samples = Module.ccall('malloc', 'pointer', ['number'], [4 * sampleBufferSize]);
 
         // return user transmit function
         return function(payloadStr, done) {
-            var payload = allocate(Module.intArrayFromString(payloadStr), 'i8', ALLOC_NORMAL);
-            Module.ccall('quiet_encoder_set_payload', 'number', ['pointer', 'pointer', 'number'], [encoder, payload, payloadStr.length]);
+            var payload = Module.intArrayFromString(payloadStr);
+            var payloadOffset = 0;
+
+            // fill as much of quiet's transmit queue as possible
+            var writebuf = function() {
+                if (payloadOffset == payload.length) {
+                    return;
+                }
+                for (var i = payloadOffset; i < payload.length; ) {
+                    var frame = payload.slice(payloadOffset, payloadOffset + frame_len);
+                    var written = Module.ccall('quiet_encoder_send', 'number', ['pointer', 'array', 'number'], [encoder, frame, frame.length]);
+                    if (written === -1) {
+                        break;
+                    }
+                    payloadOffset += frame.length;
+                }
+            };
+
+            writebuf();
 
             // yes, this is pointer arithmetic, in javascript :)
             var sample_view = Module.HEAPF32.subarray((samples/4), (samples/4) + sampleBufferSize);
@@ -260,6 +277,7 @@ var Quiet = (function() {
                     finished = true;
                     window.setTimeout(function() { transmitter.disconnect(); }, 1500);
                 }
+                window.setTimeout(writebuf, 0);
             };
 
             // put an input node on the graph. some browsers require this to run our script processor
@@ -409,9 +427,20 @@ var Quiet = (function() {
 
         var samples = Module.ccall('malloc', 'pointer', ['number'], [4 * sampleBufferSize]);
 
-        // start our local payload buffer size at the default size given by the module
-        var payloadBufferSize = payloadBufferDefaultSize;
-        var payload = Module.ccall('malloc', 'pointer', ['number'], [payloadBufferSize]);
+        var frame = Module.ccall('malloc', 'pointer', ['number'], [frameBufferSize]);
+
+        var readbuf = function() {
+            while (true) {
+                var read = Module.ccall('quiet_decoder_recv', 'number', ['pointer', 'pointer', 'number'], [encoder, frame, frameBufferSize]);
+                if (read === -1) {
+                    break;
+                }
+                // convert from emscripten bytes to js string. more pointer arithmetic.
+                var frameArray = Module.HEAP8.subarray(frame, frame + read);
+                var frameStr = String.fromCharCode.apply(null, new Uint8Array(frameArray));
+                onReceive(frameStr);
+            }
+        };
 
         window.recorder.onaudioprocess = function(e) {
             var input = e.inputBuffer.getChannelData(0);
@@ -419,30 +448,13 @@ var Quiet = (function() {
             sample_view.set(input);
 
             // quiet tells us how many bytes are stored in its internal payload buffer
-            var payloadBuffered = Module.ccall('quiet_decoder_recv', 'number', ['pointer', 'pointer', 'number'], [decoder, samples, sampleBufferSize]);
+            Module.ccall('quiet_decoder_consume', 'number', ['pointer', 'pointer', 'number'], [decoder, samples, sampleBufferSize]);
 
-            // resize our buffer if we need to receive more payload than can fit
-            if (payloadBuffered > payloadBufferSize) {
-                payload = Module.ccall('realloc', 'pointer', ['pointer', 'number'], [payload, payloadBuffered]);
-                payloadBufferSize = payloadBuffered;
-            }
-
-            // if anything was received, copy it out and pass it to user
-            if (payloadBuffered > 0) {
-                // retrieve every byte
-                Module.ccall('quiet_decoder_readbuf', 'number', ['pointer', 'pointer', 'number'], [decoder, payload, payloadBuffered]);
-
-                // convert from emscripten bytes to js string. more pointer arithmetic.
-                var payloadArray = Module.HEAP8.subarray(payload, payload + payloadBuffered)
-                var payloadStr = String.fromCharCode.apply(null, new Uint8Array(payloadArray));
-
-                // call user callback with the payload
-                onReceive(payloadStr);
-            }
+            window.setTimeout(readbuf, 0);
 
             var currentChecksumFailCount = Module.ccall('quiet_decoder_checksum_fails', 'number', ['pointer'], [decoder]);
             if ((onReceiveFail !== undefined) && (currentChecksumFailCount > lastChecksumFailCount)) {
-                onReceiveFail(currentChecksumFailCount);
+                window.setTimeout(function() { onReceiveFail(currentChecksumFailCount); }, 0);
             }
             lastChecksumFailCount = currentChecksumFailCount;
         }
