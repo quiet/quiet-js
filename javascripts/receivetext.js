@@ -3,12 +3,15 @@ var TextReceiver = (function() {
     Quiet.setMemoryInitializerPrefix("javascripts/");
     Quiet.setLibfecPrefix("javascripts/");
     var target;
-    var content = "";
+    var content = new ArrayBuffer(0);
     var warningbox;
 
     function onReceive(recvPayload) {
-        content += Quiet.ab2str(recvPayload);
-        target.textContent = content;
+        var tmp = new Uint8Array(content.length + recvPayload.length);
+        tmp.set(new Uint8Array(content), 0);
+        tmp.set(new Uint8Array(recvPayload), payload.byteLength);
+        content = tmp.buffer;
+        target.textContent = Quiet.ab2str(content);
         warningbox.classList.add("hidden");
     };
 
