@@ -34,31 +34,26 @@
       </header>
       <section>
         <h1>
-<a id="quiet" class="anchor" href="#quiet" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Quiet.js</h1>
+          <a id="quiet" class="anchor" href="#quiet" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Quiet.js</h1>
 
-<p>This is a javascript binding for <a href="https://github.com/brian-armstrong/quiet">libquiet</a>, a library for sending and receiving data via sound card. It can function either via speaker or cable (e.g., 3.5mm). Quiet comes included with a few transmissions profiles which can be selected for the intended use. For speaker transmission, there is a profile which transmits around the 19kHz range, which is essentially imperceptible to people.</p>
+        <p>This is a javascript binding for <a href="https://github.com/brian-armstrong/quiet">libquiet</a>, a library for sending and receiving data via sound card. It can function either via speaker or cable (e.g., 3.5mm). Quiet comes included with a few transmissions profiles which can be selected for the intended use. For speaker transmission, there is a profile which transmits around the 19kHz range, which is essentially imperceptible to people.</p>
 
-<p>Quiet uses the Web Audio functionality in order to send and receive sound. Although sending data is supported by many browsers, reception is presently only support by Chrome. Support for reception by Firefox will be coming soon.</p>
+        <p>Quiet uses the Web Audio functionality in order to send and receive sound. Although sending data is supported by many browsers, reception is presently only support by Chrome. Support for reception by Firefox will be coming soon.</p>
 
-<p>Try it out in this example or browse the <a href="docs/">documentation</a>.</p>
+        <p>Try it out in this example or browse the <a href="docs/">documentation</a>.</p>
+
+        <pre>Send Text</pre>
+        <div class="hidden" data-quiet-profile-name="audible"></div>
+        <div class="alert alert-danger hidden" data-quiet-warning></div>
+        <div class="form-group">
+          <textarea autofocus="true" autocapitalize="none" autocomplete="off" spellcheck="off" class="form-control" style="resize:none" rows="5" data-quiet-text-input></textarea>
+        </div>
+        <button type="button" class="btn btn-default" style="width:100%" data-quiet-send-button data-quiet-sending-text="Sending...">Send</button>
+        <pre>Receive Text</pre>
+        <p data-quiet-receive-text-target>Your received text will show up here. Waiting...</p>
       </section>
-
     </div>
-
     <div class="wrapper">
-      <header>
-        <h1>Send Text</h1>
-      </header>
-      <section>
-      <div class="hidden" data-quiet-profile-name="audible"></div>
-      <div class="alert alert-danger hidden" data-quiet-warning></div>
-      <div class="form-group">
-        <textarea autofocus="true" autocapitalize="none" autocomplete="off" spellcheck="off" class="form-control" style="resize:none" rows="5" data-quiet-text-input></textarea>
-      </div>
-      <button type="button" class="btn btn-default" style="width:100%" data-quiet-send-button data-quiet-sending-text="Sending...">Send</button>
-      <p data-quiet-receive-text-target>Your received text will show up here. Waiting...</p>
-      </section>
-    </div>
   </body>
 </html>
     <footer>
