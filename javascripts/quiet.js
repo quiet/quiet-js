@@ -486,8 +486,8 @@ var Quiet = (function() {
         var s_utf8 = unescape(encodeURIComponent(s));
         var buf = new ArrayBuffer(s_utf8.length);
         var bufView = new Uint8Array(buf);
-        for (var i = 0; i < s.length; i++) {
-            bufView[i] = s.charCodeAt(i);
+        for (var i = 0; i < s_utf8.length; i++) {
+            bufView[i] = s_utf8.charCodeAt(i);
         }
         return buf;
     };
