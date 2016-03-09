@@ -33,8 +33,8 @@ var TextTransmitter = (function() {
         var profilename = btn.getAttribute('data-quiet-profile-name');
         transmit = Quiet.transmitter(profilename);
         var onFinish = function() { return onTransmitFinish(btn); };
-        var onClick = function(e) { return onClick(e, transmit, onFinish); };
-        btn.addEventListener('click', onClick, false);
+        var onBtnClick = function(e) { return onClick(e, transmit, onFinish); };
+        btn.addEventListener('click', onBtnClick, false);
     };
 
     function onQuietReady() {
