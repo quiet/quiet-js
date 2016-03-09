@@ -1,7 +1,5 @@
 var TextTransmitter = (function() {
     var btns;
-    var transmitters = {};
-    var onFinishes = {};
     var textbox;
     var warningbox;
 
