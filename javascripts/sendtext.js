@@ -5,7 +5,6 @@ var TextTransmitter = (function() {
 
     function onTransmitFinish(btn) {
         textbox.focus();
-        btn.addEventListener('click', onClick, false);
         btn.disabled = false;
         var originalText = btn.innerText;
         btn.innerText = btn.getAttribute('data-quiet-sending-text');
@@ -13,7 +12,6 @@ var TextTransmitter = (function() {
     };
 
     function onClick(e, transmit, onFinish) {
-        e.target.removeEventListener(e.type, arguments.callee);
         e.target.disabled = true;
         var originalText = e.target.innerText;
         e.target.innerText = e.target.getAttribute('data-quiet-sending-text');
