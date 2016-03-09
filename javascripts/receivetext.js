@@ -2,6 +2,7 @@ var TextReceiver = (function() {
     var target;
     var content = new ArrayBuffer(0);
     var warningbox;
+    var btns;
 
     function onReceive(recvPayload) {
         content = Quiet.mergeab(content, recvPayload);
@@ -20,9 +21,17 @@ var TextReceiver = (function() {
         warningbox.textContent = "We didn't quite get that. It looks like you tried to transmit something. You may need to move the transmitter closer to the receiver and set the volume to 50%."
     };
 
+    function setupButton(btn) {
+        var profilename = btn.getAttribute('data-quiet-profile-name');
+        var startReceiver = function() { Quiet.receiver(profilename, onReceive, onReceiverCreateFail, onReceiveFail); };
+        var onBtnClick = function(e) { return onClick(e, startReceiver); };
+        btn.addEventListener('click', onBtnClick, false);
+    };
+
     function onQuietReady() {
-        var profilename = document.querySelector('[data-quiet-profile-name]').getAttribute('data-quiet-profile-name');
-        Quiet.receiver(profilename, onReceive, onReceiverCreateFail, onReceiveFail);
+        for (var i = 0; i < btns.length; i++) {
+            setupButton(btns[i]);
+        }
     };
 
     function onQuietFail(reason) {
@@ -32,6 +41,7 @@ var TextReceiver = (function() {
     };
 
     function onDOMLoad() {
+        btns = document.querySelectorAll('[data-quiet-receive-button]');
         target = document.querySelector('[data-quiet-receive-text-target]');
         warningbox = document.querySelector('[data-quiet-receive-text-warning]');
         Quiet.addReadyCallback(onQuietReady, onQuietFail);
