@@ -21,6 +21,15 @@ var TextReceiver = (function() {
         warningbox.textContent = "We didn't quite get that. It looks like you tried to transmit something. You may need to move the transmitter closer to the receiver and set the volume to 50%."
     };
 
+    function onClick(e, startReceiver) {
+        e.target.removeEventListener(e.type, arguments.callee);
+        e.target.disabled = true;
+        var originalText = e.target.innerText;
+        e.target.innerText = e.target.getAttribute('data-quiet-receiving-text');
+        e.target.setAttribute('data-quiet-receiving-text', originalText);
+        startReceiver();
+    }
+
     function setupButton(btn) {
         var profilename = btn.getAttribute('data-quiet-profile-name');
         var startReceiver = function() { Quiet.receiver(profilename, onReceive, onReceiverCreateFail, onReceiveFail); };
