@@ -4,7 +4,6 @@ var TextTransmitter = (function() {
     var onFinishes = {};
     var textbox;
     var warningbox;
-    var transmit;
 
     function onTransmitFinish(btn) {
         textbox.focus();
