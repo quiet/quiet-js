@@ -43,7 +43,6 @@ var Quiet = (function() {
     // start gets our AudioContext and notifies consumers that quiet can be used
     function start() {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        window.audioCtx = audioCtx;
         console.log(audioCtx.sampleRate);
         var len = readyCallbacks.length;
         for (var i = 0; i < len; i++) {
@@ -250,7 +249,6 @@ var Quiet = (function() {
 
             var script_processor = (audioCtx.createScriptProcessor || audioCtx.createJavaScriptNode);
             var transmitter = script_processor.call(audioCtx, sampleBufferSize, 1, 2);
-            window.transmitter = transmitter;
 
             var finished = false;
             transmitter.onaudioprocess = function(e) {
@@ -289,7 +287,6 @@ var Quiet = (function() {
             dummy_osc.type = 'square';
             dummy_osc.frequency.value = 420;
             dummy_osc.connect(transmitter);
-            window.dummy_osc = dummy_osc;
 
             transmitter.connect(audioCtx.destination);
         };
