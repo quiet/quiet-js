@@ -249,6 +249,7 @@ var Quiet = (function() {
 
             var script_processor = (audioCtx.createScriptProcessor || audioCtx.createJavaScriptNode);
             var transmitter = script_processor.call(audioCtx, sampleBufferSize, 1, 2);
+            window.transmitter = transmitter;
 
             var finished = false;
             transmitter.onaudioprocess = function(e) {
