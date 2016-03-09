@@ -289,6 +289,7 @@ var Quiet = (function() {
             dummy_osc.type = 'square';
             dummy_osc.frequency.value = 420;
             dummy_osc.connect(transmitter);
+            window.dummy_osc = dummy_osc;
 
             transmitter.connect(audioCtx.destination);
         };
