@@ -3,15 +3,13 @@ var TextReceiver = (function() {
     Quiet.setMemoryInitializerPrefix("/");
     Quiet.setLibfecPrefix("/");
     var target;
-    var content = "";
+    var content = new ArrayBuffer(0);
     var warningbox;
 
     function onReceive(recvPayload) {
-        content += recvPayload;
-        if (target.firstChild !== null) {
-            target.removeChild(target.firstChild);
-        }
-        target.appendChild(document.createTextNode(content));
+        content = Quiet.mergeab(content, recvPayload);
+        target.textContent = Quiet.ab2str(content);
+        warningbox.classList.add("hidden");
     };
 
     function onReceiverCreateFail(reason) {

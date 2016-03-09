@@ -96,6 +96,145 @@
         <dl>
             
 <dt>
+    <h4 class="name" id="ab2str"><span class="type-signature">&lt;static> </span>ab2str<span class="signature">(ab)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Convert an array buffer in UTF8 to string
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>ab</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">ArrayBuffer</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">array buffer to be converted</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line523">line 523</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    s - converted string
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">string</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
     <h4 class="name" id="addReadyCallback"><span class="type-signature">&lt;static> </span>addReadyCallback<span class="signature">(c, <span class="optional">onError</span>)</span><span class="type-signature"></span></h4>
     
     
@@ -177,7 +316,7 @@
             <td class="type">
             
                 
-<span class="param-type">function</span>
+<span class="param-type">onError</span>
 
 
             
@@ -228,7 +367,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line156">line 156</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line158">line 158</a>
     </li></ul></dd>
     
     
@@ -255,6 +394,170 @@
         
     <pre class="prettyprint"><code>addReadyCallback(function() { console.log("ready!"); });</code></pre>
 
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="mergeab"><span class="type-signature">&lt;static> </span>mergeab<span class="signature">(ab1, ab2)</span><span class="type-signature"> &rarr; {ArrayBuffer}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Merge 2 ArrayBuffers
+This is a convenience function to assist user receiver functions that
+want to aggregate multiple payloads.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>ab1</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">ArrayBuffer</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">beginning ArrayBuffer</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>ab2</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">ArrayBuffer</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">ending ArrayBuffer</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line534">line 534</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    buf - ab1 merged with ab2
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">ArrayBuffer</span>
+
+
+	</dd>
+</dl>
+
+        
+    
     
 </dd>
 
@@ -373,7 +676,7 @@
             <td class="type">
             
                 
-<span class="param-type">function</span>
+<span class="param-type">onReceiveCreateFail</span>
 
 
             
@@ -406,7 +709,7 @@
             <td class="type">
             
                 
-<span class="param-type">function</span>
+<span class="param-type">onReceiveFail</span>
 
 
             
@@ -457,7 +760,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line349">line 349</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line394">line 394</a>
     </li></ul></dd>
     
     
@@ -482,7 +785,7 @@
     
         <h5>Example</h5>
         
-    <pre class="prettyprint"><code>receiver("robust", function(payload) { console.log("received chunk of data: " + payload); });</code></pre>
+    <pre class="prettyprint"><code>receiver("robust", function(payload) { console.log("received chunk of data: " + Quiet.ab2str(payload)); });</code></pre>
 
     
 </dd>
@@ -867,6 +1170,145 @@ This function must be called before creating a transmitter or receiver.
         
             
 <dt>
+    <h4 class="name" id="str2ab"><span class="type-signature">&lt;static> </span>str2ab<span class="signature">(s)</span><span class="type-signature"> &rarr; {ArrayBuffer}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Convert a string to array buffer in UTF8
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>s</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">string to be converted</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line506">line 506</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    buf - converted arraybuffer
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">ArrayBuffer</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
     <h4 class="name" id="transmitter"><span class="type-signature">&lt;static> </span>transmitter<span class="signature">(profile)</span><span class="type-signature"> &rarr; {transmit}</span></h4>
     
     
@@ -956,7 +1398,7 @@ This function must be called before creating a transmitter or receiver.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line184">line 184</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line192">line 192</a>
     </li></ul></dd>
     
     
@@ -1004,7 +1446,7 @@ This function must be called before creating a transmitter or receiver.
         <h5>Example</h5>
         
     <pre class="prettyprint"><code>var transmit = transmitter("robust");
-transmit("Hello, World!", function() { console.log("transmission complete"); });</code></pre>
+transmit(Quiet.str2ab("Hello, World!"), function() { console.log("transmission complete"); });</code></pre>
 
     
 </dd>
@@ -1016,6 +1458,123 @@ transmit("Hello, World!", function() { console.log("transmission complete"); });
         <h3 class="subsection-title">Type Definitions</h3>
         
         <dl>
+                
+<dt>
+    <h4 class="name" id="onError"><span class="type-signature"></span>onError<span class="signature">(reason)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Callback to notify user that quiet.js failed to initialize
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>reason</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">error message related to failure</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line156">line 156</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+            
                 
 <dt>
     <h4 class="name" id="onReceive"><span class="type-signature"></span>onReceive<span class="signature">(payload)</span><span class="type-signature"></span></h4>
@@ -1066,7 +1625,7 @@ transmit("Hello, World!", function() { console.log("transmission complete"); });
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">ArrayBuffer</span>
 
 
             
@@ -1107,7 +1666,245 @@ transmit("Hello, World!", function() { console.log("transmission complete"); });
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line347">line 347</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line392">line 392</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+            
+                
+<dt>
+    <h4 class="name" id="onReceiveCreateFail"><span class="type-signature"></span>onReceiveCreateFail<span class="signature">(reason)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Callback used by receiver to notify user of errors in creating receiver.
+This is a callback because frequently this will result when the user denies
+permission to use the mic, which happens long after the call to create
+the receiver.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>reason</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">error message related to create fail</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line390">line 390</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+            
+                
+<dt>
+    <h4 class="name" id="onReceiveFail"><span class="type-signature"></span>onReceiveFail<span class="signature">(total)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Callback used by receiver to notify user that a frame was received but
+failed checksum. Frames that fail checksum are not sent to onReceive.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>total</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">total number of frames failed across lifetime of receiver</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line388">line 388</a>
     </li></ul></dd>
     
     
@@ -1176,7 +1973,7 @@ transmit("Hello, World!", function() { console.log("transmission complete"); });
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line180">line 180</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line188">line 188</a>
     </li></ul></dd>
     
     
@@ -1338,7 +2135,7 @@ This callback may be used multiple times, but the user must wait for the finishe
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line182">line 182</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line190">line 190</a>
     </li></ul></dd>
     
     
@@ -1363,7 +2160,7 @@ This callback may be used multiple times, but the user must wait for the finishe
     
         <h5>Example</h5>
         
-    <pre class="prettyprint"><code>transmit("Hello, World!", function() { console.log("transmission complete"); });</code></pre>
+    <pre class="prettyprint"><code>transmit(Quiet.str2ab("Hello, World!"), function() { console.log("transmission complete"); });</code></pre>
 
     
 </dd>
@@ -1388,7 +2185,7 @@ This callback may be used multiple times, but the user must wait for the finishe
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 23 2016 19:41:45 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Mar 08 2016 17:17:37 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -154,11 +154,19 @@ var Quiet = (function() {
     }
 
     /**
+     * Callback to notify user that quiet.js failed to initialize
+     *
+     * @callback onError
+     * @memberof Quiet
+     * @param {string} reason - error message related to failure
+     */
+
+    /**
      * Add a callback to be called when Quiet is ready for use, e.g. when transmitters and receivers can be created.
      * @function addReadyCallback
      * @memberof Quiet
      * @param {function} c - The user function which will be called
-     * @param {function} [onError] - User errback function
+     * @param {onError} [onError] - User errback function
      * @example
      * addReadyCallback(function() { console.log("ready!"); });
      */
@@ -192,7 +200,7 @@ var Quiet = (function() {
      * @param {string} payload - string which will be encoded and sent to speaker
      * @param {onTransmitFinish} [done] - callback to notify user that transmission has completed
      * @example
-     * transmit("Hello, World!", function() { console.log("transmission complete"); });
+     * transmit(Quiet.str2ab("Hello, World!"), function() { console.log("transmission complete"); });
      */
 
     /**
@@ -203,7 +211,7 @@ var Quiet = (function() {
      * @returns {transmit} transmit - transmit callback which user calls to start transmission
      * @example
      * var transmit = transmitter("robust");
-     * transmit("Hello, World!", function() { console.log("transmission complete"); });
+     * transmit(Quiet.str2ab("Hello, World!"), function() { console.log("transmission complete"); });
      */
     function transmitter(profile) {
         // get an encoder_options object for our quiet-profiles.json and profile key
@@ -222,8 +230,8 @@ var Quiet = (function() {
         var samples = Module.ccall('malloc', 'pointer', ['number'], [4 * sampleBufferSize]);
 
         // return user transmit function
-        return function(payloadStr, done) {
-            var payload = Module.intArrayFromString(payloadStr);
+        return function(buf, done) {
+            var payload = new Uint8Array(buf);
             var payloadOffset = 0;
 
             // fill as much of quiet's transmit queue as possible
@@ -378,11 +386,31 @@ var Quiet = (function() {
     };
 
     /**
+    * Callback used by receiver to notify user that a frame was received but
+    * failed checksum. Frames that fail checksum are not sent to onReceive.
+    *
+    * @callback onReceiveFail
+    * @memberof Quiet
+    * @param {number} total - total number of frames failed across lifetime of receiver
+    */
+
+    /**
+     * Callback used by receiver to notify user of errors in creating receiver.
+     * This is a callback because frequently this will result when the user denies
+     * permission to use the mic, which happens long after the call to create
+     * the receiver.
+     *
+     * @callback onReceiveCreateFail
+     * @memberof Quiet
+     * @param {string} reason - error message related to create fail
+    */
+
+    /**
      * Callback used by receiver to notify user of data received via microphone/line-in.
      *
      * @callback onReceive
      * @memberof Quiet
-     * @param {string} payload - chunk of data received
+     * @param {ArrayBuffer} payload - chunk of data received
     */
 
     /**
@@ -391,10 +419,10 @@ var Quiet = (function() {
      * @memberof Quiet
      * @param {string} profile - name of profile to use, must be a key in quiet-profiles.json
      * @param {onReceive} onReceive - callback which receiver will call to send user received data
-     * @param {function} [onCreateFail] - callback to notify user that receiver could not be created
-     * @param {function} [onReceiveFail] - callback to notify user that receiver received corrupted data
+     * @param {onReceiveCreateFail} [onCreateFail] - callback to notify user that receiver could not be created
+     * @param {onReceiveFail} [onReceiveFail] - callback to notify user that receiver received corrupted data
      * @example
-     * receiver("robust", function(payload) { console.log("received chunk of data: " + payload); });
+     * receiver("robust", function(payload) { console.log("received chunk of data: " + Quiet.ab2str(payload)); });
      */
     function receiver(profile, onReceive, onCreateFail, onReceiveFail) {
         var c_profiles = Module.intArrayFromString(profiles);
@@ -437,9 +465,8 @@ var Quiet = (function() {
                     break;
                 }
                 // convert from emscripten bytes to js string. more pointer arithmetic.
-                var frameArray = Module.HEAP8.subarray(frame, frame + read);
-                var frameStr = String.fromCharCode.apply(null, new Uint8Array(frameArray));
-                onReceive(frameStr);
+                var frameArray = Module.HEAP8.slice(frame, frame + read);
+                onReceive(frameArray);
             }
         };
 
@@ -476,6 +503,51 @@ var Quiet = (function() {
         fakeGain.connect(audioCtx.destination);
     };
 
+    /**
+     * Convert a string to array buffer in UTF8
+     * @function str2ab
+     * @memberof Quiet
+     * @param {string} s - string to be converted
+     * @returns {ArrayBuffer} buf - converted arraybuffer
+     */
+    function str2ab(s) {
+        var s_utf8 = unescape(encodeURIComponent(s));
+        var buf = new ArrayBuffer(s_utf8.length);
+        var bufView = new Uint8Array(buf);
+        for (var i = 0; i < s_utf8.length; i++) {
+            bufView[i] = s_utf8.charCodeAt(i);
+        }
+        return buf;
+    };
+
+    /**
+     * Convert an array buffer in UTF8 to string
+     * @function ab2str
+     * @memberof Quiet
+     * @param {ArrayBuffer} ab - array buffer to be converted
+     * @returns {string} s - converted string
+     */
+    function ab2str(ab) {
+        return decodeURIComponent(escape(String.fromCharCode.apply(null, new Uint8Array(ab))));
+    };
+
+    /**
+     * Merge 2 ArrayBuffers
+     * This is a convenience function to assist user receiver functions that
+     * want to aggregate multiple payloads.
+     * @function mergeab
+     * @memberof Quiet
+     * @param {ArrayBuffer} ab1 - beginning ArrayBuffer
+     * @param {ArrayBuffer} ab2 - ending ArrayBuffer
+     * @returns {ArrayBuffer} buf - ab1 merged with ab2
+     */
+    function mergeab(ab1, ab2) {
+        var tmp = new Uint8Array(ab1.byteLength + ab2.byteLength);
+        tmp.set(new Uint8Array(ab1), 0);
+        tmp.set(new Uint8Array(ab2), ab1.byteLength);
+        return tmp.buffer;
+    };
+
     return {
         emscriptenInitialized: onEmscriptenInitialized,
         setProfilesPrefix: setProfilesPrefix,
@@ -483,7 +555,10 @@ var Quiet = (function() {
         setLibfecPrefix: setLibfecPrefix,
         addReadyCallback: addReadyCallback,
         transmitter: transmitter,
-        receiver: receiver
+        receiver: receiver,
+        str2ab: str2ab,
+        ab2str: ab2str,
+        mergeab: mergeab
     };
 })();
 

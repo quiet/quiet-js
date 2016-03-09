@@ -27,7 +27,7 @@ var TextTransmitter = (function() {
             onTransmitFinish();
             return;
         }
-        transmit(payload, onTransmitFinish);
+        transmit(Quiet.str2ab(payload), onTransmitFinish);
     };
 
     function onQuietReady() {
@@ -45,7 +45,7 @@ var TextTransmitter = (function() {
     function onDOMLoad() {
         btn = document.querySelector('[data-quiet-send-button]');
         textbox = document.querySelector('[data-quiet-text-input]');
-        warningbox = document.querySelect('[data-quiet-warning]');
+        warningbox = document.querySelector('[data-quiet-warning]');
         Quiet.addReadyCallback(onQuietReady, onQuietFail);
     };
 
