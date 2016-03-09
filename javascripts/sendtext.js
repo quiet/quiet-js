@@ -31,13 +31,17 @@ var TextTransmitter = (function() {
         transmit(Quiet.str2ab(payload), onFinish);
     };
 
+    function finishClosure(btn) {
+        return function() { return onTransmitFinish(btn); };
+    };
+
     function onQuietReady() {
         for (var i = 0; i < btns.length; i++) {
             var btn = btns[i];
             var profilename = btn.getAttribute('data-quiet-profile-name');
             transmit = Quiet.transmitter(profilename);
             transmitters[btn] = transmit;
-            onFinishes[btn] = function() { return onTransmitFinish(btn); };
+            onFinishes[btn] = finishClosure(btn);
             btn.addEventListener('click', onClick, false);
         }
     };
