@@ -43,6 +43,7 @@ var Quiet = (function() {
     // start gets our AudioContext and notifies consumers that quiet can be used
     function start() {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        window.audioCtx = audioCtx;
         console.log(audioCtx.sampleRate);
         var len = readyCallbacks.length;
         for (var i = 0; i < len; i++) {
