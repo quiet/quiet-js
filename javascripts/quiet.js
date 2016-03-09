@@ -487,7 +487,7 @@ var Quiet = (function() {
     function ab2str(ab) {
         if (ab.byteLength % 2) {
             // odd number of bytes -> drop last byte
-            return String.fromCharCode.apply(null, new Uint16Array(ab, 0, (ab.byteLength)/2);
+            return String.fromCharCode.apply(null, new Uint16Array(ab, 0, (ab.byteLength)/2));
         }
         return String.fromCharCode.apply(null, new Uint16Array(ab));
     };
