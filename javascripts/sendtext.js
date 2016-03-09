@@ -36,14 +36,13 @@ var TextTransmitter = (function() {
     };
 
     function onQuietReady() {
-        for (var i = 0; i < btns.length; i++) {
-            var btn = btns[i];
+        btns.forEach(function(btn) {
             var profilename = btn.getAttribute('data-quiet-profile-name');
             transmit = Quiet.transmitter(profilename);
             transmitters[btn] = transmit;
             onFinishes[btn] = finishClosure(btn);
             btn.addEventListener('click', onClick, false);
-        }
+        });
     };
 
     function onQuietFail(reason) {
