@@ -35,14 +35,18 @@ var TextTransmitter = (function() {
         return function() { return onTransmitFinish(btn); };
     };
 
+    function setupButton(btn) {
+        var profilename = btn.getAttribute('data-quiet-profile-name');
+        transmit = Quiet.transmitter(profilename);
+        transmitters[btn] = transmit;
+        onFinishes[btn] = finishClosure(btn);
+        btn.addEventListener('click', onClick, false);
+    };
+
     function onQuietReady() {
-        btns.forEach(function(btn) {
-            var profilename = btn.getAttribute('data-quiet-profile-name');
-            transmit = Quiet.transmitter(profilename);
-            transmitters[btn] = transmit;
-            onFinishes[btn] = finishClosure(btn);
-            btn.addEventListener('click', onClick, false);
-        });
+        for (var i = 0; i < btns.length; i++) {
+            setupButton(btns[i]);
+        }
     };
 
     function onQuietFail(reason) {
