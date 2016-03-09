@@ -189,10 +189,10 @@ var Quiet = (function() {
      * This callback may be used multiple times, but the user must wait for the finished callback between subsequent calls.
      * @callback transmit
      * @memberof Quiet
-     * @param {string} payload - string which will be encoded and sent to speaker
+     * @param {ArrayBuffer} payload - bytes which will be encoded and sent to speaker
      * @param {onTransmitFinish} [done] - callback to notify user that transmission has completed
      * @example
-     * transmit("Hello, World!", function() { console.log("transmission complete"); });
+     * transmit(Quiet.str2ab("Hello, World!"), function() { console.log("transmission complete"); });
      */
 
     /**
@@ -203,7 +203,7 @@ var Quiet = (function() {
      * @returns {transmit} transmit - transmit callback which user calls to start transmission
      * @example
      * var transmit = transmitter("robust");
-     * transmit("Hello, World!", function() { console.log("transmission complete"); });
+     * transmit(Quiet.str2ab("Hello, World!"), function() { console.log("transmission complete"); });
      */
     function transmitter(profile) {
         // get an encoder_options object for our quiet-profiles.json and profile key
@@ -475,23 +475,42 @@ var Quiet = (function() {
         fakeGain.connect(audioCtx.destination);
     };
 
+    /**
+     * Convert a string to array buffer in UTF8
+     * @function str2ab
+     * @memberof Quiet
+     * @param {string} s - string to be converted
+     * @returns {ArrayBuffer} buf - converted arraybuffer
+     */
     function str2ab(s) {
-        var buf = new ArrayBuffer(s.length*2);
-        var bufView = new Uint16Array(buf);
+        var s_utf8 = unescape(encodeURIComponent(s));
+        var buf = new ArrayBuffer(s_utf8.length);
+        var bufView = new Uint8Array(buf);
         for (var i = 0; i < s.length; i++) {
             bufView[i] = s.charCodeAt(i);
         }
         return buf;
     };
 
+    /**
+     * Convert an array buffer in UTF8 to string
+     * @function ab2str
+     * @memberof Quiet
+     * @param {ArrayBuffer} ab - array buffer to be converted
+     * @returns {string} s - converted string
+     */
     function ab2str(ab) {
-        if (ab.byteLength % 2) {
-            // odd number of bytes -> drop last byte
-            return String.fromCharCode.apply(null, new Uint16Array(ab, 0, (ab.byteLength)/2));
-        }
-        return String.fromCharCode.apply(null, new Uint16Array(ab));
+        return decodeURIComponent(escape(String.fromCharCode.apply(null, new Uint8Array(ab))));
     };
 
+    /**
+     * Merge 2 ArrayBuffers
+     * @function mergeab
+     * @memberof Quiet
+     * @param {ArrayBuffer} ab1 - beginning ArrayBuffer
+     * @param {ArrayBuffer} ab2 - ending ArrayBuffer
+     * @returns {ArrayBuffer} buf - ab1 merged with ab2
+     */
     function mergeab(ab1, ab2) {
         var tmp = new Uint8Array(ab1.byteLength + ab2.byteLength);
         tmp.set(new Uint8Array(ab1), 0);
