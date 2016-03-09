@@ -54,7 +54,7 @@
             "filter_bank_size": 64
         }
     },
-    "robust": {
+    "ultrasonic": {
         "checksum_scheme": "crc32",
         "inner_fec_scheme": "v27",
         "outer_fec_scheme": "none",

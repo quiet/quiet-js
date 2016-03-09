@@ -1,10 +1,12 @@
 var TextTransmitter = (function() {
-    var btn;
+    var btns;
+    var transmitters = {};
+    var onFinishes = {};
     var textbox;
     var warningbox;
     var transmit;
 
-    function onTransmitFinish() {
+    function onTransmitFinish(btn) {
         textbox.focus();
         btn.addEventListener('click', onClick, false);
         btn.disabled = false;
@@ -20,17 +22,24 @@ var TextTransmitter = (function() {
         e.target.innerText = e.target.getAttribute('data-quiet-sending-text');
         e.target.setAttribute('data-quiet-sending-text', originalText);
         var payload = textbox.value;
+        var onFinish = onFinishes[e.target];
         if (payload === "") {
-            onTransmitFinish();
+            onFinish();
             return;
         }
-        transmit(Quiet.str2ab(payload), onTransmitFinish);
+        var transmit = transmitters[e.target];
+        transmit(Quiet.str2ab(payload), onFinish);
     };
 
     function onQuietReady() {
-        var profilename = document.querySelector('[data-quiet-profile-name]').getAttribute('data-quiet-profile-name');
-        transmit = Quiet.transmitter(profilename);
-        btn.addEventListener('click', onClick, false);
+        for (var i = 0; i < btns.length; i++) {
+            var btn = btns[i];
+            var profilename = btn.getAttribute('data-quiet-profile-name');
+            transmit = Quiet.transmitter(profilename);
+            transmitters[btn] = transmit;
+            onFinishes[btn] = function() { return onTransmitFinish(btn); };
+            btn.addEventListener('click', onClick, false);
+        }
     };
 
     function onQuietFail(reason) {
@@ -40,7 +49,7 @@ var TextTransmitter = (function() {
     };
 
     function onDOMLoad() {
-        btn = document.querySelector('[data-quiet-send-button]');
+        btns = document.querySelectorAll('[data-quiet-send-button]');
         textbox = document.querySelector('[data-quiet-text-input]');
         warningbox = document.querySelector('[data-quiet-send-text-warning]');
         Quiet.addReadyCallback(onQuietReady, onQuietFail);
