@@ -15,31 +15,25 @@ var TextTransmitter = (function() {
         btn.setAttribute('data-quiet-sending-text', originalText);
     };
 
-    function onClick(e) {
+    function onClick(e, transmit, onFinish) {
         e.target.removeEventListener(e.type, arguments.callee);
         e.target.disabled = true;
         var originalText = e.target.innerText;
         e.target.innerText = e.target.getAttribute('data-quiet-sending-text');
         e.target.setAttribute('data-quiet-sending-text', originalText);
         var payload = textbox.value;
-        var onFinish = onFinishes[e.target];
         if (payload === "") {
             onFinish();
             return;
         }
-        var transmit = transmitters[e.target];
         transmit(Quiet.str2ab(payload), onFinish);
-    };
-
-    function finishClosure(btn) {
-        return function() { return onTransmitFinish(btn); };
     };
 
     function setupButton(btn) {
         var profilename = btn.getAttribute('data-quiet-profile-name');
         transmit = Quiet.transmitter(profilename);
-        transmitters[btn] = transmit;
-        onFinishes[btn] = finishClosure(btn);
+        var onFinish = function() { return onTransmitFinish(btn); };
+        var onClick = function(e) { return onClick(e, transmit, onFinish); };
         btn.addEventListener('click', onClick, false);
     };
 
