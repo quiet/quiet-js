@@ -53,7 +53,7 @@ var Quiet = (function() {
     var audioInputFailedReason = "";
     var audioInputReadyCallbacks = [];
     var audioInputFailedCallbacks = [];
-    var payloadBufferDefaultSize = Math.pow(2, 16);
+    var frameBufferSize = Math.pow(2, 14);
     var lastChecksumFailCount = 0;
 
     // isReady tells us if we can start creating transmitters and receivers
@@ -181,11 +181,19 @@ var Quiet = (function() {
     }
 
     /**
+     * Callback to notify user that quiet.js failed to initialize
+     *
+     * @callback onError
+     * @memberof Quiet
+     * @param {string} reason - error message related to failure
+     */
+
+    /**
      * Add a callback to be called when Quiet is ready for use, e.g. when transmitters and receivers can be created.
      * @function addReadyCallback
      * @memberof Quiet
      * @param {function} c - The user function which will be called
-     * @param {function} [onError] - User errback function
+     * @param {onError} [onError] - User errback function
      * @example
      * addReadyCallback(function() { console.log("ready!"); });
      */
@@ -219,7 +227,7 @@ var Quiet = (function() {
      * @param {string} payload - string which will be encoded and sent to speaker
      * @param {onTransmitFinish} [done] - callback to notify user that transmission has completed
      * @example
-     * transmit("Hello, World!", function() { console.log("transmission complete"); });
+     * transmit(Quiet.str2ab("Hello, World!"), function() { console.log("transmission complete"); });
      */
 
     /**
@@ -230,7 +238,7 @@ var Quiet = (function() {
      * @returns {transmit} transmit - transmit callback which user calls to start transmission
      * @example
      * var transmit = transmitter("robust");
-     * transmit("Hello, World!", function() { console.log("transmission complete"); });
+     * transmit(Quiet.str2ab("Hello, World!"), function() { console.log("transmission complete"); });
      */
     function transmitter(profile) {
         // get an encoder_options object for our quiet-profiles.json and profile key
@@ -239,21 +247,37 @@ var Quiet = (function() {
         var opt = Module.ccall('quiet_encoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
 
         // libquiet internally works at 44.1kHz but the local sound card may be a different rate. we inform quiet about that here
-        Module.ccall('quiet_encoder_opt_set_sample_rate', 'number', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
-
-        var encoder = Module.ccall('quiet_encoder_create', 'pointer', ['pointer'], [opt]);
+        var encoder = Module.ccall('quiet_encoder_create', 'pointer', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
 
         // some profiles have an option called close_frame which prevents data frames from overlapping multiple
         //     sample buffers. this is very convenient if our system is not fast enough to feed the sound card
         //     without any gaps between subsequent buffers due to e.g. gc pause. inform quiet about our
         //     sample buffer size here so that it can reduce the frame length if this profile has close_frame enabled.
-        Module.ccall('quiet_encoder_clamp_frame_len', null, ['pointer', 'number'], [encoder, sampleBufferSize]);
+        var frame_len = Module.ccall('quiet_encoder_clamp_frame_len', 'number', ['pointer', 'number'], [encoder, sampleBufferSize]);
         var samples = Module.ccall('malloc', 'pointer', ['number'], [4 * sampleBufferSize]);
 
         // return user transmit function
-        return function(payloadStr, done) {
-            var payload = allocate(Module.intArrayFromString(payloadStr), 'i8', ALLOC_NORMAL);
-            Module.ccall('quiet_encoder_set_payload', 'number', ['pointer', 'pointer', 'number'], [encoder, payload, payloadStr.length]);
+        return function(buf, done) {
+            var payload = new Uint8Array(buf);
+            var payloadOffset = 0;
+
+            // fill as much of quiet's transmit queue as possible
+            var writebuf = function() {
+                if (payloadOffset == payload.length) {
+                    return;
+                }
+                for (var i = payloadOffset; i &lt; payload.length; ) {
+                    var frame = payload.slice(payloadOffset, payloadOffset + frame_len);
+                    var written = Module.ccall('quiet_encoder_send', 'number', ['pointer', 'array', 'number'], [encoder, frame, frame.length]);
+                    if (written === -1) {
+                        break;
+                    }
+                    payloadOffset += frame.length;
+                    i += frame.length;
+                }
+            };
+
+            writebuf();
 
             // yes, this is pointer arithmetic, in javascript :)
             var sample_view = Module.HEAPF32.subarray((samples/4), (samples/4) + sampleBufferSize);
@@ -263,11 +287,15 @@ var Quiet = (function() {
 
             var finished = false;
             transmitter.onaudioprocess = function(e) {
+                var output_l = e.outputBuffer.getChannelData(0);
+
                 if (finished) {
+                    for (var i = 0; i &lt; sampleBufferSize; i++) {
+                        output_l[i] = 0;
+                    }
                     return;
                 }
 
-                var output_l = e.outputBuffer.getChannelData(0);
                 var written = Module.ccall('quiet_encoder_emit', 'number', ['pointer', 'pointer', 'number'], [encoder, samples, sampleBufferSize]);
                 output_l.set(sample_view);
 
@@ -285,6 +313,7 @@ var Quiet = (function() {
                     finished = true;
                     window.setTimeout(function() { transmitter.disconnect(); }, 1500);
                 }
+                window.setTimeout(writebuf, 0);
             };
 
             // put an input node on the graph. some browsers require this to run our script processor
@@ -337,8 +366,10 @@ var Quiet = (function() {
                     optional: [
                       {googAutoGainControl: false},
                       {googAutoGainControl2: false},
+                      {echoCancellation: false},
                       {googEchoCancellation: false},
                       {googEchoCancellation2: false},
+                      {googDAEchoCancellation: false},
                       {googNoiseSuppression: false},
                       {googNoiseSuppression2: false},
                       {googHighpassFilter: false},
@@ -347,6 +378,16 @@ var Quiet = (function() {
                     ]
                 }
             };
+        }
+        if (navigator.mozGetUserMedia !== undefined) {
+            return {
+                audio: {
+                    echoCancellation: false,
+                    mozAutoGainControl: false,
+                    mozNoiseSuppression: false
+                }
+            };
+
         }
         return {
             audio: {
@@ -372,11 +413,31 @@ var Quiet = (function() {
     };
 
     /**
+    * Callback used by receiver to notify user that a frame was received but
+    * failed checksum. Frames that fail checksum are not sent to onReceive.
+    *
+    * @callback onReceiveFail
+    * @memberof Quiet
+    * @param {number} total - total number of frames failed across lifetime of receiver
+    */
+
+    /**
+     * Callback used by receiver to notify user of errors in creating receiver.
+     * This is a callback because frequently this will result when the user denies
+     * permission to use the mic, which happens long after the call to create
+     * the receiver.
+     *
+     * @callback onReceiveCreateFail
+     * @memberof Quiet
+     * @param {string} reason - error message related to create fail
+    */
+
+    /**
      * Callback used by receiver to notify user of data received via microphone/line-in.
      *
      * @callback onReceive
      * @memberof Quiet
-     * @param {string} payload - chunk of data received
+     * @param {ArrayBuffer} payload - chunk of data received
     */
 
     /**
@@ -385,10 +446,10 @@ var Quiet = (function() {
      * @memberof Quiet
      * @param {string} profile - name of profile to use, must be a key in quiet-profiles.json
      * @param {onReceive} onReceive - callback which receiver will call to send user received data
-     * @param {function} [onCreateFail] - callback to notify user that receiver could not be created
-     * @param {function} [onReceiveFail] - callback to notify user that receiver received corrupted data
+     * @param {onReceiveCreateFail} [onCreateFail] - callback to notify user that receiver could not be created
+     * @param {onReceiveFail} [onReceiveFail] - callback to notify user that receiver received corrupted data
      * @example
-     * receiver("robust", function(payload) { console.log("received chunk of data: " + payload); });
+     * receiver("robust", function(payload) { console.log("received chunk of data: " + Quiet.ab2str(payload)); });
      */
     function receiver(profile, onReceive, onCreateFail, onReceiveFail) {
         var c_profiles = Module.intArrayFromString(profiles);
@@ -398,7 +459,7 @@ var Quiet = (function() {
         // quiet creates audioCtx when it starts but it does not create an audio input
         // getting microphone access requires a permission dialog so only ask for it if we need it
         if (gUM === undefined) {
-            gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia);
+            gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
         }
 
         if (gUM === undefined) {
@@ -418,48 +479,43 @@ var Quiet = (function() {
         window.recorder = audioCtx.createScriptProcessor(16384, 2, 1);
 
         // inform quiet about our local sound card's sample rate so that it can resample to its internal sample rate
-        Module.ccall('quiet_decoder_opt_set_sample_rate', 'number', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
-
-        var decoder = Module.ccall('quiet_decoder_create', 'pointer', ['pointer'], [opt]);
+        var decoder = Module.ccall('quiet_decoder_create', 'pointer', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
 
         var samples = Module.ccall('malloc', 'pointer', ['number'], [4 * sampleBufferSize]);
 
-        // start our local payload buffer size at the default size given by the module
-        var payloadBufferSize = payloadBufferDefaultSize;
-        var payload = Module.ccall('malloc', 'pointer', ['number'], [payloadBufferSize]);
+        var frame = Module.ccall('malloc', 'pointer', ['number'], [frameBufferSize]);
+
+        var readbuf = function() {
+            while (true) {
+                var read = Module.ccall('quiet_decoder_recv', 'number', ['pointer', 'pointer', 'number'], [decoder, frame, frameBufferSize]);
+                if (read === -1) {
+                    break;
+                }
+                // convert from emscripten bytes to js string. more pointer arithmetic.
+                var frameArray = Module.HEAP8.slice(frame, frame + read);
+                onReceive(frameArray);
+            }
+        };
+
+        var consume = function() {
+            Module.ccall('quiet_decoder_consume', 'number', ['pointer', 'pointer', 'number'], [decoder, samples, sampleBufferSize]);
+
+            window.setTimeout(readbuf, 0);
+
+            var currentChecksumFailCount = Module.ccall('quiet_decoder_checksum_fails', 'number', ['pointer'], [decoder]);
+            if ((onReceiveFail !== undefined) && (currentChecksumFailCount > lastChecksumFailCount)) {
+                window.setTimeout(function() { onReceiveFail(currentChecksumFailCount); }, 0);
+            }
+            lastChecksumFailCount = currentChecksumFailCount;
+        }
+
 
         window.recorder.onaudioprocess = function(e) {
             var input = e.inputBuffer.getChannelData(0);
             var sample_view = Module.HEAPF32.subarray(samples/4, samples/4 + sampleBufferSize);
             sample_view.set(input);
 
-            // quiet tells us how many bytes are stored in its internal payload buffer
-            var payloadBuffered = Module.ccall('quiet_decoder_recv', 'number', ['pointer', 'pointer', 'number'], [decoder, samples, sampleBufferSize]);
-
-            // resize our buffer if we need to receive more payload than can fit
-            if (payloadBuffered > payloadBufferSize) {
-                payload = Module.ccall('realloc', 'pointer', ['pointer', 'number'], [payload, payloadBuffered]);
-                payloadBufferSize = payloadBuffered;
-            }
-
-            // if anything was received, copy it out and pass it to user
-            if (payloadBuffered > 0) {
-                // retrieve every byte
-                Module.ccall('quiet_decoder_readbuf', 'number', ['pointer', 'pointer', 'number'], [decoder, payload, payloadBuffered]);
-
-                // convert from emscripten bytes to js string. more pointer arithmetic.
-                var payloadArray = Module.HEAP8.subarray(payload, payload + payloadBuffered)
-                var payloadStr = String.fromCharCode.apply(null, new Uint8Array(payloadArray));
-
-                // call user callback with the payload
-                onReceive(payloadStr);
-            }
-
-            var currentChecksumFailCount = Module.ccall('quiet_decoder_checksum_fails', 'number', ['pointer'], [decoder]);
-            if ((onReceiveFail !== undefined) && (currentChecksumFailCount > lastChecksumFailCount)) {
-                onReceiveFail(currentChecksumFailCount);
-            }
-            lastChecksumFailCount = currentChecksumFailCount;
+            window.setTimeout(consume, 0);
         }
 
         // if this is the first receiver object created, wait for our input node to be created
@@ -474,6 +530,51 @@ var Quiet = (function() {
         fakeGain.connect(audioCtx.destination);
     };
 
+    /**
+     * Convert a string to array buffer in UTF8
+     * @function str2ab
+     * @memberof Quiet
+     * @param {string} s - string to be converted
+     * @returns {ArrayBuffer} buf - converted arraybuffer
+     */
+    function str2ab(s) {
+        var s_utf8 = unescape(encodeURIComponent(s));
+        var buf = new ArrayBuffer(s_utf8.length);
+        var bufView = new Uint8Array(buf);
+        for (var i = 0; i &lt; s_utf8.length; i++) {
+            bufView[i] = s_utf8.charCodeAt(i);
+        }
+        return buf;
+    };
+
+    /**
+     * Convert an array buffer in UTF8 to string
+     * @function ab2str
+     * @memberof Quiet
+     * @param {ArrayBuffer} ab - array buffer to be converted
+     * @returns {string} s - converted string
+     */
+    function ab2str(ab) {
+        return decodeURIComponent(escape(String.fromCharCode.apply(null, new Uint8Array(ab))));
+    };
+
+    /**
+     * Merge 2 ArrayBuffers
+     * This is a convenience function to assist user receiver functions that
+     * want to aggregate multiple payloads.
+     * @function mergeab
+     * @memberof Quiet
+     * @param {ArrayBuffer} ab1 - beginning ArrayBuffer
+     * @param {ArrayBuffer} ab2 - ending ArrayBuffer
+     * @returns {ArrayBuffer} buf - ab1 merged with ab2
+     */
+    function mergeab(ab1, ab2) {
+        var tmp = new Uint8Array(ab1.byteLength + ab2.byteLength);
+        tmp.set(new Uint8Array(ab1), 0);
+        tmp.set(new Uint8Array(ab2), ab1.byteLength);
+        return tmp.buffer;
+    };
+
     return {
         emscriptenInitialized: onEmscriptenInitialized,
         setProfilesPrefix: setProfilesPrefix,
@@ -481,7 +582,10 @@ var Quiet = (function() {
         setLibfecPrefix: setLibfecPrefix,
         addReadyCallback: addReadyCallback,
         transmitter: transmitter,
-        receiver: receiver
+        receiver: receiver,
+        str2ab: str2ab,
+        ab2str: ab2str,
+        mergeab: mergeab
     };
 })();
 
@@ -506,7 +610,7 @@ var Module = {
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 23 2016 19:41:45 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Mar 08 2016 17:27:43 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>
