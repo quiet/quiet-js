@@ -2,12 +2,17 @@ var ImageReceiver = (function() {
     var btn;
     var target;
     var content = new ArrayBuffer(0);
+    var failures = 0;
+    var successes = 0;
 
     function onReceive(recvPayload) {
         content = Quiet.mergeab(content, recvPayload);
         var blob = new Blob([content]);
         target.innerHTML = "<img src='" + URL.createObjectURL(blob) + "'>";
-        warningbox.classList.add("hidden");
+        successes++;
+        var total = failures + successes
+        var ratio = failures/total * 100;
+        warningbox.textContent = "You may need to move the transmitter closer to the receiver and set the volume to 50%. Packet Loss: " + failures + "/" + total + " (" + ratio.toFixed(0) + "%)";
     };
 
     function onReceiverCreateFail(reason) {
@@ -17,17 +22,20 @@ var ImageReceiver = (function() {
     };
 
     function onReceiveFail(num_fails) {
+        failures = num_fails;
+        var total = failures + successes;
+        var ratio = failures/total * 100;
+        warningbox.textContent = "You may need to adjust the volume to 50% and ensure no other sounds are playing. Packet Loss: " + failures + "/" + total + " (" + ratio.toFixed(0) + "%)";
         warningbox.classList.remove("hidden");
-        warningbox.textContent = "We didn't quite get that. It looks like you tried to transmit something. You may need to move the transmitter closer to the receiver and set the volume to 50%."
     };
 
     function onClick(e, startReceiver) {
-        e.target.removeEventListener(e.type, arguments.callee);
         e.target.disabled = true;
         var originalText = e.target.innerText;
         e.target.innerText = e.target.getAttribute('data-quiet-receiving-text');
         e.target.setAttribute('data-quiet-receiving-text', originalText);
         startReceiver();
+        target.classList.remove('hidden');
     }
 
     function onQuietReady() {
