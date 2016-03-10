@@ -49,7 +49,7 @@ var TextReceiver = (function() {
             content: new ArrayBuffer(0)
         };
         var onBtnClick = function(e) { return onClick(e, recvObj); };
-        btn.addEventListener('click', onBtnClick, false);
+        recvObj.btn.addEventListener('click', onBtnClick, false);
     };
 
     function onQuietReady() {
