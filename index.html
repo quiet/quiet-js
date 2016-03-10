@@ -14,6 +14,7 @@
     <script type="text/javascript" src="javascripts/sendtext.js"></script>
     <script type="text/javascript" src="javascripts/receivetext.js"></script>
     <script type="text/javascript" src="javascripts/sendimage.js"></script>
+    <script type="text/javascript" src="javascripts/receiveimage.js"></script>
     <script async type="text/javascript" src="javascripts/quiet-emscripten.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
@@ -62,10 +63,10 @@
         <div class="alert alert-danger hidden" data-quiet-receive-text-warning></div>
         <p data-quiet-receive-text-target>Your received text will show up here. Waiting...</p>
         <div class="form-group">
-          <button type="button" class="btn btn-default" style="width:100%" data-quiet-receive-button data-quiet-receiving-text="Listening..." data-quiet-profile-name="audible">Start Audible Receiver</button>
+          <button type="button" class="btn btn-default" style="width:100%" data-quiet-receive-text-button data-quiet-receiving-text="Listening..." data-quiet-profile-name="audible">Start Audible Receiver</button>
         </div>
         <div class="form-group">
-          <button type="button" class="btn btn-default" style="width:100%" data-quiet-receive-button data-quiet-receiving-text="Listening..." data-quiet-profile-name="ultrasonic">Start Ultrasonic Receiver</button>
+          <button type="button" class="btn btn-default" style="width:100%" data-quiet-receive-text-button data-quiet-receiving-text="Listening..." data-quiet-profile-name="ultrasonic">Start Ultrasonic Receiver</button>
         </div>
         <pre style="border: unset; border-radius: unset;">Transfer Image</pre>
         <p>This example will allow you to transmit an image between two quiet-compatible browsers. Because this example requires a little more power than the last one, the receiver will need to be on a laptop or desktop computer. Additionally, you will need to connect the transmitter and receiver by cable, such as a <a href="https://en.wikipedia.org/wiki/Phone_connector_%28audio%29#General_use">3.5mm phone connector</a>.</p>
@@ -77,6 +78,13 @@
             Choose an image<input type="file" id="file_input" name="file_input" data-quiet-file-input="" style="min-width: 100%; min-height: 100%; opacity: 0; position: absolute; top: 0; left: 0">
         </span>
         <button type="button" class="btn btn-default" style="width:100%" data-quiet-send-image-button data-quiet-sending-text="Sending..." data-quiet-profile-name="cable-highspeed">Send</button>
+
+        <pre style="border: unset; border-radius: unset;">Receive Image</pre>
+        <div class="alert alert-danger hidden" data-quiet-receive-image-warning></div>
+        <p data-quiet-receive-image-target>Your received image will show up here. Waiting...</p>
+        <div class="form-group">
+          <button type="button" class="btn btn-default" style="width:100%" data-quiet-receive-image-button data-quiet-receiving-text="Listening..." data-quiet-profile-name="cable-highspeed">Start Receiver</button>
+        </div>
       </section>
     </div>
     <footer>

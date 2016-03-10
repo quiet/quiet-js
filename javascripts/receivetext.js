@@ -50,7 +50,7 @@ var TextReceiver = (function() {
     };
 
     function onDOMLoad() {
-        btns = document.querySelectorAll('[data-quiet-receive-button]');
+        btns = document.querySelectorAll('[data-quiet-receive-text-button]');
         target = document.querySelector('[data-quiet-receive-text-target]');
         warningbox = document.querySelector('[data-quiet-receive-text-warning]');
         Quiet.addReadyCallback(onQuietReady, onQuietFail);
