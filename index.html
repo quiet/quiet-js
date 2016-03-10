@@ -48,6 +48,16 @@
         <p>This example will allow you to transmit text between two quiet-compatible browsers. There is a transmitter which will send tones through your speakers, and a receiver which will decode the tones through the microphone. These examples may run either in the same browser or in different browsers on different devices. The ultrasonic example cannot be received by Firefox, and neither receiver will work in Safari.</p>
         <p class="warning"><b>Be sure to turn down your volume to 50% or lower on your transmitting device.</b></p>
 
+        <pre style="border: unset; border-radius: unset;">Receive Text</pre>
+        <div class="alert alert-danger hidden" data-quiet-receive-text-warning></div>
+        <p data-quiet-receive-text-target>Your received text will show up here. Waiting...</p>
+        <div class="form-group">
+          <button type="button" class="btn btn-default" style="width:100%" data-quiet-receive-text-button data-quiet-receiving-text="Listening..." data-quiet-profile-name="audible">Start Audible Receiver</button>
+        </div>
+        <div class="form-group">
+          <button type="button" class="btn btn-default" style="width:100%" data-quiet-receive-text-button data-quiet-receiving-text="Listening..." data-quiet-profile-name="ultrasonic">Start Ultrasonic Receiver</button>
+        </div>
+
         <pre style="border: unset; border-radius: unset;">Send Text</pre>
         <div class="alert alert-danger hidden" data-quiet-send-text-warning></div>
         <div class="form-group">
@@ -59,19 +69,18 @@
         <div class="form-group">
           <button type="button" class="btn btn-default" style="width:100%" data-quiet-send-text-button data-quiet-sending-text="Sending..." data-quiet-profile-name="ultrasonic">Send (Ultrasonic)</button>
         </div>
-        <pre style="border: unset; border-radius: unset;">Receive Text</pre>
-        <div class="alert alert-danger hidden" data-quiet-receive-text-warning></div>
-        <p data-quiet-receive-text-target>Your received text will show up here. Waiting...</p>
-        <div class="form-group">
-          <button type="button" class="btn btn-default" style="width:100%" data-quiet-receive-text-button data-quiet-receiving-text="Listening..." data-quiet-profile-name="audible">Start Audible Receiver</button>
-        </div>
-        <div class="form-group">
-          <button type="button" class="btn btn-default" style="width:100%" data-quiet-receive-text-button data-quiet-receiving-text="Listening..." data-quiet-profile-name="ultrasonic">Start Ultrasonic Receiver</button>
-        </div>
+
         <pre style="border: unset; border-radius: unset;">Transfer Image</pre>
         <p>This example will allow you to transmit an image between two quiet-compatible browsers. Because this example requires a little more power than the last one, the receiver will need to be on a laptop or desktop computer. Additionally, you will need to connect the transmitter and receiver by cable, such as a <a href="https://en.wikipedia.org/wiki/Phone_connector_%28audio%29#General_use">3.5mm phone connector</a>.</p>
 
         <p>Neither Safari nor Firefox can be used as receivers for this example.</p>
+
+        <pre style="border: unset; border-radius: unset;">Receive Image</pre>
+        <div class="alert alert-danger hidden" data-quiet-receive-image-warning></div>
+        <p data-quiet-receive-image-target>Your received image will show up here. Waiting...</p>
+        <div class="form-group">
+          <button type="button" class="btn btn-default" style="width:100%" data-quiet-receive-image-button data-quiet-receiving-text="Listening..." data-quiet-profile-name="cable-highspeed">Start Receiver</button>
+        </div>
 
         <pre style="border: unset; border-radius: unset;">Send Image</pre>
         <span class="btn btn-default" style="width:100%; position: relative; margin-bottom: 20px">
@@ -79,13 +88,6 @@
         </span>
         <div class="form-group">
           <button type="button" class="btn btn-default" style="width:100%" data-quiet-send-image-button data-quiet-sending-text="Sending..." data-quiet-profile-name="cable-highspeed">Send</button>
-        </div>
-
-        <pre style="border: unset; border-radius: unset;">Receive Image</pre>
-        <div class="alert alert-danger hidden" data-quiet-receive-image-warning></div>
-        <p data-quiet-receive-image-target>Your received image will show up here. Waiting...</p>
-        <div class="form-group">
-          <button type="button" class="btn btn-default" style="width:100%" data-quiet-receive-image-button data-quiet-receiving-text="Listening..." data-quiet-profile-name="cable-highspeed">Start Receiver</button>
         </div>
       </section>
     </div>
