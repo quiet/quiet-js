@@ -18,7 +18,7 @@ var TextReceiver = (function() {
 
     function onReceiveFail(num_fails, recvObj) {
         recvObj.warningbox.classList.remove("hidden");
-        recvObj.failures++;
+        recvObj.failures = num_fails;
         var total = recvObj.failures + recvObj.successes
         var ratio = recvObj.failures/total * 100;
         recvObj.warningbox.textContent = "You may need to move the transmitter closer to the receiver and set the volume to 50%. Packet Loss: " + recvObj.failures + "/" + total + " (" + ratio.toFixed(0) + "%)";
