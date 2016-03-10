@@ -33,7 +33,7 @@ var ImageTransmitter = (function() {
     function onFileSelect(e) {
         var reader = new FileReader()
         reader.onload = onFileRead;
-        reader.readAsDataURL(e.target.files[0]);
+        reader.readAsArrayBuffer(e.target.files[0]);
     };
 
     function onQuietReady() {
