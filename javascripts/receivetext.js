@@ -30,7 +30,7 @@ var TextReceiver = (function() {
         e.target.innerText = e.target.getAttribute('data-quiet-receiving-text');
         e.target.setAttribute('data-quiet-receiving-text', originalText);
 
-        var receiverOnReceive = function(paylod) { onReceive(payload, recvObj); };
+        var receiverOnReceive = function(payload) { onReceive(payload, recvObj); };
         var receiverOnReceiverCreateFail = function(reason) { onReceiverCreateFail(reason, recvObj); };
         var receiverOnReceiveFail = function(num_fails) { onReceiverFail(num_fails, recvObj); };
         Quiet.receiver(recvObj.profilename, receiverOnReceive, receiverOnReceiverCreateFail, receiverOnReceiveFail);
