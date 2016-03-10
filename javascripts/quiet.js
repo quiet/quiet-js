@@ -156,11 +156,19 @@ var Quiet = (function() {
     }
 
     /**
+     * Callback to notify user that quiet.js failed to initialize
+     *
+     * @callback onError
+     * @memberof Quiet
+     * @param {string} reason - error message related to failure
+     */
+
+    /**
      * Add a callback to be called when Quiet is ready for use, e.g. when transmitters and receivers can be created.
      * @function addReadyCallback
      * @memberof Quiet
      * @param {function} c - The user function which will be called
-     * @param {function} [onError] - User errback function
+     * @param {onError} [onError] - User errback function
      * @example
      * addReadyCallback(function() { console.log("ready!"); });
      */
@@ -380,11 +388,31 @@ var Quiet = (function() {
     };
 
     /**
+    * Callback used by receiver to notify user that a frame was received but
+    * failed checksum. Frames that fail checksum are not sent to onReceive.
+    *
+    * @callback onReceiveFail
+    * @memberof Quiet
+    * @param {number} total - total number of frames failed across lifetime of receiver
+    */
+
+    /**
+     * Callback used by receiver to notify user of errors in creating receiver.
+     * This is a callback because frequently this will result when the user denies
+     * permission to use the mic, which happens long after the call to create
+     * the receiver.
+     *
+     * @callback onReceiverCreateFail
+     * @memberof Quiet
+     * @param {string} reason - error message related to create fail
+    */
+
+    /**
      * Callback used by receiver to notify user of data received via microphone/line-in.
      *
      * @callback onReceive
      * @memberof Quiet
-     * @param {string} payload - chunk of data received
+     * @param {ArrayBuffer} payload - chunk of data received
     */
 
     /**
@@ -393,10 +421,10 @@ var Quiet = (function() {
      * @memberof Quiet
      * @param {string} profile - name of profile to use, must be a key in quiet-profiles.json
      * @param {onReceive} onReceive - callback which receiver will call to send user received data
-     * @param {function} [onCreateFail] - callback to notify user that receiver could not be created
-     * @param {function} [onReceiveFail] - callback to notify user that receiver received corrupted data
+     * @param {onReceiverCreateFail} [onCreateFail] - callback to notify user that receiver could not be created
+     * @param {onReceiveFail} [onReceiveFail] - callback to notify user that receiver received corrupted data
      * @example
-     * receiver("robust", function(payload) { console.log("received chunk of data: " + payload); });
+     * receiver("robust", function(payload) { console.log("received chunk of data: " + Quiet.ab2str(payload)); });
      */
     function receiver(profile, onReceive, onCreateFail, onReceiveFail) {
         var c_profiles = Module.intArrayFromString(profiles);
@@ -509,6 +537,8 @@ var Quiet = (function() {
 
     /**
      * Merge 2 ArrayBuffers
+     * This is a convenience function to assist user receiver functions that
+     * want to aggregate multiple payloads.
      * @function mergeab
      * @memberof Quiet
      * @param {ArrayBuffer} ab1 - beginning ArrayBuffer
