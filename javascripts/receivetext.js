@@ -39,8 +39,8 @@ var TextReceiver = (function() {
     }
 
     function setupReceiver(receiver) {
-        var profilename = receiver.getAttribute('data-quiet-profile-name');
         var recvObj = {
+            profilename = receiver.getAttribute('data-quiet-profile-name'),
             btn: receiver.querySelector('[data-quiet-receive-text-button]'),
             target: receiver.querySelector('[data-quiet-receive-text-target]'),
             warningbox: receiver.querySelector('[data-quiet-receive-text-warning]'),
