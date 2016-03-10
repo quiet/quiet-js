@@ -27,7 +27,6 @@ var Quiet = (function() {
     var audioInputReadyCallbacks = [];
     var audioInputFailedCallbacks = [];
     var frameBufferSize = Math.pow(2, 14);
-    var lastChecksumFailCount = 0;
 
     // anti-gc
     var receivers = [];
@@ -474,6 +473,7 @@ var Quiet = (function() {
             }
         };
 
+        var lastChecksumFailCount = 0;
         var consume = function() {
             Module.ccall('quiet_decoder_consume', 'number', ['pointer', 'pointer', 'number'], [decoder, samples, sampleBufferSize]);
 
