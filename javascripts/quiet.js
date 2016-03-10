@@ -232,7 +232,7 @@ var Quiet = (function() {
                     return;
                 }
                 for (var i = payloadOffset; i < payload.length; ) {
-                    var frame = payload.slice(payloadOffset, payloadOffset + frame_len);
+                    var frame = payload.subarray(payloadOffset, payloadOffset + frame_len);
                     var written = Module.ccall('quiet_encoder_send', 'number', ['pointer', 'array', 'number'], [encoder, frame, frame.length]);
                     if (written === -1) {
                         break;
