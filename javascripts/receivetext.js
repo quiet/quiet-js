@@ -46,7 +46,7 @@ var TextReceiver = (function() {
             warningbox: receiver.querySelector('[data-quiet-receive-text-warning]'),
             successes: 0,
             failures: 0,
-            content: new ArrayBuffer(0);
+            content: new ArrayBuffer(0)
         };
         var onBtnClick = function(e) { return onClick(e, recvObj); };
         btn.addEventListener('click', onBtnClick, false);
