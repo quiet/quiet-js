@@ -29,6 +29,9 @@ var Quiet = (function() {
     var frameBufferSize = Math.pow(2, 14);
     var lastChecksumFailCount = 0;
 
+    // anti-gc
+    var receivers = [];
+
     // isReady tells us if we can start creating transmitters and receivers
     // we need the emscripten portion to be running and we need our
     // async fetch of the profiles to be completed
@@ -421,7 +424,8 @@ var Quiet = (function() {
 
         // TODO investigate if this still needs to be placed on window.
         // seems this was done to keep it from being collected
-        window.recorder = audioCtx.createScriptProcessor(16384, 2, 1);
+        var scriptProcessor = audioCtx.createScriptProcessor(16384, 2, 1);
+        receivers.push(scriptProcessor);
 
         // inform quiet about our local sound card's sample rate so that it can resample to its internal sample rate
         var decoder = Module.ccall('quiet_decoder_create', 'pointer', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
@@ -455,7 +459,7 @@ var Quiet = (function() {
         }
 
 
-        window.recorder.onaudioprocess = function(e) {
+        scriptProcessor.onaudioprocess = function(e) {
             var input = e.inputBuffer.getChannelData(0);
             var sample_view = Module.HEAPF32.subarray(samples/4, samples/4 + sampleBufferSize);
             sample_view.set(input);
@@ -465,13 +469,13 @@ var Quiet = (function() {
 
         // if this is the first receiver object created, wait for our input node to be created
         addAudioInputReadyCallback(function() {
-            audioInput.connect(window.recorder);
+            audioInput.connect(scriptProcessor);
         }, onCreateFail);
 
         // more unused nodes in the graph that some browsers insist on having
         var fakeGain = audioCtx.createGain();
         fakeGain.value = 0;
-        window.recorder.connect(fakeGain);
+        scriptProcessor.connect(fakeGain);
         fakeGain.connect(audioCtx.destination);
     };
 
