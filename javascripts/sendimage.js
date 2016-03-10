@@ -1,11 +1,9 @@
 var ImageTransmitter = (function() {
-    Quiet.setProfilesPrefix("javascripts/");
-    Quiet.setMemoryInitializerPrefix("javascripts/");
-    Quiet.setLibfecPrefix("javascripts/");
     var btn;
     var fileinput;
     var transmit;
     var payload = "";
+    var warningbox;
 
     function onTransmitFinish() {
         btn.addEventListener('click', onClick, false);
@@ -39,21 +37,24 @@ var ImageTransmitter = (function() {
     };
 
     function onQuietReady() {
-        var profilename = document.querySelector('[data-quiet-profile-name]').getAttribute('data-quiet-profile-name');
+        var profilename = btn.getAttribute('data-quiet-profile-name');
         transmit = Quiet.transmitter(profilename);
         btn.addEventListener('click', onClick, false);
         fileinput.addEventListener('change', onFileSelect, false);
     };
 
+    function onQuietFail(reason) {
+        console.log("quiet failed to initialize: " + reason);
+        warningbox.classList.remove("hidden");
+        warningbox.textContent = "Sorry, it looks like there was a problem with this example (" + reason + ")";
+    };
+
     function onDOMLoad() {
-        var host = "brian-armstrong.github.io";
-        if ((host == window.location.host) && (window.location.protocol != "https:"))
-            window.location.protocol = "https";
-
-        btn = document.querySelector('[data-quiet-send-button]');
+        btn = document.querySelector('[data-quiet-send-image-button]');
         fileinput = document.querySelector('[data-quiet-file-input]');
+        warningbox = document.querySelector('[data-quiet-send-image-warning]');
 
-        Quiet.addReadyCallback(onQuietReady);
+        Quiet.addReadyCallback(onQuietReady, onQuietFail);
     };
 
     document.addEventListener("DOMContentLoaded", onDOMLoad);
