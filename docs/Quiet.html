@@ -185,7 +185,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line523">line 523</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line527">line 527</a>
     </li></ul></dd>
     
     
@@ -367,7 +367,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line158">line 158</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line161">line 161</a>
     </li></ul></dd>
     
     
@@ -514,7 +514,7 @@ want to aggregate multiple payloads.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line534">line 534</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line538">line 538</a>
     </li></ul></dd>
     
     
@@ -676,7 +676,7 @@ want to aggregate multiple payloads.
             <td class="type">
             
                 
-<span class="param-type">onReceiveCreateFail</span>
+<span class="param-type">onReceiverCreateFail</span>
 
 
             
@@ -760,7 +760,7 @@ want to aggregate multiple payloads.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line394">line 394</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line397">line 397</a>
     </li></ul></dd>
     
     
@@ -886,7 +886,7 @@ If it is not called first, then emscripten will not load libfec.js.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line139">line 139</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line142">line 142</a>
     </li></ul></dd>
     
     
@@ -1012,7 +1012,7 @@ If it is not called first, then emscripten will default to a prefix of "".
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line123">line 123</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line126">line 126</a>
     </li></ul></dd>
     
     
@@ -1137,7 +1137,7 @@ This function must be called before creating a transmitter or receiver.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line79">line 79</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line82">line 82</a>
     </li></ul></dd>
     
     
@@ -1259,7 +1259,7 @@ This function must be called before creating a transmitter or receiver.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line506">line 506</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line510">line 510</a>
     </li></ul></dd>
     
     
@@ -1398,7 +1398,7 @@ This function must be called before creating a transmitter or receiver.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line192">line 192</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line195">line 195</a>
     </li></ul></dd>
     
     
@@ -1549,7 +1549,7 @@ transmit(Quiet.str2ab("Hello, World!"), function() { console.log("transmission c
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line156">line 156</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line159">line 159</a>
     </li></ul></dd>
     
     
@@ -1666,127 +1666,7 @@ transmit(Quiet.str2ab("Hello, World!"), function() { console.log("transmission c
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line392">line 392</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-            
-                
-<dt>
-    <h4 class="name" id="onReceiveCreateFail"><span class="type-signature"></span>onReceiveCreateFail<span class="signature">(reason)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Callback used by receiver to notify user of errors in creating receiver.
-This is a callback because frequently this will result when the user denies
-permission to use the mic, which happens long after the call to create
-the receiver.
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>reason</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">error message related to create fail</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line390">line 390</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line395">line 395</a>
     </li></ul></dd>
     
     
@@ -1904,7 +1784,127 @@ failed checksum. Frames that fail checksum are not sent to onReceive.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line388">line 388</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line391">line 391</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+            
+                
+<dt>
+    <h4 class="name" id="onReceiverCreateFail"><span class="type-signature"></span>onReceiverCreateFail<span class="signature">(reason)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Callback used by receiver to notify user of errors in creating receiver.
+This is a callback because frequently this will result when the user denies
+permission to use the mic, which happens long after the call to create
+the receiver.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>reason</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">error message related to create fail</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line393">line 393</a>
     </li></ul></dd>
     
     
@@ -1973,7 +1973,7 @@ failed checksum. Frames that fail checksum are not sent to onReceive.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line188">line 188</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line191">line 191</a>
     </li></ul></dd>
     
     
@@ -2053,7 +2053,7 @@ This callback may be used multiple times, but the user must wait for the finishe
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">ArrayBuffer</span>
 
 
             
@@ -2071,7 +2071,7 @@ This callback may be used multiple times, but the user must wait for the finishe
             
             
             
-            <td class="description last">string which will be encoded and sent to speaker</td>
+            <td class="description last">bytes which will be encoded and sent to speaker</td>
         </tr>
 	
 	
@@ -2135,7 +2135,7 @@ This callback may be used multiple times, but the user must wait for the finishe
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line190">line 190</a>
+        <a href="quiet.js.html">quiet.js</a>, <a href="quiet.js.html#line193">line 193</a>
     </li></ul></dd>
     
     
@@ -2185,7 +2185,7 @@ This callback may be used multiple times, but the user must wait for the finishe
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Mar 08 2016 17:27:43 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Mar 10 2016 01:52:26 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>
