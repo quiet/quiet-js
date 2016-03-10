@@ -7,7 +7,7 @@ var TextReceiver = (function() {
         recvObj.successes++;
         var total = recvObj.failures + recvObj.successes
         var ratio = recvObj.failures/total * 100;
-        warningbox.textContent = "You may need to move the transmitter closer to the receiver and set the volume to 50%. Packet Loss: " + recvObj.failures + "/" + total + " (" + ratio.toFixed(0) + "%)";
+        recvObj.warningbox.textContent = "You may need to move the transmitter closer to the receiver and set the volume to 50%. Packet Loss: " + recvObj.failures + "/" + total + " (" + ratio.toFixed(0) + "%)";
     };
 
     function onReceiverCreateFail(reason, recvObj) {
