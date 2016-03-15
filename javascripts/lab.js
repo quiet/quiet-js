@@ -69,7 +69,7 @@ var QuietLab = (function() {
         canvasCtx = canvas.getContext('2d');
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 2048;
+        analyser.fftSize = 128;
         fftBuffer = new Float32Array(analyser.frequencyBinCount);
 
         var gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
