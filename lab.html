@@ -34,6 +34,18 @@
               <form class="form-horizontal">
                   <h3>Parameters</h3>
                   <div class="form-group">
+                      <label class="col-sm-3 col-sm-offset-1 control-label" for="centerFrequency">Center Frequency</label>
+                      <div class="col-sm-2"><input type="text" class="form-control" id="centerFrequency"></div>
+                      <label class="col-sm-3 control-label" for="gain">Gain</label>
+                      <div class="col-sm-2"><input type="text" class="form-control" id="gain"></div>
+                  </div>
+                  <div class="form-group">
+                      <label class="col-sm-3 col-sm-offset-1 control-label" for="frameLength">Frame Length</label>
+                      <div class="col-sm-2"><input type="text" class="form-control" id="frameLength"></div>
+                      <label class="col-sm-3 control-label" for="dcFilterAlpha">DC Filter alpha</label>
+                      <div class="col-sm-2"><input type="text" class="form-control" id="dcFilterAlpha"></div>
+                  </div>
+                  <div class="form-group">
                       <label class="col-sm-2 col-sm-offset-1 control-label" for="modScheme">Modulation</label>
                       <div class="col-sm-3"><select class="form-control" id="modScheme">
                             <option>PSK2</option>
@@ -164,20 +176,8 @@
                       </select></div>
                   </div>
                   <div class="form-group">
-                      <label class="col-sm-3 col-sm-offset-1 control-label" for="centerFrequency">Center Frequency</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="centerFrequency"></div>
-                      <label class="col-sm-3 control-label" for="gain">Gain</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="gain"></div>
-                  </div>
-                  <div class="form-group">
-                      <label class="col-sm-3 col-sm-offset-1 control-label" for="frameLength">Frame Length</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="frameLength"></div>
-                      <label class="col-sm-3 control-label" for="dcFilterAlpha">DC Filter alpha</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="dcFilterAlpha"></div>
-                  </div>
-                  <div class="form-group">
                       <label class="col-sm-3 col-sm-offset-1 control-label">Operating Mode</label>
-                      <div class="col-sm-8">
+                      <div class="col-sm-7 col-sm-offset-1">
                           <div class="radio-inline">
                               <label>
                                   <input type="radio" name="mode" value="OFDMMode">OFDM
