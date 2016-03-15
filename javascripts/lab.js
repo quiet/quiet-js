@@ -4,6 +4,10 @@ var QuietLab = (function() {
     var analyser;
     var source;
 
+    function onGUMFail() {
+        console.log("failed to create media stream source");
+    };
+
     function onGUM(stream) {
         source = audioCtx.createMediaStreamSource(stream);
         source.connect(analyser);
@@ -51,7 +55,7 @@ var QuietLab = (function() {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioCtx.createAnalyser();
         var gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
-        gUM.call(navigator, gUMConstraints(), onGUM);
+        gUM.call(navigator, gUMConstraints(), onGUM, onGUMFail);
     };
 
     document.addEventListener("DOMContentLoaded", onDOMLoad);
