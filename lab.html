@@ -33,42 +33,6 @@
           <div>
               <form class="form-horizontal">
                   <div class="form-group">
-                      <label class="col-sm-4 control-label">Operating Mode</label>
-                      <div class="col-sm-8">
-                          <div class="radio-inline">
-                              <label>
-                                  <input type="radio" name="mode" value="OFDMMode">OFDM
-                              </label>
-                          </div>
-                          <div class="radio-inline">
-                              <label>
-                                  <input type="radio" name="mode" value="ModemMode">Modem
-                              </label>
-                          </div>
-                          <div class="radio-inline">
-                              <label>
-                                  <input type="radio" name="mode" value="GMSKMode">GMSK
-                              </label>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="form-group">
-                      <label class="col-sm-4 control-label" for="numSubcarriers">Number of subcarriers</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="numSubcarriers"></div>
-                      <label class="col-sm-4 control-label" for="cyclicPrefixLength">Cyclic Prefix Length</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="cyclicPrefixLength"></div>
-                  </div>
-                  <div class="form-group">
-                      <label class="col-sm-4 control-label" for="taperLength">Taper Length</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="taperLength"></div>
-                  </div>
-                  <div class="form-group">
-                      <label class="col-sm-4 control-label" for="leftBand">Extra leftside guard subcarriers</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="leftBand"></div>
-                      <label class="col-sm-4 control-label" for="rightBand">Extra rightside guard subcarriers</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="rightBand"></div>
-                  </div>
-                  <div class="form-group">
                       <label class="col-sm-4 control-label" for="modScheme">Modulation Scheme</label>
                       <div class="col-sm-2"><input type="text" class="form-control" id="modScheme"></div>
                       <label class="col-sm-4 control-label" for="checksumScheme">Checksum Scheme</label>
@@ -91,6 +55,43 @@
                       <div class="col-sm-2"><input type="text" class="form-control" id="frameLength"></div>
                       <label class="col-sm-4 control-label" for="dcFilterAlpha">DC Filter alpha</label>
                       <div class="col-sm-2"><input type="text" class="form-control" id="dcFilterAlpha"></div>
+                  </div>
+                  <div class="form-group">
+                      <label class="col-sm-4 control-label">Operating Mode</label>
+                      <div class="col-sm-8">
+                          <div class="radio-inline">
+                              <label>
+                                  <input type="radio" name="mode" value="OFDMMode">OFDM
+                              </label>
+                          </div>
+                          <div class="radio-inline">
+                              <label>
+                                  <input type="radio" name="mode" value="ModemMode">Modem
+                              </label>
+                          </div>
+                          <div class="radio-inline">
+                              <label>
+                                  <input type="radio" name="mode" value="GMSKMode">GMSK
+                              </label>
+                          </div>
+                      </div>
+                  </div>
+                  <h3>OFDM</h3>
+                  <div class="form-group">
+                      <label class="col-sm-4 control-label" for="numSubcarriers">Number of subcarriers</label>
+                      <div class="col-sm-2"><input type="text" class="form-control" id="numSubcarriers"></div>
+                      <label class="col-sm-4 control-label" for="cyclicPrefixLength">Cyclic Prefix Length</label>
+                      <div class="col-sm-2"><input type="text" class="form-control" id="cyclicPrefixLength"></div>
+                  </div>
+                  <div class="form-group">
+                      <label class="col-sm-4 control-label" for="taperLength">Taper Length</label>
+                      <div class="col-sm-2"><input type="text" class="form-control" id="taperLength"></div>
+                  </div>
+                  <div class="form-group">
+                      <label class="col-sm-4 control-label" for="leftBand">Extra leftside guard subcarriers</label>
+                      <div class="col-sm-2"><input type="text" class="form-control" id="leftBand"></div>
+                      <label class="col-sm-4 control-label" for="rightBand">Extra rightside guard subcarriers</label>
+                      <div class="col-sm-2"><input type="text" class="form-control" id="rightBand"></div>
                   </div>
                   <h3>Interpolation/Decimation</h3>
                   <div class="form-group">
