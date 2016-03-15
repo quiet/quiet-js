@@ -17,7 +17,6 @@ var QuietLab = (function() {
         }
     };
 
-
     function onGUMFail() {
         console.log("failed to create media stream source");
     };
@@ -25,6 +24,7 @@ var QuietLab = (function() {
     function onGUM(stream) {
         source = audioCtx.createMediaStreamSource(stream);
         source.connect(analyser);
+        drawFFT();
     };
 
     function gUMConstraints() {
