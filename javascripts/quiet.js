@@ -216,16 +216,23 @@ var Quiet = (function() {
      * Create a new transmitter configured by the given profile name.
      * @function transmitter
      * @memberof Quiet
-     * @param {string} profile - name of profile to use, must be a key in quiet-profiles.json
+     * @param {string|object} profile - name of profile to use, must be a key in quiet-profiles.json OR an object which contains a single profile
      * @returns {transmit} transmit - transmit callback which user calls to start transmission
      * @example
      * var transmit = transmitter("robust");
      * transmit(Quiet.str2ab("Hello, World!"), function() { console.log("transmission complete"); });
      */
     function transmitter(profile) {
-        // get an encoder_options object for our quiet-profiles.json and profile key
-        var c_profiles = Module.intArrayFromString(profiles);
-        var c_profile = Module.intArrayFromString(profile);
+        var c_profiles, c_profile;
+        if (typeof profile === 'object') {
+            c_profiles = Module.intArrayFromString(JSON.stringify({"profile": profile}));
+            c_profile = Module.intArrayFromString("profile");
+        } else {
+            // get an encoder_options object for our quiet-profiles.json and profile key
+            c_profiles = Module.intArrayFromString(profiles);
+            c_profile = Module.intArrayFromString(profile);
+        }
+
         var opt = Module.ccall('quiet_encoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
 
         // libquiet internally works at 44.1kHz but the local sound card may be a different rate. we inform quiet about that here
@@ -426,7 +433,7 @@ var Quiet = (function() {
      * Create a new receiver with the profile specified by profile (should match profile of transmitter).
      * @function receiver
      * @memberof Quiet
-     * @param {string} profile - name of profile to use, must be a key in quiet-profiles.json
+     * @param {string|object} profile - name of profile to use, must be a key in quiet-profiles.json OR an object which contains a complete profile
      * @param {onReceive} onReceive - callback which receiver will call to send user received data
      * @param {onReceiverCreateFail} [onCreateFail] - callback to notify user that receiver could not be created
      * @param {onReceiveFail} [onReceiveFail] - callback to notify user that receiver received corrupted data
@@ -434,8 +441,14 @@ var Quiet = (function() {
      * receiver("robust", function(payload) { console.log("received chunk of data: " + Quiet.ab2str(payload)); });
      */
     function receiver(profile, onReceive, onCreateFail, onReceiveFail) {
-        var c_profiles = Module.intArrayFromString(profiles);
-        var c_profile = Module.intArrayFromString(profile);
+        var c_profiles, c_profile;
+        if (typeof profile === 'object') {
+            c_profiles = Module.intArrayFromString(JSON.stringify({"profile": profile}));
+            c_profile = Module.intArrayFromString("profile");
+        } else {
+            c_profiles = Module.intArrayFromString(profiles);
+            c_profile = Module.intArrayFromString(profile);
+        }
         var opt = Module.ccall('quiet_decoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
 
         // quiet creates audioCtx when it starts but it does not create an audio input
