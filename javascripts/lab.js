@@ -14,7 +14,7 @@ var QuietLab = (function() {
         var scale = canvas.height/(analyser.maxDecibels - analyser.minDecibels);
         for (var i = 0; i < analyser.frequencyBinCount; i++) {
             var magnitude = (fftBuffer[i] - analyser.minDecibels) * scale;
-            canvasCtx.fillRect(i * 4, canvas.height, 3, magnitude);
+            canvasCtx.fillRect(i * 4, canvas.height, 3, -magnitude);
         }
     };
 
