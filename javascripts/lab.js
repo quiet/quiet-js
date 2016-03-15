@@ -9,7 +9,7 @@ var QuietLab = (function() {
 
     function drawFFT() {
         drawVisual = requestAnimationFrame(drawFFT);
-        analyser.getFloatFrequencyDomainData(fftBuffer);
+        analyser.getFloatFrequencyData(fftBuffer);
         canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
         for (var i = 0; i < analyser.frequencyBinCount; i++) {
             var magnitude = fftBuffer[i] * 4000;
