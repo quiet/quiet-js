@@ -11,9 +11,10 @@ var QuietLab = (function() {
         drawVisual = requestAnimationFrame(drawFFT);
         analyser.getFloatFrequencyData(fftBuffer);
         canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+        var scale = canvas.height/(analyser.maxDecibels - analyser.minDecibels);
         for (var i = 0; i < analyser.frequencyBinCount; i++) {
-            var magnitude = fftBuffer[i] * 4000;
-            canvasCtx.fillRect(i * 4, canvas.height, 3, -magnitude);
+            var magnitude = (fftBuffer[i] - analyser.minDecibels) * scale;
+            canvasCtx.fillRect(i * 4, canvas.height, 3, magnitude);
         }
     };
 
