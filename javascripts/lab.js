@@ -107,7 +107,7 @@ var QuietLab = (function() {
         gUM.call(navigator, gUMConstraints(), onGUM, onGUMFail);
 
         updateBtn = document.querySelector("[data-quiet-lab-update]");
-        btn.addEventListener('click', onUpdateClick, false);
+        updateBtn.addEventListener('click', onUpdateClick, false);
 
         var mode = document.querySelector("input[name=mode]");
         mode.addEventListener('change', onModeChange, false);
