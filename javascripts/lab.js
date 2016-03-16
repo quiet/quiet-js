@@ -6,7 +6,7 @@ var QuietLab = (function() {
     var source;
     var drawVisual;
     var fftBuffer;
-    var updateBtn;
+    var mode;
     var inputs;
 
     function disableInput(input) {
@@ -106,9 +106,7 @@ var QuietLab = (function() {
         var gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
         gUM.call(navigator, gUMConstraints(), onGUM, onGUMFail);
 
-        updateBtn = document.querySelector("[data-quiet-lab-update]");
-
-        var mode = document.querySelectorAll("input[name=mode]");
+        mode = document.querySelectorAll("input[name=mode]");
         for (var i = 0; i < mode.length; i++) {
             mode[i].addEventListener('change', onModeChange, false);
         }

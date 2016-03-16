@@ -36,10 +36,9 @@
                       <div>
                           <div class="control-label">
                               <label for="centerFrequency">Center Frequency</label>
-                              <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
                           <div>
-                              <input type="text" class="form-control" id="centerFrequency">
+                              <input type="range" value="10000" min="100" max="20000" step="1" class="form-control" id="centerFrequency">
                           </div>
                       </div>
                   </div>
@@ -47,10 +46,9 @@
                       <div>
                           <div class="control-label">
                               <label for="gain">Gain</label>
-                              <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
                           <div>
-                              <input type="text" class="form-control" id="gain">
+                              <input type="range" value="0.15" min="0.01" max="0.5" step="0.01" class="form-control" id="gain">
                           </div>
                       </div>
                   </div>
@@ -58,21 +56,19 @@
                       <div>
                           <div class="control-label">
                               <label for="frameLength">Frame Length</label>
-                              <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
                           <div>
-                              <input type="text" class="form-control" id="frameLength">
+                              <input type="range" value="400" min="4" max="6000" step="1" class="form-control" id="frameLength">
                           </div>
                       </div>
                   </div>
                   <div class="form-group">
                       <div>
                           <div class="control-label">
-                              <label for="dcFilterAlpha">DC Filter alpha</label>
-                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                              <label for="dcFilterAlpha">DC Filter Alpha</label>
                           </div>
                           <div>
-                              <input type="text" class="form-control" id="dcFilterAlpha">
+                              <input type="range" value="0.15" min="0.01" max="0.3" step="0.01" class="form-control" id="dcFilterAlpha">
                           </div>
                       </div>
                   </div>
@@ -80,7 +76,6 @@
                       <div>
                           <div class="control-label">
                               <label for="modScheme">Modulation</label>
-                              <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
                           <div>
                               <select class="form-control" id="modScheme">
@@ -146,7 +141,6 @@
                       <div>
                           <div class="control-label">
                               <label for="checksumScheme">Checksum</label>
-                              <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
                           <div>
                               <select class="form-control" id="checksumScheme">
@@ -164,7 +158,6 @@
                       <div>
                           <div class="control-label">
                               <label for="innerFecScheme">Inner FEC</label>
-                              <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
                           <div>
                               <select class="form-control" id="innerFecScheme">
@@ -203,7 +196,6 @@
                       <div>
                           <div class="control-label">
                               <label for="outerFecScheme">Outer FEC</label>
-                              <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
                           <div>
                               <select class="form-control" id="outerFecScheme">
@@ -263,10 +255,9 @@
                       <div>
                           <div class="control-label">
                               <label for="numSubcarriers">Number of subcarriers</label>
-                              <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
                           <div>
-                              <input type="text" class="form-control" id="numSubcarriers">
+                              <input type="range" value="128" min="32" max="256" step="1" class="form-control" id="numSubcarriers">
                           </div>
                       </div>
                   </div>
@@ -274,10 +265,9 @@
                       <div>
                           <div class="control-label">
                               <label for="cyclicPrefixLength">Cyclic Prefix Length</label>
-                              <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
                           <div>
-                              <input type="text" class="form-control" id="cyclicPrefixLength">
+                              <input type="range" value="16" min="0" max="256" step="1" class="form-control" id="cyclicPrefixLength">
                           </div>
                       </div>
                   </div>
@@ -285,10 +275,9 @@
                       <div>
                           <div class="control-label">
                               <label for="leftBand">Extra leftside guard subcarriers</label>
-                              <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
                           <div>
-                              <input type="text" class="form-control" id="leftBand">
+                              <input type="range" value="0" min="0" max="16" step="1" class="form-control" id="leftBand">
                           </div>
                       </div>
                   </div>
@@ -296,10 +285,9 @@
                       <div>
                           <div class="control-label">
                               <label for="rightBand">Extra rightside guard subcarriers</label>
-                              <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
                           <div>
-                              <input type="text" class="form-control" id="rightBand">
+                              <input type="range" value="0" min="0" max="16" step="1" class="form-control" id="rightBand">
                           </div>
                       </div>
                   </div>
@@ -307,10 +295,9 @@
                       <div>
                           <div class="control-label">
                               <label for="taperLength">Intersymbol Taper Length</label>
-                              <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
                           <div>
-                              <input type="text" class="form-control" id="taperLength">
+                              <input type="range" value="0" min="0" max="64" step="1" class="form-control" id="taperLength">
                           </div>
                       </div>
                   </div>
@@ -319,10 +306,9 @@
                       <div>
                           <div class="control-label">
                               <label for="interpolationSamplesPerSymbol">Samples Per Symbol</label>
-                              <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
                           <div>
-                              <input type="text" class="form-control" id="interpolationSamplesPerSymbol">
+                              <input type="range" value="2" min="1" max="64" step="1" class="form-control" id="interpolationSamplesPerSymbol">
                           </div>
                       </div>
                   </div>
@@ -330,33 +316,31 @@
                       <div>
                           <div class="control-label">
                               <label for="interpolationSymbolDelay">Symbol Delay</label>
-                              <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
                           <div>
-                              <input type="text" class="form-control" id="interpolationSymbolDelay">
+                              <input type="range" value="4" min="1" max="64" step="1" class="form-control" id="interpolationSymbolDelay">
                           </div>
                       </div>
                   </div>
                   <div class="form-group">
                       <div>
                           <div class="control-label">
-                              <label for="interpolationExcessBandwidth">Excess Bandwidth</label>
-                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                              <label for="interpolationExcessBandwidth">Excess Bandwidth (Beta)</label>
                           </div>
                           <div>
-                              <input type="text" class="form-control" id="interpolationExcessBandwidth">
+                              <input type="range" value="0.35" min="0.01" max="1.00" step="0.01" class="form-control" id="interpolationExcessBandwidth">
                           </div>
                       </div>
                   </div>
                   <h3>Resampler</h3>
+                  <p>This applies only for sample rates that are not 44.1kHz</p>
                   <div class="form-group">
                       <div>
                           <div class="control-label">
                               <label for="resamplerDelay">Symbol Delay</label>
-                              <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
                           <div>
-                              <input type="text" class="form-control" id="resamplerDelay">
+                              <input type="range" value="13" min="1" max="30" step="1" class="form-control" id="resamplerDelay">
                           </div>
                       </div>
                   </div>
@@ -364,21 +348,19 @@
                       <div>
                           <div class="control-label">
                               <label for="resamplerBandwidth">Filter Bandwidth</label>
-                              <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
                           <div>
-                              <input type="text" class="form-control" id="resamplerBandwidth">
+                              <input type="range" value="0.35" min="0.01" max="1.00" step="0.01" class="form-control" id="resamplerBandwidth">
                           </div>
                       </div>
                   </div>
                   <div class="form-group">
                       <div>
                           <div class="control-label">
-                              <label for="resamplerAttenuation">Filter Attenuation</label>
-                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                              <label for="resamplerAttenuation">Sidelobe Attenuation</label>
                           </div>
                           <div>
-                              <input type="text" class="form-control" id="resamplerAttenuation">
+                              <input type="range" value="60" min="10" max="90" step="1" class="form-control" id="resamplerAttenuation">
                           </div>
                       </div>
                   </div>
@@ -386,16 +368,13 @@
                       <div>
                           <div class="control-label">
                               <label for="resamplerFilterBankSize">Filter Bank Size</label>
-                              <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
                           <div>
-                              <input type="text" class="form-control" id="resamplerFilterBankSize">
+                              <input type="range" value="64" min="4" max="256" step="1" class="form-control" id="resamplerFilterBankSize">
                           </div>
                       </div>
                   </div>
-                  <div class="form-group" style="margin-top: 40px;">
-                      <button type="button" class="btn btn-default btn-block" data-quiet-lab-update>Update</button>
-                  </div>
+                  <h3>Presets</h3>
                   <div class="form-group" style="margin-top: 30px;">
                       <select class="form-control"><option>profile</option></select>
                   </div>
