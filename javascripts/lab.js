@@ -37,14 +37,14 @@ var QuietLab = (function() {
         }
     };
 
-    function updateRangeLabel(e) {
-        document.querySelector("label[for=" + e.target.id +"]").querySelector("span").textContent = e.target.value;
+    function updateLabel(input) {
+        if (input.type === "range") {
+            document.querySelector("label[for=" + input.id +"]").querySelector("span").textContent = input.value;
+        }
     };
 
     function onInputChange(e) {
-        if (e.target.type === "range") {
-            updateRangeLabel(e);
-        }
+        updateLabel(e.target);
     };
 
     function drawFFT() {
@@ -158,10 +158,12 @@ var QuietLab = (function() {
             var input = inputs[k];
             if (input instanceof Node) {
                 input.addEventListener('input', onInputChange, false);
+                updateLabel(input);
             } else {
                 for (var nestedK in input) {
                     var nestedInput = input[nestedK];
                     nestedInput.addEventListener('input', onInputChange, false);
+                    updateLabel(nestedInput);
                 }
             }
         }
