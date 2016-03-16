@@ -108,8 +108,10 @@ var QuietLab = (function() {
 
         updateBtn = document.querySelector("[data-quiet-lab-update]");
 
-        var mode = document.querySelector("input[name=mode]");
-        mode.addEventListener('change', onModeChange, false);
+        var mode = document.querySelectorAll("input[name=mode]");
+        for (var i = 0; i < mode.length; i++) {
+            mode[i].addEventListener('change', onModeChange, false);
+        }
 
         inputs = {
             ofdm: {
