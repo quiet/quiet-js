@@ -34,149 +34,206 @@
               <form class="form-horizontal">
                   <h3>Parameters</h3>
                   <div class="form-group">
-                      <label class="col-sm-3 col-sm-offset-1 control-label" for="centerFrequency">Center Frequency</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="centerFrequency"></div>
-                      <label class="col-sm-3 control-label" for="gain">Gain</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="gain"></div>
+                      <div>
+                          <div class="col-sm-3 col-sm-offset-1 control-label">
+                              <label for="centerFrequency">Center Frequency</label>
+                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                          </div>
+                          <div class="col-sm-2">
+                              <input type="text" class="form-control" id="centerFrequency">
+                          </div>
+                      </div>
+                      <div>
+                          <div class="col-sm-3 control-label">
+                              <label for="gain">Gain</label>
+                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                          </div>
+                          <div class="col-sm-2">
+                              <input type="text" class="form-control" id="gain">
+                          </div>
+                      </div>
                   </div>
                   <div class="form-group">
-                      <label class="col-sm-3 col-sm-offset-1 control-label" for="frameLength">Frame Length</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="frameLength"></div>
-                      <label class="col-sm-3 control-label" for="dcFilterAlpha">DC Filter alpha</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="dcFilterAlpha"></div>
+                      <div>
+                          <div class="col-sm-3 col-sm-offset-1 control-label">
+                              <label for="frameLength">Frame Length</label>
+                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                          </div>
+                          <div class="col-sm-2">
+                              <input type="text" class="form-control" id="frameLength">
+                          </div>
+                      </div>
+                      <div>
+                          <div class="col-sm-3 control-label">
+                              <label for="dcFilterAlpha">DC Filter alpha</label>
+                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                          </div>
+                          <div class="col-sm-2">
+                              <input type="text" class="form-control" id="dcFilterAlpha">
+                          </div>
+                      </div>
                   </div>
                   <div class="form-group">
-                      <label class="col-sm-2 col-sm-offset-1 control-label" for="modScheme">Modulation</label>
-                      <div class="col-sm-3"><select class="form-control" id="modScheme">
-                            <option>PSK2</option>
-                            <option>PSK4</option>
-                            <option>PSK8</option>
-                            <option>PSK16</option>
-                            <option>PSK32</option>
-                            <option>PSK64</option>
-                            <option>PSK128</option>
-                            <option>PSK256</option>
-                            <option>DPSK2</option>
-                            <option>DPSK4</option>
-                            <option>DPSK8</option>
-                            <option>DPSK16</option>
-                            <option>DPSK32</option>
-                            <option>DPSK64</option>
-                            <option>DPSK128</option>
-                            <option>DPSK256</option>
-                            <option>ASK2</option>
-                            <option>ASK4</option>
-                            <option>ASK8</option>
-                            <option>ASK16</option>
-                            <option>ASK32</option>
-                            <option>ASK64</option>
-                            <option>ASK128</option>
-                            <option>ASK256</option>
-                            <option>QAM4</option>
-                            <option>QAM8</option>
-                            <option>QAM16</option>
-                            <option>QAM32</option>
-                            <option>QAM64</option>
-                            <option>QAM128</option>
-                            <option>QAM256</option>
-                            <option>QAM512</option>
-                            <option>QAM1024</option>
-                            <option>QAM2048</option>
-                            <option>QAM4096</option>
-                            <option>APSK4</option>
-                            <option>APSK8</option>
-                            <option>APSK16</option>
-                            <option>APSK32</option>
-                            <option>APSK64</option>
-                            <option>APSK128</option>
-                            <option>APSK256</option>
-                            <option>BPSK</option>
-                            <option>QPSK</option>
-                            <option>OOK</option>
-                            <option>SQAM32</option>
-                            <option>SQAM128</option>
-                            <option>V.29</option>
-                            <option>ARB16OPT</option>
-                            <option>ARB32OPT</option>
-                            <option>ARB64OPT</option>
-                            <option>ARB128OPT</option>
-                            <option>ARB256OPT</option>
-                            <option>ARB64VT</option>
-                      </select></div>
-                      <label class="col-sm-2 control-label" for="checksumScheme">Checksum</label>
-                      <div class="col-sm-3"><select class="form-control" id="checksumScheme">
-                            <option>None</option>
-                            <option>Checksum</option>
-                            <option>CRC8</option>
-                            <option>CRC16</option>
-                            <option>CRC24</option>
-                            <option>CRC32</option>
-                      </select></div>
+                      <div>
+                          <div class="col-sm-2 col-sm-offset-1 control-label">
+                              <label for="modScheme">Modulation</label>
+                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                          </div>
+                          <div class="col-sm-3">
+                              <select class="form-control" id="modScheme">
+                                <option>PSK2</option>
+                                <option>PSK4</option>
+                                <option>PSK8</option>
+                                <option>PSK16</option>
+                                <option>PSK32</option>
+                                <option>PSK64</option>
+                                <option>PSK128</option>
+                                <option>PSK256</option>
+                                <option>DPSK2</option>
+                                <option>DPSK4</option>
+                                <option>DPSK8</option>
+                                <option>DPSK16</option>
+                                <option>DPSK32</option>
+                                <option>DPSK64</option>
+                                <option>DPSK128</option>
+                                <option>DPSK256</option>
+                                <option>ASK2</option>
+                                <option>ASK4</option>
+                                <option>ASK8</option>
+                                <option>ASK16</option>
+                                <option>ASK32</option>
+                                <option>ASK64</option>
+                                <option>ASK128</option>
+                                <option>ASK256</option>
+                                <option>QAM4</option>
+                                <option>QAM8</option>
+                                <option>QAM16</option>
+                                <option>QAM32</option>
+                                <option>QAM64</option>
+                                <option>QAM128</option>
+                                <option>QAM256</option>
+                                <option>QAM512</option>
+                                <option>QAM1024</option>
+                                <option>QAM2048</option>
+                                <option>QAM4096</option>
+                                <option>APSK4</option>
+                                <option>APSK8</option>
+                                <option>APSK16</option>
+                                <option>APSK32</option>
+                                <option>APSK64</option>
+                                <option>APSK128</option>
+                                <option>APSK256</option>
+                                <option>BPSK</option>
+                                <option>QPSK</option>
+                                <option>OOK</option>
+                                <option>SQAM32</option>
+                                <option>SQAM128</option>
+                                <option>V.29</option>
+                                <option>ARB16OPT</option>
+                                <option>ARB32OPT</option>
+                                <option>ARB64OPT</option>
+                                <option>ARB128OPT</option>
+                                <option>ARB256OPT</option>
+                                <option>ARB64VT</option>
+                              </select>
+                          </div>
+                      </div>
+                      <div>
+                          <div class="col-sm-2 control-label">
+                              <label for="checksumScheme">Checksum</label>
+                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                          </div>
+                          <div class="col-sm-3">
+                              <select class="form-control" id="checksumScheme">
+                                <option>None</option>
+                                <option>Checksum</option>
+                                <option>CRC8</option>
+                                <option>CRC16</option>
+                                <option>CRC24</option>
+                                <option>CRC32</option>
+                              </select>
+                          </div>
+                      </div>
                   </div>
                   <div class="form-group">
-                      <label class="col-sm-2 col-sm-offset-1 control-label" for="innerFecScheme">Inner FEC</label>
-                      <div class="col-sm-3"><select class="form-control" id="innerFecScheme">
-                            <option>None</option>
-                            <option>Repeat3</option>
-                            <option>Repeat5</option>
-                            <option>Hamming74</option>
-                            <option>Hamming84</option>
-                            <option>Hamming128</option>
-                            <option>Golay2412</option>
-                            <option>Secded2216</option>
-                            <option>Secded3932</option>
-                            <option>Secded7264</option>
-                            <option>Conv27</option>
-                            <option>Conv29</option>
-                            <option>Conv39</option>
-                            <option>Conv615</option>
-                            <option>Conv27p23</option>
-                            <option>Conv27p34</option>
-                            <option>Conv27p45</option>
-                            <option>Conv27p56</option>
-                            <option>Conv27p67</option>
-                            <option>Conv27p78</option>
-                            <option>Conv29p23</option>
-                            <option>Conv29p34</option>
-                            <option>Conv29p45</option>
-                            <option>Conv29p56</option>
-                            <option>Conv29p67</option>
-                            <option>Conv29p78</option>
-                            <option>R-s223/255</option>
-                      </select></div>
-                      <label class="col-sm-2 control-label" for="outerFecScheme">Outer FEC</label>
-                      <div class="col-sm-3"><select class="form-control" id="outerFecScheme">
-                            <option>None</option>
-                            <option>Repeat3</option>
-                            <option>Repeat5</option>
-                            <option>Hamming74</option>
-                            <option>Hamming84</option>
-                            <option>Hamming128</option>
-                            <option>Golay2412</option>
-                            <option>Secded2216</option>
-                            <option>Secded3932</option>
-                            <option>Secded7264</option>
-                            <option>Conv27</option>
-                            <option>Conv29</option>
-                            <option>Conv39</option>
-                            <option>Conv615</option>
-                            <option>Conv27p23</option>
-                            <option>Conv27p34</option>
-                            <option>Conv27p45</option>
-                            <option>Conv27p56</option>
-                            <option>Conv27p67</option>
-                            <option>Conv27p78</option>
-                            <option>Conv29p23</option>
-                            <option>Conv29p34</option>
-                            <option>Conv29p45</option>
-                            <option>Conv29p56</option>
-                            <option>Conv29p67</option>
-                            <option>Conv29p78</option>
-                            <option>R-s223/255</option>
-                      </select></div>
+                      <div>
+                          <div class="col-sm-2 col-sm-offset-1 control-label">
+                              <label for="innerFecScheme">Inner FEC</label>
+                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                          </div>
+                          <div class="col-sm-3">
+                              <select class="form-control" id="innerFecScheme">
+                                <option>None</option>
+                                <option>Repeat3</option>
+                                <option>Repeat5</option>
+                                <option>Hamming74</option>
+                                <option>Hamming84</option>
+                                <option>Hamming128</option>
+                                <option>Golay2412</option>
+                                <option>Secded2216</option>
+                                <option>Secded3932</option>
+                                <option>Secded7264</option>
+                                <option>Conv27</option>
+                                <option>Conv29</option>
+                                <option>Conv39</option>
+                                <option>Conv615</option>
+                                <option>Conv27p23</option>
+                                <option>Conv27p34</option>
+                                <option>Conv27p45</option>
+                                <option>Conv27p56</option>
+                                <option>Conv27p67</option>
+                                <option>Conv27p78</option>
+                                <option>Conv29p23</option>
+                                <option>Conv29p34</option>
+                                <option>Conv29p45</option>
+                                <option>Conv29p56</option>
+                                <option>Conv29p67</option>
+                                <option>Conv29p78</option>
+                                <option>R-s223/255</option>
+                              </select>
+                          </div>
+                      </div>
+                      <div>
+                          <div class="col-sm-2 control-label">
+                              <label for="outerFecScheme">Outer FEC</label>
+                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                          </div>
+                          <div class="col-sm-3">
+                              <select class="form-control" id="outerFecScheme">
+                                <option>None</option>
+                                <option>Repeat3</option>
+                                <option>Repeat5</option>
+                                <option>Hamming74</option>
+                                <option>Hamming84</option>
+                                <option>Hamming128</option>
+                                <option>Golay2412</option>
+                                <option>Secded2216</option>
+                                <option>Secded3932</option>
+                                <option>Secded7264</option>
+                                <option>Conv27</option>
+                                <option>Conv29</option>
+                                <option>Conv39</option>
+                                <option>Conv615</option>
+                                <option>Conv27p23</option>
+                                <option>Conv27p34</option>
+                                <option>Conv27p45</option>
+                                <option>Conv27p56</option>
+                                <option>Conv27p67</option>
+                                <option>Conv27p78</option>
+                                <option>Conv29p23</option>
+                                <option>Conv29p34</option>
+                                <option>Conv29p45</option>
+                                <option>Conv29p56</option>
+                                <option>Conv29p67</option>
+                                <option>Conv29p78</option>
+                                <option>R-s223/255</option>
+                              </select>
+                          </div>
+                      </div>
                   </div>
                   <div class="form-group">
-                      <label class="col-sm-3 col-sm-offset-1 control-label">Operating Mode</label>
+                      <div class="col-sm-3 col-sm-offset-1 control-label">
+                              <label>Operating Mode</label>
                       <div>
                           <div class="radio-inline col-sm-2 col-sm-offset-1">
                               <label>
@@ -197,44 +254,128 @@
                   </div>
                   <h3>OFDM</h3>
                   <div class="form-group">
-                      <label class="col-sm-3 col-sm-offset-1 control-label" for="numSubcarriers">Number of subcarriers</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="numSubcarriers"></div>
-                      <label class="col-sm-3 control-label" for="cyclicPrefixLength">Cyclic Prefix Length</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="cyclicPrefixLength"></div>
+                      <div>
+                          <div class="col-sm-3 col-sm-offset-1 control-label">
+                              <label for="numSubcarriers">Number of subcarriers</label>
+                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                          </div>
+                          <div class="col-sm-2">
+                              <input type="text" class="form-control" id="numSubcarriers">
+                          </div>
+                      </div>
+                      <div>
+                          <div class="col-sm-3 control-label">
+                              <label for="cyclicPrefixLength">Cyclic Prefix Length</label>
+                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                          </div>
+                          <div class="col-sm-2">
+                              <input type="text" class="form-control" id="cyclicPrefixLength">
+                          </div>
+                      </div>
                   </div>
                   <div class="form-group">
-                      <label class="col-sm-3 col-sm-offset-1 control-label" for="leftBand">Extra leftside guard subcarriers</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="leftBand"></div>
-                      <label class="col-sm-3 control-label" for="rightBand">Extra rightside guard subcarriers</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="rightBand"></div>
+                      <div>
+                          <div class="col-sm-3 col-sm-offset-1 control-label">
+                              <label for="leftBand">Extra leftside guard subcarriers</label>
+                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                          </div>
+                          <div class="col-sm-2">
+                              <input type="text" class="form-control" id="leftBand">
+                          </div>
+                      </div>
+                      <div>
+                          <div class="col-sm-3 control-label">
+                              <label for="rightBand">Extra rightside guard subcarriers</label>
+                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                          </div>
+                          <div class="col-sm-2">
+                              <input type="text" class="form-control" id="rightBand">
+                          </div>
+                      </div>
                   </div>
                   <div class="form-group">
-                      <label class="col-sm-3 col-sm-offset-1 control-label" for="taperLength">Intersymbol Taper Length</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="taperLength"></div>
+                      <div>
+                          <div class="col-sm-3 col-sm-offset-1 control-label">
+                              <label for="taperLength">Intersymbol Taper Length</label>
+                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                          </div>
+                          <div class="col-sm-2">
+                              <input type="text" class="form-control" id="taperLength">
+                          </div>
+                      </div>
                   </div>
                   <h3>Interpolation/Decimation</h3>
                   <div class="form-group">
-                      <label class="col-sm-3 col-sm-offset-1 control-label" for="interpolationSamplesPerSymbol">Samples Per Symbol</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="interpolationSamplesPerSymbol"></div>
-                      <label class="col-sm-3 control-label" for="interpolationSymbolDelay">Symbol Delay</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="interpolationSymbolDelay"></div>
+                      <div>
+                          <div class="col-sm-3 col-sm-offset-1 control-label">
+                              <label for="interpolationSamplesPerSymbol">Samples Per Symbol</label>
+                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                          </div>
+                          <div class="col-sm-2">
+                              <input type="text" class="form-control" id="interpolationSamplesPerSymbol">
+                          </div>
+                      </div>
+                      <div>
+                          <div class="col-sm-3 control-label">
+                              <label for="interpolationSymbolDelay">Symbol Delay</label>
+                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                          </div>
+                          <div class="col-sm-2">
+                              <input type="text" class="form-control" id="interpolationSymbolDelay">
+                          </div>
+                      </div>
                   </div>
                   <div class="form-group">
-                      <label class="col-sm-3 col-sm-offset-1 control-label" for="interpolationExcessBandwidth">Excess Bandwidth</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="interpolationExcessBandwidth"></div>
+                      <div>
+                          <div class="col-sm-3 col-sm-offset-1 control-label">
+                              <label for="interpolationExcessBandwidth">Excess Bandwidth</label>
+                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                          </div>
+                          <div class="col-sm-2">
+                              <input type="text" class="form-control" id="interpolationExcessBandwidth">
+                          </div>
+                      </div>
                   </div>
                   <h3>Resampler</h3>
                   <div class="form-group">
-                      <label class="col-sm-3 col-sm-offset-1 control-label" for="resamplerDelay">Symbol Delay</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="resamplerDelay"></div>
-                      <label class="col-sm-3 control-label" for="resamplerBandwidth">Filter Bandwidth</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="resamplerBandwidth"></div>
+                      <div>
+                          <div class="col-sm-3 col-sm-offset-1 control-label">
+                              <label for="resamplerDelay">Symbol Delay</label>
+                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                          </div>
+                          <div class="col-sm-2">
+                              <input type="text" class="form-control" id="resamplerDelay">
+                          </div>
+                      </div>
+                      <div>
+                          <div class="col-sm-3 control-label">
+                              <label for="resamplerBandwidth">Filter Bandwidth</label>
+                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                          </div>
+                          <div class="col-sm-2">
+                              <input type="text" class="form-control" id="resamplerBandwidth">
+                          </div>
+                      </div>
                   </div>
                   <div class="form-group">
-                      <label class="col-sm-3 col-sm-offset-1 control-label" for="resamplerAttenuation">Filter Attenuation</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="resamplerAttenuation"></div>
-                      <label class="col-sm-3 control-label" for="resamplerFilterBankSize">Filter Bank Size</label>
-                      <div class="col-sm-2"><input type="text" class="form-control" id="resamplerFilterBankSize"></div>
+                      <div>
+                          <div class="col-sm-3 col-sm-offset-1 control-label">
+                              <label for="resamplerAttenuation">Filter Attenuation</label>
+                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                          </div>
+                          <div class="col-sm-2">
+                              <input type="text" class="form-control" id="resamplerAttenuation">
+                          </div>
+                      </div>
+                      <div>
+                          <div class="col-sm-3 control-label">
+                              <label for="resamplerFilterBankSize">Filter Bank Size</label>
+                              <span class="hidden help-block">Value must be between 1 and 20</span>
+                          </div>
+                          <div class="col-sm-2">
+                              <input type="text" class="form-control" id="resamplerFilterBankSize">
+                          </div>
+                      </div>
                   </div>
                   <div class="form-group" style="margin-top: 40px;">
                       <button type="button" class="btn btn-default col-sm-10 col-sm-offset-1">Update</button>
