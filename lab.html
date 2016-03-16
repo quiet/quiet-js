@@ -20,7 +20,7 @@
     <![endif]-->
   </head>
   <body style="background: #fff; padding: 0">
-    <div class="col-sm-3">
+    <div class="col-sm-4">
       <header>
         <h1>Quiet.js</h1>
         <p>Transmit and receive data in the browser with sound</p>
@@ -231,20 +231,20 @@
                       </div>
                   </div>
                   <div class="form-group">
-                      <div class="col-sm-3 col-sm-offset-1 control-label">
+                      <div class="control-label">
                               <label>Operating Mode</label>
                       </div>
-                      <div class="radio-inline col-sm-2 col-sm-offset-1">
+                      <div class="radio-inline">
                           <label>
                               <input type="radio" name="mode" value="OFDMMode">OFDM
                           </label>
                       </div>
-                      <div class="radio-inline col-sm-2">
+                      <div class="radio-inline">
                           <label>
                               <input type="radio" name="mode" value="ModemMode">Modem
                           </label>
                       </div>
-                      <div class="radio-inline col-sm-2">
+                      <div class="radio-inline">
                           <label>
                               <input type="radio" name="mode" value="GMSKMode">GMSK
                           </label>
@@ -376,23 +376,22 @@
                       </div>
                   </div>
                   <div class="form-group" style="margin-top: 40px;">
-                      <button type="button" class="btn btn-default col-sm-10 col-sm-offset-1" data-quiet-lab-update>Update</button>
+                      <button type="button" class="btn btn-default btn-block" data-quiet-lab-update>Update</button>
                   </div>
                   <div class="form-group" style="margin-top: 30px;">
-                      <div class="col-sm-4 col-sm-offset-1" style="padding-left: 0; padding-right: 0">
-                          <select class="form-control"><option>profile</option></select>
-                      </div>
-                      <button type="button" class="btn btn-default col-sm-4 col-sm-offset-2">Load From Preset</button>
+                      <select class="form-control"><option>profile</option></select>
+                  </div>
+                  <div class="form-group" style="margin-top: 30px;">
+                      <button type="button" class="btn btn-default btn-block">Load From Preset</button>
                   </div>
               </form>
           </div>
+          <footer>
+            <p>Project maintained by <a href="https://github.com/quiet">quiet</a>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+          </footer>
       </section>
-      <footer>
-        <p>Project maintained by <a href="https://github.com/quiet">quiet</a></p>
-        <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
-      </footer>
     </div>
-    <div class="col-sm-9">
+    <div class="col-sm-8">
         <div style="margin: 0 auto">
             <canvas data-quiet-lab-canvas width="512" height="200"></canvas>
         </div>
