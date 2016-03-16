@@ -19,8 +19,8 @@
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
   </head>
-  <body>
-    <div class="wrapper">
+  <body style="background: #fff; padding: 0">
+    <div class="col-sm-3">
       <header>
         <h1>Quiet.js</h1>
         <p>Transmit and receive data in the browser with sound</p>
@@ -31,55 +31,55 @@
 
           <div style="margin-left: 44px; margin-right: 44px;"><canvas data-quiet-lab-canvas width="512" height="200"></canvas></div>
           <div>
-              <form class="form-horizontal">
+              <form>
                   <h3>Parameters</h3>
                   <div class="form-group">
                       <div>
-                          <div class="col-sm-3 col-sm-offset-1 control-label">
+                          <div class="control-label">
                               <label for="centerFrequency">Center Frequency</label>
                               <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
-                          <div class="col-sm-2">
+                          <div>
                               <input type="text" class="form-control" id="centerFrequency">
                           </div>
                       </div>
                       <div>
-                          <div class="col-sm-3 control-label">
+                          <div class="control-label">
                               <label for="gain">Gain</label>
                               <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
-                          <div class="col-sm-2">
+                          <div>
                               <input type="text" class="form-control" id="gain">
                           </div>
                       </div>
                   </div>
                   <div class="form-group">
                       <div>
-                          <div class="col-sm-3 col-sm-offset-1 control-label">
+                          <div class="control-label">
                               <label for="frameLength">Frame Length</label>
                               <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
-                          <div class="col-sm-2">
+                          <div>
                               <input type="text" class="form-control" id="frameLength">
                           </div>
                       </div>
                       <div>
-                          <div class="col-sm-3 control-label">
+                          <div class="control-label">
                               <label for="dcFilterAlpha">DC Filter alpha</label>
                               <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
-                          <div class="col-sm-2">
+                          <div>
                               <input type="text" class="form-control" id="dcFilterAlpha">
                           </div>
                       </div>
                   </div>
                   <div class="form-group">
                       <div>
-                          <div class="col-sm-2 col-sm-offset-1 control-label">
+                          <div class="control-label">
                               <label for="modScheme">Modulation</label>
                               <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
-                          <div class="col-sm-3">
+                          <div>
                               <select class="form-control" id="modScheme">
                                 <option>PSK2</option>
                                 <option>PSK4</option>
@@ -139,11 +139,11 @@
                           </div>
                       </div>
                       <div>
-                          <div class="col-sm-2 control-label">
+                          <div class="control-label">
                               <label for="checksumScheme">Checksum</label>
                               <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
-                          <div class="col-sm-3">
+                          <div>
                               <select class="form-control" id="checksumScheme">
                                 <option>None</option>
                                 <option>Checksum</option>
@@ -157,11 +157,11 @@
                   </div>
                   <div class="form-group">
                       <div>
-                          <div class="col-sm-2 col-sm-offset-1 control-label">
+                          <div class="control-label">
                               <label for="innerFecScheme">Inner FEC</label>
                               <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
-                          <div class="col-sm-3">
+                          <div>
                               <select class="form-control" id="innerFecScheme">
                                 <option>None</option>
                                 <option>Repeat3</option>
@@ -194,11 +194,11 @@
                           </div>
                       </div>
                       <div>
-                          <div class="col-sm-2 control-label">
+                          <div class="control-label">
                               <label for="outerFecScheme">Outer FEC</label>
                               <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
-                          <div class="col-sm-3">
+                          <div>
                               <select class="form-control" id="outerFecScheme">
                                 <option>None</option>
                                 <option>Repeat3</option>
@@ -254,51 +254,51 @@
                   <h3>OFDM</h3>
                   <div class="form-group">
                       <div>
-                          <div class="col-sm-3 col-sm-offset-1 control-label">
+                          <div class="control-label">
                               <label for="numSubcarriers">Number of subcarriers</label>
                               <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
-                          <div class="col-sm-2">
+                          <div>
                               <input type="text" class="form-control" id="numSubcarriers">
                           </div>
                       </div>
                       <div>
-                          <div class="col-sm-3 control-label">
+                          <div class="control-label">
                               <label for="cyclicPrefixLength">Cyclic Prefix Length</label>
                               <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
-                          <div class="col-sm-2">
+                          <div>
                               <input type="text" class="form-control" id="cyclicPrefixLength">
                           </div>
                       </div>
                   </div>
                   <div class="form-group">
                       <div>
-                          <div class="col-sm-3 col-sm-offset-1 control-label">
+                          <div class="control-label">
                               <label for="leftBand">Extra leftside guard subcarriers</label>
                               <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
-                          <div class="col-sm-2">
+                          <div>
                               <input type="text" class="form-control" id="leftBand">
                           </div>
                       </div>
                       <div>
-                          <div class="col-sm-3 control-label">
+                          <div class="control-label">
                               <label for="rightBand">Extra rightside guard subcarriers</label>
                               <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
-                          <div class="col-sm-2">
+                          <div>
                               <input type="text" class="form-control" id="rightBand">
                           </div>
                       </div>
                   </div>
                   <div class="form-group">
                       <div>
-                          <div class="col-sm-3 col-sm-offset-1 control-label">
+                          <div class="control-label">
                               <label for="taperLength">Intersymbol Taper Length</label>
                               <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
-                          <div class="col-sm-2">
+                          <div>
                               <input type="text" class="form-control" id="taperLength">
                           </div>
                       </div>
@@ -306,31 +306,31 @@
                   <h3>Interpolation/Decimation</h3>
                   <div class="form-group">
                       <div>
-                          <div class="col-sm-3 col-sm-offset-1 control-label">
+                          <div class="control-label">
                               <label for="interpolationSamplesPerSymbol">Samples Per Symbol</label>
                               <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
-                          <div class="col-sm-2">
+                          <div>
                               <input type="text" class="form-control" id="interpolationSamplesPerSymbol">
                           </div>
                       </div>
                       <div>
-                          <div class="col-sm-3 control-label">
+                          <div class="control-label">
                               <label for="interpolationSymbolDelay">Symbol Delay</label>
                               <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
-                          <div class="col-sm-2">
+                          <div>
                               <input type="text" class="form-control" id="interpolationSymbolDelay">
                           </div>
                       </div>
                   </div>
                   <div class="form-group">
                       <div>
-                          <div class="col-sm-3 col-sm-offset-1 control-label">
+                          <div class="control-label">
                               <label for="interpolationExcessBandwidth">Excess Bandwidth</label>
                               <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
-                          <div class="col-sm-2">
+                          <div>
                               <input type="text" class="form-control" id="interpolationExcessBandwidth">
                           </div>
                       </div>
@@ -338,40 +338,40 @@
                   <h3>Resampler</h3>
                   <div class="form-group">
                       <div>
-                          <div class="col-sm-3 col-sm-offset-1 control-label">
+                          <div class="control-label">
                               <label for="resamplerDelay">Symbol Delay</label>
                               <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
-                          <div class="col-sm-2">
+                          <div>
                               <input type="text" class="form-control" id="resamplerDelay">
                           </div>
                       </div>
                       <div>
-                          <div class="col-sm-3 control-label">
+                          <div class="control-label">
                               <label for="resamplerBandwidth">Filter Bandwidth</label>
                               <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
-                          <div class="col-sm-2">
+                          <div>
                               <input type="text" class="form-control" id="resamplerBandwidth">
                           </div>
                       </div>
                   </div>
                   <div class="form-group">
                       <div>
-                          <div class="col-sm-3 col-sm-offset-1 control-label">
+                          <div class="control-label">
                               <label for="resamplerAttenuation">Filter Attenuation</label>
                               <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
-                          <div class="col-sm-2">
+                          <div>
                               <input type="text" class="form-control" id="resamplerAttenuation">
                           </div>
                       </div>
                       <div>
-                          <div class="col-sm-3 control-label">
+                          <div class="control-label">
                               <label for="resamplerFilterBankSize">Filter Bank Size</label>
                               <span class="hidden help-block">Value must be between 1 and 20</span>
                           </div>
-                          <div class="col-sm-2">
+                          <div>
                               <input type="text" class="form-control" id="resamplerFilterBankSize">
                           </div>
                       </div>
@@ -388,11 +388,11 @@
               </form>
           </div>
       </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/quiet">quiet</a></p>
+        <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+      </footer>
     </div>
-    <footer>
-      <p>Project maintained by <a href="https://github.com/quiet">quiet</a></p>
-      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
-    </footer>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
   </body>
 </html>
