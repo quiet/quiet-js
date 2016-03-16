@@ -154,9 +154,11 @@ var QuietLab = (function() {
             }
         };
 
-        for (var input in inputs) {
+        for (var k in inputs) {
+            var input = inputs[k];
             if (typeof input === "object") {
-                for (var nestedInput in input) {
+                for (var nestedK in input) {
+                    var nestedInput = input[nestedK];
                     nestedInput.addEventListener('change', onInputChange, false);
                 }
             } else {
