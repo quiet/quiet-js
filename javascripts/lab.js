@@ -37,6 +37,16 @@ var QuietLab = (function() {
         }
     };
 
+    function updateRangeLabel(e) {
+        document.querySelector("label[for=" + e.target.id +"]").querySelector("span").textContent = e.target.value;
+    };
+
+    function onInputChange(e) {
+        if (e.target.type === "range") {
+            updateRangeLabel(e);
+        }
+    };
+
     function drawFFT() {
         drawVisual = requestAnimationFrame(drawFFT);
         analyser.getFloatFrequencyData(fftBuffer);
@@ -144,6 +154,15 @@ var QuietLab = (function() {
             }
         };
 
+        for (var input in inputs) {
+            if (typeof input === "object") {
+                for (var nestedInput in input) {
+                    nestedInput.addEventListener('change', onInputChange, false);
+                }
+            } else {
+                input.addEventListener('change', onInputChange, false);
+            }
+        }
     };
 
     document.addEventListener("DOMContentLoaded", onDOMLoad);
