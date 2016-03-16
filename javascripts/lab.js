@@ -157,11 +157,11 @@ var QuietLab = (function() {
         for (var k in inputs) {
             var input = inputs[k];
             if (input instanceof Node) {
-                input.addEventListener('change', onInputChange, false);
+                input.addEventListener('input', onInputChange, false);
             } else {
                 for (var nestedK in input) {
                     var nestedInput = input[nestedK];
-                    nestedInput.addEventListener('change', onInputChange, false);
+                    nestedInput.addEventListener('input', onInputChange, false);
                 }
             }
         }
