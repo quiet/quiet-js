@@ -6,6 +6,36 @@ var QuietLab = (function() {
     var source;
     var drawVisual;
     var fftBuffer;
+    var updateBtn;
+    var inputs;
+
+    function disableInput(input) {
+        input.setAttribute("disabled", "disabled");
+    };
+
+    function enableInput(input) {
+        input.removeAttribute("disabled");
+    };
+
+    function onModeChange(e) {
+        var newMode = e.target.value;
+        if (newMode === "OFDMMode") {
+            for (var prop in inputs.ofdm) {
+                enableInput(inputs.ofdm[prop]);
+            }
+            enableInput(inputs.mod_scheme);
+        } else if (newMode === "ModemMode") {
+            for (var prop in inputs.ofdm) {
+                disableInput(inputs.ofdm[prop]);
+            }
+            enableInput(inputs.mod_scheme);
+        } else {
+            for (var prop in inputs.ofdm) {
+                disableInput(inputs.ofdm[prop]);
+            }
+            disableInput(inputs.mod_scheme);
+        }
+    };
 
     function drawFFT() {
         drawVisual = requestAnimationFrame(drawFFT);
@@ -75,6 +105,46 @@ var QuietLab = (function() {
 
         var gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
         gUM.call(navigator, gUMConstraints(), onGUM, onGUMFail);
+
+        updateBtn = document.querySelector("[data-quiet-lab-update]");
+        btn.addEventListener('click', onUpdateClick, false);
+
+        var mode = document.querySelector("input[name=mode]");
+        mode.addEventListener('change', onModeChange, false);
+
+        inputs = {
+            ofdm: {
+                num_subcarriers: document.querySelector("#numSubcarriers"),
+                cyclic_prefix_length: document.querySelector("#cyclicPrefixLength"),
+                taper_length: document.querySelector("#taperLength"),
+                left_band: document.querySelector("#leftBand"),
+                right_band: document.querySelector("#rightBand")
+            },
+            mod_scheme: document.querySelector("#modScheme"),
+            checksum_cheme: document.querySelector("#checksumScheme"),
+            inner_fec_scheme: document.querySelector("#innerFecScheme"),
+            outer_fec_scheme: document.querySelector("#outerFecScheme"),
+            frame_length: document.querySelector("#frameLength"),
+            modulation: {
+                center_frequency: document.querySelector("#centerFrequency"),
+                gain: document.querySelector("#gain")
+            },
+            interpolation: {
+                samples_per_symbol: document.querySelector("#interpolationSamplesPerSymbol"),
+                symbol_delay: document.querySelector("#interpolationSymbolDelay"),
+                excess_bandwidth: document.querySelector("#interpolationExcessBandwidth")
+            },
+            encoder_filters: {
+                dc_filter_alpha: document.querySelector("#dcFilterAlpha")
+            },
+            resampler: {
+                delay: document.querySelector("#resamplerDelay"),
+                bandwidth: document.querySelector("#resamplerBandwidth"),
+                attenuation: document.querySelector("#resamplerAttenuation"),
+                filter_bank_size: document.querySelector("#resamplerFilterBankSize")
+            }
+        };
+
     };
 
     document.addEventListener("DOMContentLoaded", onDOMLoad);
