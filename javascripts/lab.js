@@ -175,7 +175,6 @@ var QuietLab = (function() {
                     input.addEventListener('change', onInputChange, false);
                     profile[k] = input.value;
                 }
-                updateLabel(input);
                 inputsIndex[input.id] = k;
             } else {
                 profile[k] = {};
@@ -188,7 +187,6 @@ var QuietLab = (function() {
                         nestedInput.addEventListener('change', onInputChange, false);
                         profile[k][nestedK] = nestedInput.value;
                     }
-                    updateLabel(nestedInput);
                     inputsIndex[nestedInput.id] = k + "." + nestedK;
                 }
             }
