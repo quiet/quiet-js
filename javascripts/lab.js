@@ -8,6 +8,9 @@ var QuietLab = (function() {
     var fftBuffer;
     var mode;
     var inputs;
+    var inputsIndex;
+    var profile;
+    var jsonBlock;
 
     function disableInput(input) {
         input.setAttribute("disabled", "disabled");
@@ -37,6 +40,10 @@ var QuietLab = (function() {
         }
     };
 
+    function updateProfileOutput() {
+        jsonBlock.textContent = JSON.stringify(profile, null, 4);
+    };
+
     function updateLabel(input) {
         if (input.type === "range") {
             document.querySelector("label[for=" + input.id +"]").querySelector("span").textContent = input.value;
@@ -44,6 +51,12 @@ var QuietLab = (function() {
     };
 
     function onInputChange(e) {
+        var index = inputsIndex[e.target.id].split(".");
+        if (index.length === 2) {
+            profile[index[0]][index[1]] = e.target.value;
+        } else {
+            profile[index[0]] = e.target.value;
+        }
         updateLabel(e.target);
     };
 
@@ -154,19 +167,36 @@ var QuietLab = (function() {
             }
         };
 
+        inputsIndex = {};
+
         for (var k in inputs) {
             var input = inputs[k];
             if (input instanceof Node) {
-                input.addEventListener('input', onInputChange, false);
+                if (input.type === "range") {
+                    input.addEventListener('input', onInputChange, false);
+                } else {
+                    input.addEventListener('change', onInputChange, false);
+                }
                 updateLabel(input);
+                inputsIndex[input.id] = k;
+                profile[k] = input.value;
             } else {
+                profile[input] = {};
                 for (var nestedK in input) {
                     var nestedInput = input[nestedK];
-                    nestedInput.addEventListener('input', onInputChange, false);
+                    if (nestedInput.type === "range") {
+                        nestedInput.addEventListener('input', onInputChange, false);
+                    } else {
+                        nestedInput.addEventListener('change', onInputChange, false);
+                    }
                     updateLabel(nestedInput);
+                    inputsIndex[nestedInput.id] = input + "." + nestedK;
+                    profile[input][nestedK] = nestedInput.value;
                 }
             }
         }
+
+        updateProfileOutput();
     };
 
     document.addEventListener("DOMContentLoaded", onDOMLoad);
