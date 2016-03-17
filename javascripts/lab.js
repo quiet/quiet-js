@@ -100,6 +100,7 @@ var QuietLab = (function() {
             presets.appendChild(opt);
         }
 
+        presets.value = "audible";
         loadPreset("audible");
     };
 
