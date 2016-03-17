@@ -196,7 +196,7 @@ var QuietLab = (function() {
                         profile[k][nestedK] = nestedInput.value;
                     }
                     updateLabel(nestedInput);
-                    inputsIndex[nestedInput.id] = input + "." + nestedK;
+                    inputsIndex[nestedInput.id] = k + "." + nestedK;
                 }
             }
         }
