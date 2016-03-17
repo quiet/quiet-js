@@ -168,6 +168,9 @@ var QuietLab = (function() {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioCtx.createAnalyser();
         analyser.fftSize = 512;
+        analyser.smoothingTimeConstant = 0.05;
+        analyser.minDecibels = -90;
+        analyser.maxDecibels = -10;
         fftBuffer = new Float32Array(analyser.frequencyBinCount);
 
         var gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
