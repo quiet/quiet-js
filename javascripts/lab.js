@@ -44,16 +44,10 @@ var QuietLab = (function() {
         jsonBlock.textContent = JSON.stringify(profile, null, 4);
     };
 
-    function updateLabel(input) {
-        if (input.type === "range") {
-            document.querySelector("label[for=" + input.id +"]").querySelector("span").textContent = input.value;
-        }
-    };
-
     function onInputChange(e) {
         var index = inputsIndex[e.target.id].split(".");
         var val = e.target.value;
-        if (e.target.type === "range") {
+        if (e.target.type === "number") {
             val = Number(val);
         }
         if (index.length === 2) {
@@ -61,7 +55,6 @@ var QuietLab = (function() {
         } else {
             profile[index[0]] = val;
         }
-        updateLabel(e.target);
         updateProfileOutput();
     };
 
@@ -175,7 +168,7 @@ var QuietLab = (function() {
         for (var k in inputs) {
             var input = inputs[k];
             if (input instanceof Node) {
-                if (input.type === "range") {
+                if (input.type === "number") {
                     input.addEventListener('input', onInputChange, false);
                     profile[k] = Number(input.value);
                 } else {
@@ -188,7 +181,7 @@ var QuietLab = (function() {
                 profile[k] = {};
                 for (var nestedK in input) {
                     var nestedInput = input[nestedK];
-                    if (nestedInput.type === "range") {
+                    if (nestedInput.type === "number") {
                         nestedInput.addEventListener('input', onInputChange, false);
                         profile[k][nestedK] = Number(nestedInput.value);
                     } else {
