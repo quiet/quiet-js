@@ -70,8 +70,19 @@ var QuietLab = (function() {
         updateProfileOutput();
     };
 
-    function loadPreset(k) {
-        profile = profilesObj[k];
+    function loadPreset(preset) {
+        profile = profilesObj[preset];
+        for (var k in profile) {
+            var input = inputs[k];
+            if (input instanceof Node) {
+                input.value = profile[k];
+            } else {
+                for (var nestedK in input) {
+                    var nestedInput = input[nestedK];
+                    nestedInput.value = profile[k][nestedK];
+                }
+            }
+        }
         updateProfileOutput();
     };
 
