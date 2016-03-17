@@ -249,8 +249,8 @@ var QuietLab = (function() {
             console.log("fetch of quiet-profiles.json failed: " + err);
         });
 
-        var loadPresets = document.querySelector("#loadPresets");
-        loadPresets.addEventListener('click', onLoadPreset, false);
+        var loadPresetBtn = document.querySelector("#loadPreset");
+        loadPresetBtn.addEventListener('click', onLoadPreset, false);
 
         jsonBlock = document.querySelector("#quiet-profiles-json");
         updateProfileOutput();
