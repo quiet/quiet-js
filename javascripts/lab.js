@@ -58,6 +58,7 @@ var QuietLab = (function() {
             profile[index[0]] = e.target.value;
         }
         updateLabel(e.target);
+        updateProfileOutput();
     };
 
     function drawFFT() {
