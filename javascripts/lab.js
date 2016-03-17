@@ -111,7 +111,7 @@ var QuietLab = (function() {
         var scale = canvas.height/(analyser.maxDecibels - analyser.minDecibels);
         for (var i = 0; i < analyser.frequencyBinCount; i++) {
             var magnitude = (fftBuffer[i] - analyser.minDecibels) * scale;
-            canvasCtx.fillRect(i * 4, canvas.height, 3, -magnitude);
+            canvasCtx.fillRect(i * 2, canvas.height, 1, -magnitude);
         }
     };
 
@@ -167,7 +167,7 @@ var QuietLab = (function() {
         canvasCtx = canvas.getContext('2d');
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 256;
+        analyser.fftSize = 512;
         fftBuffer = new Float32Array(analyser.frequencyBinCount);
 
         var gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
