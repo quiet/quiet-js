@@ -8,8 +8,8 @@ var QuietLab = (function() {
     var fftBuffer;
     var mode;
     var inputs;
-    var inputsIndex;
-    var profile;
+    var inputsIndex = {};
+    var profile = {};
     var jsonBlock;
 
     function disableInput(input) {
@@ -166,8 +166,6 @@ var QuietLab = (function() {
                 filter_bank_size: document.querySelector("#resamplerFilterBankSize")
             }
         };
-
-        inputsIndex = {};
 
         for (var k in inputs) {
             var input = inputs[k];
