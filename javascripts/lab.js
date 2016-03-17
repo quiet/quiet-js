@@ -180,7 +180,7 @@ var QuietLab = (function() {
                 inputsIndex[input.id] = k;
                 profile[k] = input.value;
             } else {
-                profile[input] = {};
+                profile[k] = {};
                 for (var nestedK in input) {
                     var nestedInput = input[nestedK];
                     if (nestedInput.type === "range") {
@@ -190,7 +190,7 @@ var QuietLab = (function() {
                     }
                     updateLabel(nestedInput);
                     inputsIndex[nestedInput.id] = input + "." + nestedK;
-                    profile[input][nestedK] = nestedInput.value;
+                    profile[k][nestedK] = nestedInput.value;
                 }
             }
         }
