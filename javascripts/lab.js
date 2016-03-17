@@ -49,6 +49,16 @@ var QuietLab = (function() {
         var val = e.target.value;
         if (e.target.type === "number") {
             val = Number(val);
+            max = Number(e.target.max);
+            min = Number(e.target.min);
+            if (val > max) {
+                e.target.value = max;
+                val = max;
+            }
+            if (val < min) {
+                e.target.value = min;
+                val = min;
+            }
         }
         if (index.length === 2) {
             profile[index[0]][index[1]] = val;
