@@ -12,6 +12,7 @@ var QuietLab = (function() {
     var profile = {};
     var jsonBlock;
     var presets;
+    var presetsObj;
 
     function disableInput(input) {
         input.setAttribute("disabled", "disabled");
@@ -69,8 +70,17 @@ var QuietLab = (function() {
         updateProfileOutput();
     };
 
+    function loadPreset(k) {
+        profile = profilesObj[k];
+        updateProfileOutput();
+    };
+
+    function onLoadPreset(e) {
+        loadPreset(presets.value);
+    };
+
     function onProfilesFetch(resp) {
-        var profilesObj = JSON.parse(resp);
+        profilesObj = JSON.parse(resp);
 
         for (var k in profilesObj) {
             var opt = document.createElement("option");
@@ -78,6 +88,8 @@ var QuietLab = (function() {
             opt.value = k;
             presets.appendChild(opt);
         }
+
+        loadPreset("audible");
     };
 
     function drawFFT() {
@@ -236,6 +248,9 @@ var QuietLab = (function() {
         }, function(err) {
             console.log("fetch of quiet-profiles.json failed: " + err);
         });
+
+        var loadPresets = document.querySelector("#loadPresets");
+        loadPresets.addEventListener('click', onLoadPreset, false);
 
         jsonBlock = document.querySelector("#quiet-profiles-json");
         updateProfileOutput();
