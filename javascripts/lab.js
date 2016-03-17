@@ -187,7 +187,7 @@ var QuietLab = (function() {
                 right_band: document.querySelector("#rightBand")
             },
             mod_scheme: document.querySelector("#modScheme"),
-            checksum_cheme: document.querySelector("#checksumScheme"),
+            checksum_scheme: document.querySelector("#checksumScheme"),
             inner_fec_scheme: document.querySelector("#innerFecScheme"),
             outer_fec_scheme: document.querySelector("#outerFecScheme"),
             frame_length: document.querySelector("#frameLength"),
