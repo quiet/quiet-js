@@ -52,10 +52,14 @@ var QuietLab = (function() {
 
     function onInputChange(e) {
         var index = inputsIndex[e.target.id].split(".");
+        var val = e.target.value;
+        if (e.target.type === "range") {
+            val = Number(val);
+        }
         if (index.length === 2) {
-            profile[index[0]][index[1]] = e.target.value;
+            profile[index[0]][index[1]] = val;
         } else {
-            profile[index[0]] = e.target.value;
+            profile[index[0]] = val;
         }
         updateLabel(e.target);
         updateProfileOutput();
@@ -173,24 +177,26 @@ var QuietLab = (function() {
             if (input instanceof Node) {
                 if (input.type === "range") {
                     input.addEventListener('input', onInputChange, false);
+                    profile[k] = Number(input.value);
                 } else {
                     input.addEventListener('change', onInputChange, false);
+                    profile[k] = input.value;
                 }
                 updateLabel(input);
                 inputsIndex[input.id] = k;
-                profile[k] = input.value;
             } else {
                 profile[k] = {};
                 for (var nestedK in input) {
                     var nestedInput = input[nestedK];
                     if (nestedInput.type === "range") {
                         nestedInput.addEventListener('input', onInputChange, false);
+                        profile[k][nestedK] = Number(nestedInput.value);
                     } else {
                         nestedInput.addEventListener('change', onInputChange, false);
+                        profile[k][nestedK] = nestedInput.value;
                     }
                     updateLabel(nestedInput);
                     inputsIndex[nestedInput.id] = input + "." + nestedK;
-                    profile[k][nestedK] = nestedInput.value;
                 }
             }
         }
