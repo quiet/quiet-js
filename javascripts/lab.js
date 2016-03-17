@@ -195,6 +195,7 @@ var QuietLab = (function() {
             }
         }
 
+        jsonBlock = document.querySelector("#quiet-profiles-json");
         updateProfileOutput();
     };
 
