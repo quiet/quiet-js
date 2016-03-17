@@ -33,6 +33,26 @@
               <form>
                   <h3>Parameters</h3>
                   <div class="form-group">
+                      <div class="control-label">
+                              <label style="display: block">Operating Mode</label>
+                      </div>
+                      <div class="radio-inline">
+                          <label>
+                              <input type="radio" name="mode" value="OFDMMode">OFDM
+                          </label>
+                      </div>
+                      <div class="radio-inline">
+                          <label>
+                              <input type="radio" name="mode" value="ModemMode">Modem
+                          </label>
+                      </div>
+                      <div class="radio-inline">
+                          <label>
+                              <input type="radio" name="mode" value="GMSKMode">GMSK
+                          </label>
+                      </div>
+                  </div>
+                  <div class="form-group">
                       <div>
                           <div class="control-label">
                               <label style="display: block" for="centerFrequency">Center Frequency
@@ -232,26 +252,6 @@
                                 <option value="rs8">R-S 223/255</option>
                               </select>
                           </div>
-                      </div>
-                  </div>
-                  <div class="form-group">
-                      <div class="control-label">
-                              <label style="display: block">Operating Mode</label>
-                      </div>
-                      <div class="radio-inline">
-                          <label>
-                              <input type="radio" name="mode" value="OFDMMode">OFDM
-                          </label>
-                      </div>
-                      <div class="radio-inline">
-                          <label>
-                              <input type="radio" name="mode" value="ModemMode">Modem
-                          </label>
-                      </div>
-                      <div class="radio-inline">
-                          <label>
-                              <input type="radio" name="mode" value="GMSKMode">GMSK
-                          </label>
                       </div>
                   </div>
                   <h3>OFDM</h3>
