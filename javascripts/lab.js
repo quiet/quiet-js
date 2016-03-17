@@ -179,24 +179,22 @@ var QuietLab = (function() {
             var input = inputs[k];
             if (input instanceof Node) {
                 if (input.type === "number") {
-                    input.addEventListener('input', onInputChange, false);
                     profile[k] = Number(input.value);
                 } else {
-                    input.addEventListener('change', onInputChange, false);
                     profile[k] = input.value;
                 }
+                input.addEventListener('change', onInputChange, false);
                 inputsIndex[input.id] = k;
             } else {
                 profile[k] = {};
                 for (var nestedK in input) {
                     var nestedInput = input[nestedK];
                     if (nestedInput.type === "number") {
-                        nestedInput.addEventListener('input', onInputChange, false);
                         profile[k][nestedK] = Number(nestedInput.value);
                     } else {
-                        nestedInput.addEventListener('change', onInputChange, false);
                         profile[k][nestedK] = nestedInput.value;
                     }
+                    nestedInput.addEventListener('change', onInputChange, false);
                     inputsIndex[nestedInput.id] = k + "." + nestedK;
                 }
             }
