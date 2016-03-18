@@ -85,17 +85,6 @@ var Quiet = (function() {
         checkInitState();
     };
 
-    /**
-     * Set the path prefix of quiet-profiles.json and do an async fetch of that path.
-     * This file is used to configure transmitter and receiver parameters.
-     * <br><br>
-     * This function must be called before creating a transmitter or receiver.
-     * @function setProfilesPrefix
-     * @memberof Quiet
-     * @param {string} prefix - The path prefix where Quiet will fetch quiet-profiles.json
-     * @example
-     * setProfilesPrefix("/js/");  // fetches /js/quiet-profiles.json
-     */
     function setProfilesPrefix(prefix) {
         if (profilesFetched) {
             return;
@@ -129,56 +118,15 @@ var Quiet = (function() {
         });
     };
 
-    /**
-     * Set the path prefix of quiet-emscripten.js.mem.
-     * This file is used to initialize the memory state of emscripten.
-     * <br><br>
-     * This function must be called before quiet-emscripten.js has started loading.
-     * If it is not called first, then emscripten will default to a prefix of "".
-     * @function setMemoryInitializerPrefix
-     * @memberof Quiet
-     * @param {string} prefix - The path prefix where emscripten will fetch quiet-emscripten.js.mem
-     * @example
-     * setMemoryInitializerPrefix("/");  // fetches /quiet-emscripten.js.mem
-     */
     function setMemoryInitializerPrefix(prefix) {
         Module.memoryInitializerPrefixURL = prefix;
-    }
+    };
 
-    /**
-     * Set the path prefix of libfec.js.
-     * Although not strictly required, it is highly recommended to include this library.
-     * <br><br>
-     * This function, if used, must be called before quiet-emscripten.js has started loading.
-     * If it is not called first, then emscripten will not load libfec.js.
-     * @function setLibfecPrefix
-     * @memberof Quiet
-     * @param {string} prefix - The path prefix where emscripten will fetch libfec.js
-     * @example
-     * setLibfecPrefix("/");  // fetches /libfec.js
-     */
     function setLibfecPrefix(prefix) {
         Module.dynamicLibraries = Module.dynamicLibraries || [];
         Module.dynamicLibraries.push(prefix + "libfec.js");
-    }
+    };
 
-    /**
-     * Callback to notify user that quiet.js failed to initialize
-     *
-     * @callback onError
-     * @memberof Quiet
-     * @param {string} reason - error message related to failure
-     */
-
-    /**
-     * Add a callback to be called when Quiet is ready for use, e.g. when transmitters and receivers can be created.
-     * @function addReadyCallback
-     * @memberof Quiet
-     * @param {function} c - The user function which will be called
-     * @param {onError} [onError] - User errback function
-     * @example
-     * addReadyCallback(function() { console.log("ready!"); });
-     */
     function addReadyCallback(c, errback) {
         if (isReady()) {
             c();
@@ -192,37 +140,92 @@ var Quiet = (function() {
             }
             readyErrbacks.push(errback);
         }
-    }
+    };
 
     /**
-     * Callback used by transmit to notify user that transmission has finished
-     * @callback onTransmitFinish
+     * Callback to notify user that quiet.js failed to initialize
+     *
+     * @callback onError
      * @memberof Quiet
+     * @param {string} reason - error message related to failure
      */
 
     /**
+     * Initialize Quiet and set up a callback to be called when Quiet is ready
+     * @function init
+     * @memberof Quiet
+     * @param {object} opts - configuration options
+     * @param {string} opts.profilesPrefix - path prefix to quiet-profiles.json
+     *   this file configures transmitter and receiver parameters
+     * @param {string} opts.memoryInitializerPrefix - path prefix to quiet-emscripten.js.mem
+     * @param {string} [opts.libfecPrefix] - path prefix to libfec.js
+     * @param {function} [opts.onReady] - Quiet ready callback
+     * @param {onError} [opts.onError] - User errback function
+     * @example
+     * Quiet.init({
+     *   profilesPrefix: "/",  // fetches /quiet-profiles.json
+     *   memoryInitializerPrefix: "/",  // fetches /quiet-emscripten.js.mem
+     *   libfecPrefix: "/",  // fetches /libfec.js
+     *   onReady: function() { console.log("quiet is ready"); },
+     *   onError: function(reason) { console.log("quiet failed to start: " + reason); }
+     * });
+     */
+    function init(opts) {
+        if (opts.profilesPrefix !== undefined) {
+            setProfilesPrefix(opt.profilesPrefix);
+        }
+
+        if (opts.memoryInitializerPrefix !== undefined) {
+            setMemoryInitializerPrefix(opt.memoryInitializerPrefix);
+        }
+
+        if (opts.libfecPrefix !== undefined) {
+            setLibfecPrefix(opts.libfecPrefix);
+        }
+
+        if (opts.onReady !== undefined) {
+            if (opts.onError !== undefined) {
+                addReadyCallback(opts.onReady, opts.onError);
+            } else {
+                addReadyCallback(opts.onReady);
+            }
+        }
+    };
+
+
+
+    /**
      * Callback for user to provide data to a Quiet transmitter
-     * <br><br>
-     * This callback may be used multiple times, but the user must wait for the finished callback between subsequent calls.
      * @callback transmit
      * @memberof Quiet
      * @param {ArrayBuffer} payload - bytes which will be encoded and sent to speaker
-     * @param {onTransmitFinish} [done] - callback to notify user that transmission has completed
      * @example
-     * transmit(Quiet.str2ab("Hello, World!"), function() { console.log("transmission complete"); });
+     * transmit(Quiet.str2ab("Hello, World!"));
+     */
+
+    /**
+     * @typedef Transmitter
+     * @type object
+     * @property {transmit} transmit - queue up array buffer and begin transmitting
+     * @property {function} destroy - immediately stop playback and release all resources
      */
 
     /**
      * Create a new transmitter configured by the given profile name.
      * @function transmitter
      * @memberof Quiet
-     * @param {string|object} profile - name of profile to use, must be a key in quiet-profiles.json OR an object which contains a single profile
-     * @returns {transmit} transmit - transmit callback which user calls to start transmission
+     * @param {object} opts - transmitter params
+     * @param {string|object} opts.profile - name of profile to use, must be a key in quiet-profiles.json OR an object which contains a single profile
+     * @param {function} [opts.onFinish] - user callback which will notify user when playback of all data in queue is complete
+     *    if the user calls transmit multiple times before waiting for onFinish, then onFinish will be called only once after
+     *    all of the data has been played out
+     * @returns {Transmitter} - Transmitter object
      * @example
-     * var transmit = transmitter("robust");
-     * transmit(Quiet.str2ab("Hello, World!"), function() { console.log("transmission complete"); });
+     * var tx = transmitter({profile: "robust", onFinish: function () { console.log("transmission complete"); }});
+     * tx.transmit(Quiet.str2ab("Hello, World!"));
      */
-    function transmitter(profile) {
+    function transmitter(opts) {
+        var profile = opts.profile;
         var c_profiles, c_profile;
         if (typeof profile === 'object') {
             c_profiles = Module.intArrayFromString(JSON.stringify({"profile": profile}));
@@ -233,86 +236,163 @@ var Quiet = (function() {
             c_profile = Module.intArrayFromString(profile);
         }
 
+        var done = opts.onFinish;
+
         var opt = Module.ccall('quiet_encoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
 
-        // libquiet internally works at 44.1kHz but the local sound card may be a different rate. we inform quiet about that here
+        // libquiet internally works at 44.1kHz but the local sound card
+        // may be a different rate. we inform quiet about that here
         var encoder = Module.ccall('quiet_encoder_create', 'pointer', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
 
-        // some profiles have an option called close_frame which prevents data frames from overlapping multiple
-        //     sample buffers. this is very convenient if our system is not fast enough to feed the sound card
-        //     without any gaps between subsequent buffers due to e.g. gc pause. inform quiet about our
-        //     sample buffer size here so that it can reduce the frame length if this profile has close_frame enabled.
+        Module.ccall('free', null, ['pointer'], [opt]);
+
+        // enable close_frame which prevents data frames from overlapping multiple
+        // sample buffers. this is very convenient if our system is not fast enough
+        // to feed the sound card without any gaps between subsequent buffers due
+        // to e.g. gc pause. inform quiet about our sample buffer size here
         var frame_len = Module.ccall('quiet_encoder_clamp_frame_len', 'number', ['pointer', 'number'], [encoder, sampleBufferSize]);
         var samples = Module.ccall('malloc', 'pointer', ['number'], [4 * sampleBufferSize]);
 
-        // return user transmit function
-        return function(buf, done) {
-            var payload = new Uint8Array(buf);
-            var payloadOffset = 0;
+        // yes, this is pointer arithmetic, in javascript :)
+        var sample_view = Module.HEAPF32.subarray((samples/4), (samples/4) + sampleBufferSize);
 
-            // fill as much of quiet's transmit queue as possible
-            var writebuf = function() {
-                if (payloadOffset == payload.length) {
-                    return;
-                }
-                for (var i = payloadOffset; i < payload.length; ) {
-                    var frame = payload.subarray(payloadOffset, payloadOffset + frame_len);
-                    var written = Module.ccall('quiet_encoder_send', 'number', ['pointer', 'array', 'number'], [encoder, frame, frame.length]);
-                    if (written === -1) {
-                        break;
-                    }
-                    payloadOffset += frame.length;
-                    i += frame.length;
-                }
-            };
+        var script_processor = (audioCtx.createScriptProcessor || audioCtx.createJavaScriptNode);
+        // we want a single input because some implementations will not run a node without some kind of source
+        // we want two outputs so that we can explicitly silence the right channel and no mixing will occur
+        var transmitter = script_processor.call(audioCtx, sampleBufferSize, 1, 2);
 
-            writebuf();
+        // put an input node on the graph. some browsers require this to run our script processor
+        // this oscillator will not actually be used in any way
+        var dummy_osc = audioCtx.createOscillator();
+        dummy_osc.type = 'square';
+        dummy_osc.frequency.value = 420;
 
-            // yes, this is pointer arithmetic, in javascript :)
-            var sample_view = Module.HEAPF32.subarray((samples/4), (samples/4) + sampleBufferSize);
+        // we'll start and stop transmitter as needed
+        //   if we have something to send, start it
+        //   if we are done talking, stop it
+        var running = false;
 
-            var script_processor = (audioCtx.createScriptProcessor || audioCtx.createJavaScriptNode);
-            var transmitter = script_processor.call(audioCtx, sampleBufferSize, 1, 2);
-
-            var finished = false;
-            transmitter.onaudioprocess = function(e) {
-                var output_l = e.outputBuffer.getChannelData(0);
-
-                if (finished) {
-                    for (var i = 0; i < sampleBufferSize; i++) {
-                        output_l[i] = 0;
-                    }
-                    return;
-                }
-
-                var written = Module.ccall('quiet_encoder_emit', 'number', ['pointer', 'pointer', 'number'], [encoder, samples, sampleBufferSize]);
-                output_l.set(sample_view);
-
-                // libquiet notifies us that the payload is finished by returning written < number of samples we asked for
-                if (written < sampleBufferSize) {
-                    // be extra cautious and 0-fill what's left
-                    //   (we want the end of transmission to be silence, not potentially loud noise)
-                    for (var i = written; i < sampleBufferSize; i++) {
-                        output_l[i] = 0;
-                    }
-                    // user callback
-                    if (done !== undefined) {
-                            done();
-                    }
-                    finished = true;
-                    window.setTimeout(function() { transmitter.disconnect(); }, 1500);
-                }
-                window.setTimeout(writebuf, 0);
-            };
-
-            // put an input node on the graph. some browsers require this to run our script processor
-            // this oscillator will not actually be used in any way
-            var dummy_osc = audioCtx.createOscillator();
-            dummy_osc.type = 'square';
-            dummy_osc.frequency.value = 420;
+        var startTransmitter = function () {
             dummy_osc.connect(transmitter);
-
             transmitter.connect(audioCtx.destination);
+            running = true;
+        };
+
+        var stopTransmitter = function () {
+            dummy_osc.disconnect();
+            transmitter.disconnect();
+            running = false;
+        };
+
+        // we are only going to keep one chunk of samples around
+        // ideally there will be a 1:1 sequence between writebuf and onaudioprocess
+        // but just in case one gets ahead of the other, this flag will prevent us
+        // from throwing away a buffer or playing a buffer twice
+        var played = true;
+
+        // payload is a list of ArrayBuffers, each one frame or smaller in length
+        var payload = [];
+        var payloadView = new Uint8Array(payload);
+
+        // writebuf calls _send and _emit on the encoder
+        // first we push as much payload as will fit into encoder's tx queue
+        // then we create the next sample block (if played = true)
+        var writebuf = function() {
+            // fill as much of quiet's transmit queue as possible
+            var frame_available = false;
+            while(true) {
+                var frame = payload.shift();
+                if (frame === undefined) {
+                    break;
+                }
+                frame_available = true;
+                var written = Module.ccall('quiet_encoder_send', 'number', ['pointer', 'array', 'number'], [encoder, frame, frame.byteLength]);
+                if (written === -1) {
+                    payload.unshift(frame);
+                    break;
+                }
+            }
+
+            if (frame_available === true && running === false) {
+                startTransmitter();
+            }
+
+            // now set the sample block
+            if (played === false) {
+                // the existing sample block has yet to be played
+                // we are done
+                return;
+            }
+
+            var written = Module.ccall('quiet_encoder_emit', 'number', ['pointer', 'pointer', 'number'], [encoder, samples, sampleBufferSize]);
+
+            // libquiet notifies us that the payload is finished by
+            // returning written < number of samples we asked for
+            if (frame_available === false && written === 0) {
+                // looks like we are done
+                // user callback
+                if (done !== undefined) {
+                        done();
+                }
+                if (running === true) {
+                    stopTransmitter();
+                }
+                return;
+            }
+
+            played = false;
+
+            // in this case, we are sending data, but the whole block isn't full (we're near the end)
+            if (written < sampleBufferSize) {
+                // be extra cautious and 0-fill what's left
+                //   (we want the end of transmission to be silence, not potentially loud noise)
+                for (var i = written; i < sampleBufferSize; i++) {
+                    sample_view[i] = 0;
+                }
+            }
+
+        };
+
+        transmitter.onaudioprocess = function(e) {
+            var output_l = e.outputBuffer.getChannelData(0);
+
+            if (played === true) {
+                // we've already played what's in sample_view, and it hasn't been
+                //   rewritten for whatever reason, so just play out silence
+                for (var i = 0; i < sampleBufferSize; i++) {
+                    output_l[i] = 0;
+                }
+                return;
+            }
+
+            played = true;
+
+            output_l.set(sample_view);
+            window.setTimeout(writebuf, 0);
+        };
+
+        var transmit = function(buf) {
+            // slice up into frames and push the frames to a list
+            for (var i = 0; i < buf.byteLength; ) {
+                var frame = buf.slice(i, i + frame_len);
+                i += frame.byteLength;
+                payload.push(frame);
+            }
+            // now do an update. this may or may not write samples
+            writebuf();
+        };
+
+        var destroy = function() {
+            Module.ccall('free', null, ['pointer'], [samples]);
+            Module.ccall('quiet_encoder_destroy', null, ['pointer'], [encoder]);
+            if (running === true) {
+                stopTransmitter();
+            }
+        };
+
+        return {
+            transmit: transmit,
+            destroy: destroy
         };
     };
 
@@ -574,10 +654,7 @@ var Quiet = (function() {
 
     return {
         emscriptenInitialized: onEmscriptenInitialized,
-        setProfilesPrefix: setProfilesPrefix,
-        setMemoryInitializerPrefix: setMemoryInitializerPrefix,
-        setLibfecPrefix: setLibfecPrefix,
-        addReadyCallback: addReadyCallback,
+        init: init,
         transmitter: transmitter,
         receiver: receiver,
         str2ab: str2ab,
