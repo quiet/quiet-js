@@ -311,6 +311,10 @@ var Quiet = (function() {
         var payload = [];
         var payloadView = new Uint8Array(payload);
 
+        // unfortunately, we need to flush out the browser's sound sample buffer ourselves
+        // the way we do this is by writing empty blocks once we're done and *then* we can disconnect
+        var empties_written = 0;
+
         // writebuf calls _send and _emit on the encoder
         // first we push as much payload as will fit into encoder's tx queue
         // then we create the next sample block (if played = true)
@@ -346,6 +350,15 @@ var Quiet = (function() {
             // libquiet notifies us that the payload is finished by
             // returning written < number of samples we asked for
             if (frame_available === false && written === 0) {
+                if (empties_written < 3) {
+                    // flush out browser's sound sample buffer before quitting
+                    for (var i = 0; i < sampleBufferSize; i++) {
+                        sample_view[i] = 0;
+                    }
+                    empties_written++;
+                    played = false;
+                    return;
+                }
                 // looks like we are done
                 // user callback
                 if (done !== undefined) {
@@ -358,6 +371,7 @@ var Quiet = (function() {
             }
 
             played = false;
+            empties_written = 0;
 
             // in this case, we are sending data, but the whole block isn't full (we're near the end)
             if (written < sampleBufferSize) {
