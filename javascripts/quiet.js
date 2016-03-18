@@ -189,11 +189,11 @@ var Quiet = (function() {
      */
     function init(opts) {
         if (opts.profilesPrefix !== undefined) {
-            setProfilesPrefix(opt.profilesPrefix);
+            setProfilesPrefix(opts.profilesPrefix);
         }
 
         if (opts.memoryInitializerPrefix !== undefined) {
-            setMemoryInitializerPrefix(opt.memoryInitializerPrefix);
+            setMemoryInitializerPrefix(opts.memoryInitializerPrefix);
         }
 
         if (opts.libfecPrefix !== undefined) {
