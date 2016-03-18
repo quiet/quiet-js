@@ -3,7 +3,7 @@ var QuietInitializer = (function() {
         profilesPrefix: "javascripts/",
         memoryInitializerPrefix: "javascripts/",
         libfecPrefix: "javascripts/"
-    }
+    });
 
     function onDOMLoad() {
         var host = "quiet.github.io";
