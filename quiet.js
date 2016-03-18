@@ -127,6 +127,23 @@ var Quiet = (function() {
         Module.dynamicLibraries.push(prefix + "libfec.js");
     };
 
+    /**
+     * Callback to notify user that quiet.js failed to initialize
+     *
+     * @callback onError
+     * @memberof Quiet
+     * @param {string} reason - error message related to failure
+     */
+
+    /**
+     * Add a callback to be called when Quiet is ready for use, e.g. when transmitters and receivers can be created.
+     * @function addReadyCallback
+     * @memberof Quiet
+     * @param {function} c - The user function which will be called
+     * @param {onError} [onError] - User errback function
+     * @example
+     * addReadyCallback(function() { console.log("ready!"); });
+     */
     function addReadyCallback(c, errback) {
         if (isReady()) {
             c();
@@ -654,6 +671,7 @@ var Quiet = (function() {
 
     return {
         emscriptenInitialized: onEmscriptenInitialized,
+        addReadyCallback: addReadyCallback,
         init: init,
         transmitter: transmitter,
         receiver: receiver,
