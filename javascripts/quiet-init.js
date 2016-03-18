@@ -1,7 +1,9 @@
 var QuietInitializer = (function() {
-    Quiet.setProfilesPrefix("javascripts/");
-    Quiet.setMemoryInitializerPrefix("javascripts/");
-    Quiet.setLibfecPrefix("javascripts/");
+    Quiet.init({
+        profilesPrefix: "javascripts/",
+        memoryInitializerPrefix: "javascripts/",
+        libfecPrefix: "javascripts/"
+    }
 
     function onDOMLoad() {
         var host = "quiet.github.io";
