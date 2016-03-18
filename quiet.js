@@ -85,17 +85,6 @@ var Quiet = (function() {
         checkInitState();
     };
 
-    /**
-     * Set the path prefix of quiet-profiles.json and do an async fetch of that path.
-     * This file is used to configure transmitter and receiver parameters.
-     * <br><br>
-     * This function must be called before creating a transmitter or receiver.
-     * @function setProfilesPrefix
-     * @memberof Quiet
-     * @param {string} prefix - The path prefix where Quiet will fetch quiet-profiles.json
-     * @example
-     * setProfilesPrefix("/js/");  // fetches /js/quiet-profiles.json
-     */
     function setProfilesPrefix(prefix) {
         if (profilesFetched) {
             return;
@@ -129,56 +118,15 @@ var Quiet = (function() {
         });
     };
 
-    /**
-     * Set the path prefix of quiet-emscripten.js.mem.
-     * This file is used to initialize the memory state of emscripten.
-     * <br><br>
-     * This function must be called before quiet-emscripten.js has started loading.
-     * If it is not called first, then emscripten will default to a prefix of "".
-     * @function setMemoryInitializerPrefix
-     * @memberof Quiet
-     * @param {string} prefix - The path prefix where emscripten will fetch quiet-emscripten.js.mem
-     * @example
-     * setMemoryInitializerPrefix("/");  // fetches /quiet-emscripten.js.mem
-     */
     function setMemoryInitializerPrefix(prefix) {
         Module.memoryInitializerPrefixURL = prefix;
-    }
+    };
 
-    /**
-     * Set the path prefix of libfec.js.
-     * Although not strictly required, it is highly recommended to include this library.
-     * <br><br>
-     * This function, if used, must be called before quiet-emscripten.js has started loading.
-     * If it is not called first, then emscripten will not load libfec.js.
-     * @function setLibfecPrefix
-     * @memberof Quiet
-     * @param {string} prefix - The path prefix where emscripten will fetch libfec.js
-     * @example
-     * setLibfecPrefix("/");  // fetches /libfec.js
-     */
     function setLibfecPrefix(prefix) {
         Module.dynamicLibraries = Module.dynamicLibraries || [];
         Module.dynamicLibraries.push(prefix + "libfec.js");
-    }
+    };
 
-    /**
-     * Callback to notify user that quiet.js failed to initialize
-     *
-     * @callback onError
-     * @memberof Quiet
-     * @param {string} reason - error message related to failure
-     */
-
-    /**
-     * Add a callback to be called when Quiet is ready for use, e.g. when transmitters and receivers can be created.
-     * @function addReadyCallback
-     * @memberof Quiet
-     * @param {function} c - The user function which will be called
-     * @param {onError} [onError] - User errback function
-     * @example
-     * addReadyCallback(function() { console.log("ready!"); });
-     */
     function addReadyCallback(c, errback) {
         if (isReady()) {
             c();
@@ -192,13 +140,59 @@ var Quiet = (function() {
             }
             readyErrbacks.push(errback);
         }
-    }
+    };
 
     /**
-     * Callback used by transmit to notify user that transmission has finished
-     * @callback onTransmitFinish
+     * Callback to notify user that quiet.js failed to initialize
+     *
+     * @callback onError
      * @memberof Quiet
+     * @param {string} reason - error message related to failure
      */
+
+    /**
+     * Initialize Quiet and set up a callback to be called when Quiet is ready
+     * @function init
+     * @memberof Quiet
+     * @param {object} opts - configuration options
+     * @param {string} opts.profilesPrefix - path prefix to quiet-profiles.json
+     *   this file configures transmitter and receiver parameters
+     * @param {string} opts.memoryInitializerPrefix - path prefix to quiet-emscripten.js.mem
+     * @param {string} [opts.libfecPrefix] - path prefix to libfec.js
+     * @param {function} [opts.onReady] - Quiet ready callback
+     * @param {onError} [opts.onError] - User errback function
+     * @example
+     * Quiet.init({
+     *   profilesPrefix: "/",  // fetches /quiet-profiles.json
+     *   memoryInitializerPrefix: "/",  // fetches /quiet-emscripten.js.mem
+     *   libfecPrefix: "/",  // fetches /libfec.js
+     *   onReady: function() { console.log("quiet is ready"); },
+     *   onError: function(reason) { console.log("quiet failed to start: " + reason); }
+     * });
+     */
+    function init(opts) {
+        if (opts.profilesPrefix !== undefined) {
+            setProfilesPrefix(opt.profilesPrefix);
+        }
+
+        if (opts.memoryInitializerPrefix !== undefined) {
+            setMemoryInitializerPrefix(opt.memoryInitializerPrefix);
+        }
+
+        if (opts.libfecPrefix !== undefined) {
+            setLibfecPrefix(opts.libfecPrefix);
+        }
+
+        if (opts.onReady !== undefined) {
+            if (opts.onError !== undefined) {
+                addReadyCallback(opts.onReady, opts.onError);
+            } else {
+                addReadyCallback(opts.onReady);
+            }
+        }
+    };
+
+
 
     /**
      * Callback for user to provide data to a Quiet transmitter
@@ -574,10 +568,7 @@ var Quiet = (function() {
 
     return {
         emscriptenInitialized: onEmscriptenInitialized,
-        setProfilesPrefix: setProfilesPrefix,
-        setMemoryInitializerPrefix: setMemoryInitializerPrefix,
-        setLibfecPrefix: setLibfecPrefix,
-        addReadyCallback: addReadyCallback,
+        init: init,
         transmitter: transmitter,
         receiver: receiver,
         str2ab: str2ab,
