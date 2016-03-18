@@ -11,7 +11,7 @@ var TextTransmitter = (function() {
         btn.setAttribute('data-quiet-sending-text', originalText);
     };
 
-    function onClick(e, transmit, onFinish) {
+    function onClick(e, transmit) {
         e.target.disabled = true;
         var originalText = e.target.innerText;
         e.target.innerText = e.target.getAttribute('data-quiet-sending-text');
@@ -21,14 +21,14 @@ var TextTransmitter = (function() {
             onFinish();
             return;
         }
-        transmit.transmit(Quiet.str2ab(payload), onFinish);
+        transmit.transmit(Quiet.str2ab(payload));
     };
 
     function setupButton(btn) {
         var profilename = btn.getAttribute('data-quiet-profile-name');
-        var transmit = Quiet.transmitter({profile: profilename});
+        var transmit = Quiet.transmitter({profile: profilename, onFinish: onFinish});
         var onFinish = function() { return onTransmitFinish(btn); };
-        var onBtnClick = function(e) { return onClick(e, transmit, onFinish); };
+        var onBtnClick = function(e) { return onClick(e, transmit); };
         btn.addEventListener('click', onBtnClick, false);
     };
 

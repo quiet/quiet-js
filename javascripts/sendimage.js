@@ -23,7 +23,7 @@ var ImageTransmitter = (function() {
             onTransmitFinish();
             return;
         }
-        transmit.transmit(payload, onTransmitFinish);
+        transmit.transmit(payload);
     };
 
     function onFileRead(e) {
@@ -38,7 +38,7 @@ var ImageTransmitter = (function() {
 
     function onQuietReady() {
         var profilename = btn.getAttribute('data-quiet-profile-name');
-        transmit = Quiet.transmitter({profile: profilename});
+        transmit = Quiet.transmitter({profile: profilename, onFinish: onTransmitFinish});
         btn.addEventListener('click', onClick, false);
         fileinput.addEventListener('change', onFileSelect, false);
     };
