@@ -23,7 +23,7 @@ var ImageTransmitter = (function() {
             onTransmitFinish();
             return;
         }
-        transmit(payload, onTransmitFinish);
+        transmit.transmit(payload, onTransmitFinish);
     };
 
     function onFileRead(e) {

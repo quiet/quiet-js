@@ -21,7 +21,7 @@ var TextTransmitter = (function() {
             onFinish();
             return;
         }
-        transmit(Quiet.str2ab(payload), onFinish);
+        transmit.transmit(Quiet.str2ab(payload), onFinish);
     };
 
     function setupButton(btn) {
