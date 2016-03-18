@@ -327,7 +327,7 @@ var Quiet = (function() {
                     break;
                 }
                 frame_available = true;
-                var written = Module.ccall('quiet_encoder_send', 'number', ['pointer', 'array', 'number'], [encoder, frame, frame.byteLength]);
+                var written = Module.ccall('quiet_encoder_send', 'number', ['pointer', 'array', 'number'], [encoder, new Uint8Array(frame), frame.byteLength]);
                 if (written === -1) {
                     payload.unshift(frame);
                     break;
