@@ -31,24 +31,29 @@ var QuietLab = (function() {
         } else if (input.type === "number") {
             input.value = input.getAttribute("value");
         }
+        return input.value;
     };
 
     function onModeChange(newMode) {
         if (newMode === "OFDMMode") {
+            profile['ofdm'] = {};
             for (var prop in inputs.ofdm) {
-                enableInput(inputs.ofdm[prop]);
+                profile.ofdm[prop] = enableInput(inputs.ofdm[prop]);
             }
-            enableInput(inputs.mod_scheme);
+            profile['mod_scheme'] = enableInput(inputs.mod_scheme);
         } else if (newMode === "ModemMode") {
             for (var prop in inputs.ofdm) {
                 disableInput(inputs.ofdm[prop]);
             }
-            enableInput(inputs.mod_scheme);
+            delete profile['ofdm'];
+            profile['mod_scheme'] = enableInput(inputs.mod_scheme);
         } else {
             for (var prop in inputs.ofdm) {
                 disableInput(inputs.ofdm[prop]);
             }
+            delete profile['ofdm'];
             disableInput(inputs.mod_scheme);
+            profile['mod_scheme'] = 'gmsk';
         }
     };
 
@@ -100,28 +105,30 @@ var QuietLab = (function() {
         warningbox.textContent = "Sorry, it looks like there was a problem with this example (" + reason + ")";
     };
 
-    function loadPreset(preset) {
-        profile = profilesObj[preset];
-        for (var k in profile) {
-            var input = inputs[k];
-            if (input instanceof Node) {
-                input.value = profile[k];
-            } else {
-                for (var nestedK in input) {
-                    var nestedInput = input[nestedK];
-                    nestedInput.value = profile[k][nestedK];
-                }
-            }
-        }
-        if (profile.ofdm !== undefined) {
+    function loadPreset(presetname) {
+        var preset = profilesObj[presetname];
+        if (preset.ofdm !== undefined) {
             mode["OFDMMode"].checked = true;
             onModeChange("OFDMMode");
-        } else if (profile.mod_scheme === "gmsk") {
+        } else if (preset.mod_scheme === "gmsk") {
             mode["GMSKMode"].checked = true;
             onModeChange("GMSKMode");
         } else {
             mode["ModemMode"].checked = true;
             onModeChange("ModemMode");
+        }
+        for (var k in profile) {
+            var input = inputs[k];
+            if (input instanceof Node) {
+                profile[k] = preset[k];  // copy so that we can reload pristine later
+                input.value = profile[k];
+            } else {
+                for (var nestedK in input) {
+                    var nestedInput = input[nestedK];
+                    profile[k][nestedK] = preset[k][nestedK];
+                    nestedInput.value = profile[k][nestedK];
+                }
+            }
         }
         updateProfileOutput();
     };
