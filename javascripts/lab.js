@@ -217,7 +217,7 @@ var QuietLab = (function() {
         gUM.call(navigator, gUMConstraints(), onGUM, onGUMFail);
 
         var modelist = document.querySelectorAll("input[name=mode]");
-        for (var i = 0; i < mode.length; i++) {
+        for (var i = 0; i < modelist.length; i++) {
             modelist[i].addEventListener('change', function(e) { onModeChange(e.target.value); }, false);
             mode[modelist[i].value] = modelist[i];
         }
