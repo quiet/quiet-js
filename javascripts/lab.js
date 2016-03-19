@@ -77,7 +77,7 @@ var QuietLab = (function() {
     };
 
     function onTransmitFinish() {
-        transmitter.transmit(Quiet.str2ab("foo"));
+        window.setTimeout(function() { transmitter.transmit(Quiet.str2ab("foo")); }, 0);
     }
 
     function onQuietReady() {
