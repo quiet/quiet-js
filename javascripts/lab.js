@@ -28,10 +28,12 @@ var QuietLab = (function() {
         input.removeAttribute("disabled");
         if (input.type === "select-one") {
             input.selectedIndex = input.querySelector("option[selected]").index;
+            return input.value;
         } else if (input.type === "number") {
-            input.value = input.getAttribute("value");
+            var val = Number(input.getattribute("value"));
+            input.value = val;
+            return val;
         }
-        return input.value;
     };
 
     function onModeChange(newMode) {
