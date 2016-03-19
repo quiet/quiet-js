@@ -720,7 +720,8 @@ var Quiet = (function() {
         receiver: receiver,
         str2ab: str2ab,
         ab2str: ab2str,
-        mergeab: mergeab
+        mergeab: mergeab,
+        receivers: receivers
     };
 })();
 
