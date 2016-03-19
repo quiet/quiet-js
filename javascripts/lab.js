@@ -17,14 +17,23 @@ var QuietLab = (function() {
 
     function disableInput(input) {
         input.setAttribute("disabled", "disabled");
+        if (input.type === "select-one") {
+            input.selectedIndex = -1;
+        } else if (input.type === "number") {
+            input.value = "";
+        }
     };
 
     function enableInput(input) {
         input.removeAttribute("disabled");
+        if (input.type === "select-one") {
+            input.selectedIndex = input.querySelector("option[selected]").index;
+        } else if (input.type === "number") {
+            input.value = input.getAttribute("value");
+        }
     };
 
-    function onModeChange(e) {
-        var newMode = e.target.value;
+    function onModeChange(newMode) {
         if (newMode === "OFDMMode") {
             for (var prop in inputs.ofdm) {
                 enableInput(inputs.ofdm[prop]);
@@ -40,6 +49,7 @@ var QuietLab = (function() {
                 disableInput(inputs.ofdm[prop]);
             }
             disableInput(inputs.mod_scheme);
+            inputs.mod_scheme.value = "GMSK";
         }
     };
 
@@ -103,6 +113,13 @@ var QuietLab = (function() {
                     nestedInput.value = profile[k][nestedK];
                 }
             }
+        }
+        if (profile.ofdm !== undefined) {
+            onModeChange("OFDMMode");
+        } else if (profile.mod_scheme === "gmsk") {
+            onModeChange("GMSKMode");
+        } else {
+            onModeChange("ModemMode");
         }
         updateProfileOutput();
     };
@@ -199,7 +216,7 @@ var QuietLab = (function() {
 
         mode = document.querySelectorAll("input[name=mode]");
         for (var i = 0; i < mode.length; i++) {
-            mode[i].addEventListener('change', onModeChange, false);
+            mode[i].addEventListener('change', function(e) { onModeChange(e.target.value); }, false);
         }
 
         inputs = {
