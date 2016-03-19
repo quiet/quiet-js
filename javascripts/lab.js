@@ -30,7 +30,7 @@ var QuietLab = (function() {
             input.selectedIndex = input.querySelector("option[selected]").index;
             return input.value;
         } else if (input.type === "number") {
-            var val = Number(input.getattribute("value"));
+            var val = Number(input.getAttribute("value"));
             input.value = val;
             return val;
         }
