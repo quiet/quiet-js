@@ -273,10 +273,6 @@ var Quiet = (function() {
         // yes, this is pointer arithmetic, in javascript :)
         var sample_view = Module.HEAPF32.subarray((samples/4), (samples/4) + sampleBufferSize);
 
-        var script_processor = (audioCtx.createScriptProcessor || audioCtx.createJavaScriptNode);
-        // we want a single input because some implementations will not run a node without some kind of source
-        // we want two outputs so that we can explicitly silence the right channel and no mixing will occur
-        var transmitter = script_processor.call(audioCtx, sampleBufferSize, 1, 2);
 
         // put an input node on the graph. some browsers require this to run our script processor
         // this oscillator will not actually be used in any way
@@ -288,8 +284,36 @@ var Quiet = (function() {
         //   if we have something to send, start it
         //   if we are done talking, stop it
         var running = false;
+        var transmitter;
+
+        var onaudioprocess = function(e) {
+            var output_l = e.outputBuffer.getChannelData(0);
+
+            if (played === true) {
+                // we've already played what's in sample_view, and it hasn't been
+                //   rewritten for whatever reason, so just play out silence
+                for (var i = 0; i < sampleBufferSize; i++) {
+                    output_l[i] = 0;
+                }
+                return;
+            }
+
+            played = true;
+
+            output_l.set(sample_view);
+            window.setTimeout(writebuf, 0);
+        };
 
         var startTransmitter = function () {
+            if (transmitter === undefined) {
+                // we have to start transmitter here because mobile safari wants it to be in response to a
+                // user action
+                var script_processor = (audioCtx.createScriptProcessor || audioCtx.createJavaScriptNode);
+                // we want a single input because some implementations will not run a node without some kind of source
+                // we want two outputs so that we can explicitly silence the right channel and no mixing will occur
+                transmitter = script_processor.call(audioCtx, sampleBufferSize, 1, 2);
+                transmitter.onaudioprocess = onaudioprocess;
+            }
             dummy_osc.connect(transmitter);
             transmitter.connect(audioCtx.destination);
             running = true;
@@ -382,24 +406,6 @@ var Quiet = (function() {
                 }
             }
 
-        };
-
-        transmitter.onaudioprocess = function(e) {
-            var output_l = e.outputBuffer.getChannelData(0);
-
-            if (played === true) {
-                // we've already played what's in sample_view, and it hasn't been
-                //   rewritten for whatever reason, so just play out silence
-                for (var i = 0; i < sampleBufferSize; i++) {
-                    output_l[i] = 0;
-                }
-                return;
-            }
-
-            played = true;
-
-            output_l.set(sample_view);
-            window.setTimeout(writebuf, 0);
         };
 
         var transmit = function(buf) {
