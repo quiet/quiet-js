@@ -273,12 +273,7 @@ var Quiet = (function() {
         // yes, this is pointer arithmetic, in javascript :)
         var sample_view = Module.HEAPF32.subarray((samples/4), (samples/4) + sampleBufferSize);
 
-
-        // put an input node on the graph. some browsers require this to run our script processor
-        // this oscillator will not actually be used in any way
-        var dummy_osc = audioCtx.createOscillator();
-        dummy_osc.type = 'square';
-        dummy_osc.frequency.value = 420;
+        var dummy_osc;
 
         // we'll start and stop transmitter as needed
         //   if we have something to send, start it
@@ -313,6 +308,12 @@ var Quiet = (function() {
                 // we want two outputs so that we can explicitly silence the right channel and no mixing will occur
                 transmitter = script_processor.call(audioCtx, sampleBufferSize, 1, 2);
                 transmitter.onaudioprocess = onaudioprocess;
+                // put an input node on the graph. some browsers require this to run our script processor
+                // this oscillator will not actually be used in any way
+                dummy_osc = audioCtx.createOscillator();
+                dummy_osc.type = 'square';
+                dummy_osc.frequency.value = 420;
+
             }
             dummy_osc.connect(transmitter);
             transmitter.connect(audioCtx.destination);
