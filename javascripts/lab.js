@@ -48,6 +48,7 @@ var QuietLab = (function() {
         if (transmitter !== undefined) {
             transmitter.destroy();
             transmitter = Quiet.transmitter({profile: profile, onFinish: onTransmitFinish});
+            transmitter.transmit(Quiet.str2ab("foo"));
         }
     };
 
