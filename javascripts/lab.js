@@ -6,7 +6,7 @@ var QuietLab = (function() {
     var source;
     var drawVisual;
     var fftBuffer;
-    var mode;
+    var mode = {};
     var inputs;
     var inputsIndex = {};
     var profile = {};
@@ -49,7 +49,6 @@ var QuietLab = (function() {
                 disableInput(inputs.ofdm[prop]);
             }
             disableInput(inputs.mod_scheme);
-            inputs.mod_scheme.value = "GMSK";
         }
     };
 
@@ -115,10 +114,13 @@ var QuietLab = (function() {
             }
         }
         if (profile.ofdm !== undefined) {
+            mode["OFDMMode"].checked = true;
             onModeChange("OFDMMode");
         } else if (profile.mod_scheme === "gmsk") {
+            mode["GMSKMode"].checked = true;
             onModeChange("GMSKMode");
         } else {
+            mode["ModemMode"].checked = true;
             onModeChange("ModemMode");
         }
         updateProfileOutput();
@@ -214,9 +216,10 @@ var QuietLab = (function() {
         var gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
         gUM.call(navigator, gUMConstraints(), onGUM, onGUMFail);
 
-        mode = document.querySelectorAll("input[name=mode]");
+        var modelist = document.querySelectorAll("input[name=mode]");
         for (var i = 0; i < mode.length; i++) {
-            mode[i].addEventListener('change', function(e) { onModeChange(e.target.value); }, false);
+            modelist[i].addEventListener('change', function(e) { onModeChange(e.target.value); }, false);
+            mode[modelist[i].value] = modelist[i];
         }
 
         inputs = {
