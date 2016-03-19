@@ -57,6 +57,11 @@ var QuietLab = (function() {
         }
     };
 
+    function onModeRadioChange(e) {
+        onModeChange(e.target.value);
+        updateProfileOutput();
+    };
+
     function updateProfileOutput() {
         jsonBlock.textContent = JSON.stringify(profile, null, 4);
         if (transmitter !== undefined) {
@@ -225,7 +230,7 @@ var QuietLab = (function() {
 
         var modelist = document.querySelectorAll("input[name=mode]");
         for (var i = 0; i < modelist.length; i++) {
-            modelist[i].addEventListener('change', function(e) { onModeChange(e.target.value); }, false);
+            modelist[i].addEventListener('change', onModeRadioChange, false);
             mode[modelist[i].value] = modelist[i];
         }
 
