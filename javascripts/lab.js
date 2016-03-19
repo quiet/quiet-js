@@ -13,6 +13,7 @@ var QuietLab = (function() {
     var jsonBlock;
     var presets;
     var presetsObj;
+    var transmitter;
 
     function disableInput(input) {
         input.setAttribute("disabled", "disabled");
@@ -44,6 +45,10 @@ var QuietLab = (function() {
 
     function updateProfileOutput() {
         jsonBlock.textContent = JSON.stringify(profile, null, 4);
+        if (transmitter !== undefined) {
+            transmitter.destroy();
+            transmitter = Quiet.transmitter({profile: profile, onFinish: onTransmitFinish});
+        }
     };
 
     function onInputChange(e) {
@@ -68,6 +73,21 @@ var QuietLab = (function() {
             profile[index[0]] = val;
         }
         updateProfileOutput();
+    };
+
+    function onTransmitFinish() {
+        transmitter.transmit(Quiet.str2ab("foo"));
+    }
+
+    function onQuietReady() {
+        transmitter = Quiet.transmitter({profile: profile, onFinish: onTransmitFinish});
+        transmitter.transmit(Quiet.str2ab("foo"));
+    };
+
+    function onQuietFail(reason) {
+        console.log("quiet failed to initialize: " + reason);
+        warningbox.classList.remove("hidden");
+        warningbox.textContent = "Sorry, it looks like there was a problem with this example (" + reason + ")";
     };
 
     function loadPreset(preset) {
@@ -269,6 +289,8 @@ var QuietLab = (function() {
 
         jsonBlock = document.querySelector("#quiet-profiles-json");
         updateProfileOutput();
+
+        Quiet.addReadyCallback(onQuietReady, onQuietFail);
     };
 
     document.addEventListener("DOMContentLoaded", onDOMLoad);
