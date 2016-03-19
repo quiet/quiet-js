@@ -33,7 +33,11 @@ var TextReceiver = (function() {
         var receiverOnReceive = function(payload) { onReceive(payload, recvObj); };
         var receiverOnReceiverCreateFail = function(reason) { onReceiverCreateFail(reason, recvObj); };
         var receiverOnReceiveFail = function(num_fails) { onReceiveFail(num_fails, recvObj); };
-        Quiet.receiver(recvObj.profilename, receiverOnReceive, receiverOnReceiverCreateFail, receiverOnReceiveFail);
+        Quiet.receiver({profile: recvObj.profilename,
+            onReceive: receiverOnReceive,
+            onCreateFail: receiverOnReceiverCreateFail,
+            onReceiveFail: receiverOnReceiveFail
+        });
 
         recvObj.target.classList.remove('hidden');
     }

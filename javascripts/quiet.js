@@ -520,13 +520,19 @@ var Quiet = (function() {
     };
 
     /**
-    * Callback used by receiver to notify user that a frame was received but
-    * failed checksum. Frames that fail checksum are not sent to onReceive.
-    *
-    * @callback onReceiveFail
-    * @memberof Quiet
-    * @param {number} total - total number of frames failed across lifetime of receiver
-    */
+     * @typedef Receiver
+     * @type object
+     * @property {function} destroy - immediately stop sampling microphone and release all resources
+     */
+
+    /**
+     * Callback used by receiver to notify user that a frame was received but
+     * failed checksum. Frames that fail checksum are not sent to onReceive.
+     *
+     * @callback onReceiveFail
+     * @memberof Quiet
+     * @param {number} total - total number of frames failed across lifetime of receiver
+     */
 
     /**
      * Callback used by receiver to notify user of errors in creating receiver.
@@ -537,7 +543,7 @@ var Quiet = (function() {
      * @callback onReceiverCreateFail
      * @memberof Quiet
      * @param {string} reason - error message related to create fail
-    */
+     */
 
     /**
      * Callback used by receiver to notify user of data received via microphone/line-in.
@@ -545,20 +551,23 @@ var Quiet = (function() {
      * @callback onReceive
      * @memberof Quiet
      * @param {ArrayBuffer} payload - chunk of data received
-    */
+     */
 
     /**
      * Create a new receiver with the profile specified by profile (should match profile of transmitter).
      * @function receiver
      * @memberof Quiet
-     * @param {string|object} profile - name of profile to use, must be a key in quiet-profiles.json OR an object which contains a complete profile
-     * @param {onReceive} onReceive - callback which receiver will call to send user received data
-     * @param {onReceiverCreateFail} [onCreateFail] - callback to notify user that receiver could not be created
-     * @param {onReceiveFail} [onReceiveFail] - callback to notify user that receiver received corrupted data
+     * @param {object} opts - receiver params
+     * @param {string|object} opts.profile - name of profile to use, must be a key in quiet-profiles.json OR an object which contains a complete profile
+     * @param {onReceive} opts.onReceive - callback which receiver will call to send user received data
+     * @param {onReceiverCreateFail} [opts.onCreateFail] - callback to notify user that receiver could not be created
+     * @param {onReceiveFail} [opts.onReceiveFail] - callback to notify user that receiver received corrupted data
+     * @returns {Receiver} - Receiver object
      * @example
-     * receiver("robust", function(payload) { console.log("received chunk of data: " + Quiet.ab2str(payload)); });
+     * receiver({profile: "robust", onReceive: function(payload) { console.log("received chunk of data: " + Quiet.ab2str(payload)); }});
      */
-    function receiver(profile, onReceive, onCreateFail, onReceiveFail) {
+    function receiver(opts) {
+        var profile = opts.profile;
         var c_profiles, c_profile;
         if (typeof profile === 'object') {
             c_profiles = Module.intArrayFromString(JSON.stringify({"profile": profile}));
@@ -577,8 +586,8 @@ var Quiet = (function() {
 
         if (gUM === undefined) {
             // we couldn't find a suitable getUserMedia, so fail fast
-            if (onCreateFail !== undefined) {
-                onCreateFail("getUserMedia undefined (mic not supported by browser)");
+            if (opts.onCreateFail !== undefined) {
+                opts.onCreateFail("getUserMedia undefined (mic not supported by browser)");
             }
             return;
         }
@@ -595,6 +604,8 @@ var Quiet = (function() {
         // inform quiet about our local sound card's sample rate so that it can resample to its internal sample rate
         var decoder = Module.ccall('quiet_decoder_create', 'pointer', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
 
+        Module.ccall('free', null, ['pointer'], [opt]);
+
         var samples = Module.ccall('malloc', 'pointer', ['number'], [4 * sampleBufferSize]);
 
         var frame = Module.ccall('malloc', 'pointer', ['number'], [frameBufferSize]);
@@ -607,7 +618,7 @@ var Quiet = (function() {
                 }
                 // convert from emscripten bytes to js string. more pointer arithmetic.
                 var frameArray = Module.HEAP8.slice(frame, frame + read);
-                onReceive(frameArray);
+                opts.onReceive(frameArray);
             }
         };
 
@@ -618,12 +629,11 @@ var Quiet = (function() {
             window.setTimeout(readbuf, 0);
 
             var currentChecksumFailCount = Module.ccall('quiet_decoder_checksum_fails', 'number', ['pointer'], [decoder]);
-            if ((onReceiveFail !== undefined) && (currentChecksumFailCount > lastChecksumFailCount)) {
-                window.setTimeout(function() { onReceiveFail(currentChecksumFailCount); }, 0);
+            if ((opts.onReceiveFail !== undefined) && (currentChecksumFailCount > lastChecksumFailCount)) {
+                window.setTimeout(function() { opts.onReceiveFail(currentChecksumFailCount); }, 0);
             }
             lastChecksumFailCount = currentChecksumFailCount;
         }
-
 
         scriptProcessor.onaudioprocess = function(e) {
             var input = e.inputBuffer.getChannelData(0);
@@ -636,13 +646,25 @@ var Quiet = (function() {
         // if this is the first receiver object created, wait for our input node to be created
         addAudioInputReadyCallback(function() {
             audioInput.connect(scriptProcessor);
-        }, onCreateFail);
+        }, opts.onCreateFail);
 
         // more unused nodes in the graph that some browsers insist on having
         var fakeGain = audioCtx.createGain();
         fakeGain.value = 0;
         scriptProcessor.connect(fakeGain);
         fakeGain.connect(audioCtx.destination);
+
+        var destroy = function() {
+            fakeGain.disconnect();
+            scriptProcessor.disconnect();
+            Module.ccall('free', null, ['pointer'], [samples]);
+            Module.ccall('free', null, ['pointer'], [frame]);
+            Module.ccall('quiet_decoder_destroy', null, ['pointer'], [decoder]);
+        };
+
+        return {
+            destroy: destroy
+        }
     };
 
     /**

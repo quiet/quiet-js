@@ -40,7 +40,11 @@ var ImageReceiver = (function() {
 
     function onQuietReady() {
         var profilename = btn.getAttribute('data-quiet-profile-name');
-        var startReceiver = function() { Quiet.receiver(profilename, onReceive, onReceiverCreateFail, onReceiveFail); };
+        var startReceiver = function() { Quiet.receiver({profile: profilename,
+            onReceive: onReceive,
+            onCreateFail: onReceiverCreateFail,
+            onReceiveFail: onReceiveFail});
+        };
         var onBtnClick = function(e) { return onClick(e, startReceiver); };
         btn.addEventListener('click', onBtnClick, false);
     };
