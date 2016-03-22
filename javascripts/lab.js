@@ -230,6 +230,16 @@ var QuietLab = (function() {
         fftAxesCtx.lineTo(xmargin, fftAxes.height - ymargin);
         fftAxesCtx.lineTo(fftAxes.width, fftAxes.height - ymargin);
         fftAxesCtx.stroke();
+        fftAxesCtx.font = "12px monospace";
+        var yscale = fftCanvas.height/(analyser.maxDecibels - analyser.minDecibels);
+        for (var i = analyser.minDecibels; i < analyser.maxDecibels; i += 10) {
+            fftAxesCtx.strokeText(i, 0, fftCanvas.height - ((i - analyser.minDecibels) * scale) + 10);
+        }
+        var maxFreq = audioCtx.sampleRate/2;
+        var xscale = fftCanvas.width/maxFreq;
+        for (var i = 0; i < maxFreq; i += 2000) {
+            fftAxesCtx.strokeText((i/1000).toFixed(0), xmargin + (i * xscale), fftCanvas.height);
+        }
 
         var constellationAxes = document.querySelector("[data-quiet-lab-constellation-axes]");
         var constellationAxesCtx = constellationAxes.getContext('2d');
