@@ -331,10 +331,10 @@ var QuietLab = (function() {
         var loadPresetBtn = document.querySelector("#loadPreset");
         loadPresetBtn.addEventListener('click', onLoadPreset, false);
 
-        var startBtn = document.querySelector("[data-quiet-lab-start-button]");
+        startBtn = document.querySelector("[data-quiet-lab-start-button]");
 
-        var pausedBlock = document.querySelector("[data-quiet-lab-paused]");
-        var instrumentsBlock = document.querySelector("[data-quiet-lab-instruments]");
+        pausedBlock = document.querySelector("[data-quiet-lab-paused]");
+        instrumentsBlock = document.querySelector("[data-quiet-lab-instruments]");
 
         jsonBlock = document.querySelector("#quiet-profiles-json");
         updateProfileOutput();
