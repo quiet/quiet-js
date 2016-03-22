@@ -14,9 +14,13 @@ var QuietLab = (function() {
     var presets;
     var presetsObj;
     var transmitter;
+    var receiver;
     var startBtn;
     var pausedBlock;
     var instrumentsBlock;
+    var warningbox;
+    var instruments;
+    var instrumentData;
 
     function disableInput(input) {
         input.setAttribute("disabled", "disabled");
@@ -104,9 +108,31 @@ var QuietLab = (function() {
         window.setTimeout(function() { transmitter.transmit(Quiet.str2ab("foo")); }, 0);
     };
 
+    function updateInstruments() {
+        for (var k in instruments) {
+            instruments[k].textContent = instrumentData[k];
+        }
+    };
+
+    function onReceive(recvPayload) {
+        instrumentData["packets-received"]++;
+        updateInstruments();
+    };
+
+    function onReceiverCreateFail(reason) {
+        console.log("failed to create quiet receiver: " + reason);
+        warningbox.classList.remove("hidden");
+        warningbox.textContent = "Sorry, it looks like this example is not supported by your browser. Please give permission to use the microphone or try again in Google Chrome or Microsoft Edge."
+    };
+
     function onLabStart() {
         transmitter = Quiet.transmitter({profile: profile, onFinish: onTransmitFinish});
         transmitter.transmit(Quiet.str2ab("foo"));
+        receiver = Quiet.receiver({profile: profile,
+            onReceive: onReceive,
+            onCreateFail: onReceiverCreateFail,
+        });
+
         pausedBlock.classList.add("hidden");
         instrumentsBlock.classList.remove("hidden");
         var gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
@@ -229,6 +255,8 @@ var QuietLab = (function() {
     };
 
     function onDOMLoad() {
+        warningbox = document.querySelector("[data-quiet-lab-warning]");
+
         canvas = document.querySelector("[data-quiet-lab-canvas]");
         canvasCtx = canvas.getContext('2d');
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -330,6 +358,14 @@ var QuietLab = (function() {
 
         var loadPresetBtn = document.querySelector("#loadPreset");
         loadPresetBtn.addEventListener('click', onLoadPreset, false);
+
+        instruments = {
+            "packets-received": document.querySelector("[data-quiet-lab-packets-received]")
+        };
+
+        instrumentData = {
+            "packets-received": 0
+        };
 
         startBtn = document.querySelector("[data-quiet-lab-start-button]");
 
