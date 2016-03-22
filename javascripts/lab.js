@@ -219,6 +219,30 @@ var QuietLab = (function() {
         loadPreset("audible");
     };
 
+    function drawAxes() {
+        var fftAxes = document.querySelector("[data-quiet-lab-fft-axes]");
+        var fftAxesCtx = fftAxes.getContext('2d');
+
+        fftAxesCtx.beginPath();
+        var maxFreq = (audioCtx.sampleRate/2)/1000;
+        var xmargin = fftAxesCtx.measureText(analyser.minDecibels).width + 2;
+        var ymargin = fftAxesCtx.measureText(maxFreq.toFixed(0)).height + 2;
+        fftAxesCtx.moveTo(xmargin, 0);
+        fftAxesCtx.lineTo(xmargin, fftAxes.height - ymargin);
+        fftAxesCtx.lineTo(fftAxes.width, fftAxes.height - ymargin);
+        fftAxesCtx.stroke();
+
+        var constellationAxes = document.querySelector("[data-quiet-lab-constellation-axes]");
+        var constellationAxesCtx = constellationAxes.getContext('2d');
+
+        constellationAxesCtx.beginPath();
+        constellationAxesCtx.moveTo(0, constellationAxes.height/2);
+        constellationAxesCtx.lineTo(constellationAxes.width, constellationAxes.height/2);
+        constellationAxesCtx.moveTo(constellationAxes.width/2, 0);
+        constellationAxesCtx.lineTo(constellationAxes.width/2, constellationAxes.height);
+        constellationAxesCtx.stroke();
+    };
+
     function drawFFT() {
         drawVisual = requestAnimationFrame(drawFFT);
         analyser.getFloatFrequencyData(fftBuffer);
@@ -319,6 +343,8 @@ var QuietLab = (function() {
 
         constellationCanvas = document.querySelector("[data-quiet-lab-constellation]");
         constellationCanvasCtx = constellationCanvas.getContext('2d');
+
+        drawAxes();
 
         var modelist = document.querySelectorAll("input[name=mode]");
         for (var i = 0; i < modelist.length; i++) {
