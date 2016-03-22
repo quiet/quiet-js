@@ -139,7 +139,7 @@ var QuietLab = (function() {
 
     function onReceiverStatsUpdate(stats) {
         if (stats.length > 0) {
-            drawConstellation(stats.frames[0].symbols);
+            drawConstellation(stats[0].symbols);
         } else {
             drawConstellation([]);
         }
