@@ -137,7 +137,7 @@ var QuietLab = (function() {
 
     function onReceiverStatsUpdate(stats) {
         for (var i = 0; i < stats.length; i++) {
-            console.log(stats[i].symbols);
+            console.log(stats[i].symbols[0]);
         }
     };
 
