@@ -109,6 +109,9 @@ var QuietLab = (function() {
         transmitter.transmit(Quiet.str2ab("foo"));
         pausedBlock.classList.add("hidden");
         instrumentsBlock.classList.remove("hidden");
+        var gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
+        gUM.call(navigator, gUMConstraints(), onGUM, onGUMFail);
+
     };
 
     function onQuietReady() {
@@ -235,9 +238,6 @@ var QuietLab = (function() {
         analyser.minDecibels = -90;
         analyser.maxDecibels = -10;
         fftBuffer = new Float32Array(analyser.frequencyBinCount);
-
-        var gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
-        gUM.call(navigator, gUMConstraints(), onGUM, onGUMFail);
 
         var modelist = document.querySelectorAll("input[name=mode]");
         for (var i = 0; i < modelist.length; i++) {
