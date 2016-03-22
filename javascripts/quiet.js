@@ -665,7 +665,7 @@ var Quiet = (function() {
             lastChecksumFailCount = currentChecksumFailCount;
 
             if (opts.onReceiverStatsUpdate !== undefined) {
-                var stats = Module.ccall('quiet_decoder_consume_stats', 'pointer', ['pointer'], [decoder]);
+                var stats = Module.ccall('quiet_decoder_consume_stats', 'number', ['pointer'], [decoder]);
                 // time for some more pointer arithmetic
                 var num_frames = Module.HEAPU32[stats/4];
                 var frames = Module.HEAPU32[(stats/4) + 1];
