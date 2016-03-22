@@ -141,6 +141,9 @@ var QuietLab = (function() {
     function onReceiverStatsUpdate(stats) {
         if (stats.length > 0) {
             drawConstellation(stats[0].symbols);
+            instrumentData.rssi = stats[0].receivedSignalStrengthIndicator;
+            instrumentData.evm = stats[0].errorVectorMagnitude;
+            updateInstruments();
         }
     };
 
@@ -295,6 +298,8 @@ var QuietLab = (function() {
     function initInstrumentData() {
         instrumentData = {
             "packets-received": 0,
+            "rssi": 0,
+            "evm": 0
         };
 
     };
@@ -408,7 +413,9 @@ var QuietLab = (function() {
         loadPresetBtn.addEventListener('click', onLoadPreset, false);
 
         instruments = {
-            "packets-received": document.querySelector("[data-quiet-lab-packets-received]")
+            "packets-received": document.querySelector("[data-quiet-lab-packets-received]"),
+            "rssi": document.querySelector("[data-quiet-lab-rssi]"),
+            "evm": document.querySelector("[data-quiet-lab-evm]")
         };
 
         initInstrumentData();
