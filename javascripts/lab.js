@@ -89,6 +89,7 @@ var QuietLab = (function() {
             });
             initInstrumentData();
             updateInstruments();
+            drawConstellation([]);
         }
     };
 
@@ -140,8 +141,6 @@ var QuietLab = (function() {
     function onReceiverStatsUpdate(stats) {
         if (stats.length > 0) {
             drawConstellation(stats[0].symbols);
-        } else {
-            drawConstellation([]);
         }
     };
 
