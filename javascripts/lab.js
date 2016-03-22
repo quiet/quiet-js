@@ -14,6 +14,9 @@ var QuietLab = (function() {
     var presets;
     var presetsObj;
     var transmitter;
+    var startBtn;
+    var pausedBlock;
+    var instrumentsBlock;
 
     function disableInput(input) {
         input.setAttribute("disabled", "disabled");
@@ -99,11 +102,17 @@ var QuietLab = (function() {
 
     function onTransmitFinish() {
         window.setTimeout(function() { transmitter.transmit(Quiet.str2ab("foo")); }, 0);
-    }
+    };
 
-    function onQuietReady() {
+    function onLabStart() {
         transmitter = Quiet.transmitter({profile: profile, onFinish: onTransmitFinish});
         transmitter.transmit(Quiet.str2ab("foo"));
+        pausedBlock.classList.add("hidden");
+        instrumentsBlock.classList.remove("hidden");
+    };
+
+    function onQuietReady() {
+        startBtn.addEventListener('click', onLabStart, false);
     };
 
     function onQuietFail(reason) {
@@ -321,6 +330,11 @@ var QuietLab = (function() {
 
         var loadPresetBtn = document.querySelector("#loadPreset");
         loadPresetBtn.addEventListener('click', onLoadPreset, false);
+
+        var startBtn = document.querySelector("[data-quiet-lab-start-button]");
+
+        var pausedBlock = document.querySelector("[data-quiet-lab-paused]");
+        var instrumentsBlock = document.querySelector("[data-quiet-lab-instruments]");
 
         jsonBlock = document.querySelector("#quiet-profiles-json");
         updateProfileOutput();

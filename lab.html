@@ -407,7 +407,13 @@
     </div>
     <div class="col-sm-8" style="position: fixed; top: 25px; right: 0;">
         <div class="wrapper" style="width: 100%">
-            <canvas style="display: block; margin: 0 auto" data-quiet-lab-canvas width="512" height="400"></canvas>
+            <div data-quiet-lab-paused>
+                <button data-quiet-lab-start-button type="button" class="btn btn-default btn-block">Start Lab</button>
+                <p>This will start the transmitter, which plays sound. Please turn down your volume to 20% before starting.</p>
+            </div>
+            <div data-quiet-lab-instruments class="hidden">
+                <canvas style="display: block; margin: 0 auto" data-quiet-lab-canvas width="512" height="400"></canvas>
+            </div>
         </div>
     </div>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
