@@ -8,6 +8,15 @@
     <link rel="stylesheet" href="stylesheets/bootstrap.min.css">
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <style media="scren" type="text/css">
+        @media (max-width: 768px) {
+            .instrument-panel {
+                position: fixed;
+                top: 25px;
+                right: 0;
+            }
+        }
+    </style>
     <script src="javascripts/scale.fix.js"></script>
     <script type="text/javascript" src="javascripts/quiet.js"></script>
     <script type="text/javascript" src="javascripts/quiet-init.js"></script>
@@ -405,7 +414,7 @@
           <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
       </section>
     </div>
-    <div class="col-sm-8" style="position: fixed; top: 25px; right: 0;">
+    <div class="col-sm-8" class="instrument-panel">
         <div class="wrapper" style="width: 100%">
             <div class="alert alert-danger hidden" data-quiet-lab-warning></div>
             <div data-quiet-lab-paused>
@@ -413,9 +422,13 @@
                 <p>This will start the transmitter, which plays sound. Please turn down your volume to 20% before starting.</p>
             </div>
             <div data-quiet-lab-instruments class="hidden">
-                <div style="display: block; margin: 10 auto">
-                    <canvas data-quiet-lab-fft width="256" height="256"></canvas>
-                    <canvas data-quiet-lab-constellation width="256" height="256"</canvas>
+                <div class="container">
+                    <div class="col-sm-6">
+                        <canvas data-quiet-lab-fft width="256" height="256"></canvas>
+                    </div>
+                    <div class="col-sm-6">
+                        <canvas data-quiet-lab-constellation width="256" height="256"></canvas>
+                    </div>
                 </div>
                 <div class="container">
                     <div class="col-sm-2">Packets Received:</div>
