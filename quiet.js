@@ -691,7 +691,7 @@ var Quiet = (function() {
                         });
                     }
                     stats.push(frameStats);
-                    onReceiverStatsUpdate(frameStats);
+                    opts.onReceiverStatsUpdate(frameStats);
                 }
             }
         }
