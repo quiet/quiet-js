@@ -85,6 +85,7 @@ var QuietLab = (function() {
                 onCreateFail: onReceiverCreateFail
             });
             initInstrumentData();
+            updateInstruments();
         }
     };
 
