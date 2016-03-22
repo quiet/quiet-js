@@ -526,6 +526,31 @@ var Quiet = (function() {
      */
 
     /**
+     * @typedef Complex
+     * @type object
+     * @property {Number} real - real valued component
+     * @property {Number} imag - imaginary valued component
+     */
+
+    /**
+     * @typedef ReceiverStats
+     * @type object
+     * @property [Array] symbols - received complex symbols
+     * @property {Number} receivedSignalStrengthIndicator - strength of received signal, in dB
+     * @property {Number} errorVectorMagnitude - magnitude of error vector between received symbols
+     *   and reference symbols, in dB
+     */
+
+    /**
+     * Callback used by receiver to notify user that new decoder stats were
+     * generated. These stats provide instrumentation into the decoding process.
+     *
+     * @callback onReceiverStatsUpdate
+     * @memberof Quiet
+     * @param {Array} stats - Array of stats objects, one per frame detected by decoder
+     */
+
+    /**
      * Callback used by receiver to notify user that a frame was received but
      * failed checksum. Frames that fail checksum are not sent to onReceive.
      *
@@ -562,6 +587,7 @@ var Quiet = (function() {
      * @param {onReceive} opts.onReceive - callback which receiver will call to send user received data
      * @param {onReceiverCreateFail} [opts.onCreateFail] - callback to notify user that receiver could not be created
      * @param {onReceiveFail} [opts.onReceiveFail] - callback to notify user that receiver received corrupted data
+     * @param {onReceiverStatsUpdate} [opts.onReceiverStatsUpdate] - callback to notify user with new decode stats
      * @returns {Receiver} - Receiver object
      * @example
      * receiver({profile: "robust", onReceive: function(payload) { console.log("received chunk of data: " + Quiet.ab2str(payload)); }});
@@ -610,6 +636,10 @@ var Quiet = (function() {
 
         var frame = Module.ccall('malloc', 'pointer', ['number'], [frameBufferSize]);
 
+        if (opts.onReceiverStatsUpdate !== undefined) {
+            Module.ccall('quiet_decoder_enable_stats', null, ['pointer'], [decoder]);
+        }
+
         var readbuf = function() {
             while (true) {
                 var read = Module.ccall('quiet_decoder_recv', 'number', ['pointer', 'pointer', 'number'], [decoder, frame, frameBufferSize]);
@@ -633,6 +663,36 @@ var Quiet = (function() {
                 window.setTimeout(function() { opts.onReceiveFail(currentChecksumFailCount); }, 0);
             }
             lastChecksumFailCount = currentChecksumFailCount;
+
+            if (opts.onReceiverStatsUpdate !== undefined) {
+                var stats = Module.ccall('quiet_decoder_consume_stats', 'pointer', ['pointer'], [decoder]);
+                // time for some more pointer arithmetic
+                var num_frames = Module.HEAPU32[stats/4];
+                var frames = Module.HEAPU32[(stats/4) + 1];
+
+                var framesize = 4 + 4 + 4 + 4 + 4;
+                var stats = [];
+
+                for (var i = 0; i < num_frames; i++) {
+                    var frameStats = {};
+                    var frame = (frames + i*framesize)/4;
+                    var symbols = Module.HEAPU32[frame];
+                    var num_symbols = Module.HEAPU32[frame + 1];
+                    frameStats.errorVectorMagnitude = Module.HEAPF32[frame + 2];
+                    frameStats.receivedSignalStrengthIndicator = Module.HEAPF32[frame + 3];
+
+                    frameStats.symbols = [];
+                    for (var j = 0; j < num_symbols; j++) {
+                        var symbol = (symbols + 8*j)/4;
+                        frameStats.symbols.push({
+                            real: Module.HEAPF32[symbol],
+                            imag: Module.HEAPF32[symbol + 1]
+                        });
+                    }
+                    stats.push(frameStats);
+                    onReceiverStatsUpdate(frameStats);
+                }
+            }
         }
 
         scriptProcessor.onaudioprocess = function(e) {
