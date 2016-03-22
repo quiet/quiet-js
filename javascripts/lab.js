@@ -235,8 +235,8 @@ var QuietLab = (function() {
         var yscale = constellationCanvas.height/(max - min);
         var xscale = constellationCanvas.width/(max - min);
         for (var i = 0; i < symbols.length; i++) {
-            var x = (symbols[i].real - min) * scale;
-            var y = (symbols[i].imag - min) * scale;
+            var x = (symbols[i].real - min) * xscale;
+            var y = (symbols[i].imag - min) * yscale;
             constellationCanvasCtx.beginPath();
             constellationCanvasCtx.moveTo(x - 1, y - 1);
             constellationCanvasCtx.lineTo(x + 1, y + 1);
