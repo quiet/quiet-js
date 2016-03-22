@@ -8,13 +8,12 @@
     <link rel="stylesheet" href="stylesheets/bootstrap.min.css">
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/github-dark.css">
-    <style media="scren" type="text/css">
-        @media (max-width: 768px) {
-            .instrument-panel {
-                position: fixed;
-                top: 25px;
-                right: 0;
-            }
+    <style media="screen" type="text/css">
+        @media (max-width: 768px)
+        .instrument-panel {
+            position: fixed;
+            top: 25px;
+            right: 0;
         }
     </style>
     <script src="javascripts/scale.fix.js"></script>
@@ -414,7 +413,7 @@
           <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
       </section>
     </div>
-    <div class="col-sm-8" class="instrument-panel">
+    <div class="col-sm-8 instrument-panel">
         <div class="wrapper" style="width: 100%">
             <div class="alert alert-danger hidden" data-quiet-lab-warning></div>
             <div data-quiet-lab-paused>
@@ -424,15 +423,19 @@
             <div data-quiet-lab-instruments class="hidden">
                 <div class="container">
                     <div class="col-sm-6">
-                        <canvas data-quiet-lab-fft width="256" height="256"></canvas>
+                        <div style="width: 256px; margin: 0 auto">
+                            <canvas data-quiet-lab-fft width="256" height="256"></canvas>
+                        </div>
                     </div>
                     <div class="col-sm-6">
-                        <canvas data-quiet-lab-constellation width="256" height="256"></canvas>
+                        <div style="width: 256px; margin: 0 auto">
+                            <canvas data-quiet-lab-constellation width="256" height="256"></canvas>
+                        </div>
                     </div>
                 </div>
                 <div class="container">
-                    <div class="col-sm-2">Packets Received:</div>
-                    <div class="col-sm-2" data-quiet-lab-packets-received>0</div>
+                    <div class="col-sm-3">Packets Received:</div>
+                    <div class="col-sm-3" data-quiet-lab-packets-received>0</div>
                 </div>
             </div>
 
