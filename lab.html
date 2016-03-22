@@ -413,7 +413,10 @@
                 <p>This will start the transmitter, which plays sound. Please turn down your volume to 20% before starting.</p>
             </div>
             <div data-quiet-lab-instruments class="hidden">
-                <canvas style="display: block; margin: 0 auto" data-quiet-lab-canvas width="512" height="400"></canvas>
+                <div style="display: block; margin: 10 auto">
+                    <canvas data-quiet-lab-fft width="256" height="256"></canvas>
+                    <canvas data-quiet-lab-constellation width="256" height="256"</canvas>
+                </div>
                 <div class="container">
                     <div class="col-sm-2">Packets Received:</div>
                     <div class="col-sm-2" data-quiet-lab-packets-received>0</div>

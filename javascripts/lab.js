@@ -1,6 +1,8 @@
 var QuietLab = (function() {
-    var canvas;
-    var canvasCtx;
+    var fftCanvas;
+    var fftCanvasCtx;
+    var constellationCanvas;
+    var constellationCanvasCtx;
     var audioCtx;
     var analyser;
     var source;
@@ -136,8 +138,10 @@ var QuietLab = (function() {
     };
 
     function onReceiverStatsUpdate(stats) {
-        for (var i = 0; i < stats.length; i++) {
-            console.log(stats[i].symbols);
+        if (stats.length > 0) {
+            drawConstellation(stats.frames[0].symbols);
+        } else {
+            drawConstellation([]);
         }
     };
 
@@ -216,11 +220,29 @@ var QuietLab = (function() {
     function drawFFT() {
         drawVisual = requestAnimationFrame(drawFFT);
         analyser.getFloatFrequencyData(fftBuffer);
-        canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-        var scale = canvas.height/(analyser.maxDecibels - analyser.minDecibels);
+        fftCanvasCtx.clearRect(0, 0, fftCanvas.width, fftCanvas.height);
+        var scale = fftCanvas.height/(analyser.maxDecibels - analyser.minDecibels);
         for (var i = 0; i < analyser.frequencyBinCount; i++) {
             var magnitude = (fftBuffer[i] - analyser.minDecibels) * scale;
-            canvasCtx.fillRect(i * 2, canvas.height, 2, -magnitude);
+            fftCanvasCtx.fillRect(i, fftCanvas.height, 1, -magnitude);
+        }
+    };
+
+    function drawConstellation(symbols) {
+        constellationCanvasCtx.clearRect(0, 0, constellationCanvas.width, constellationCanvas.height);
+        var min = -1.5;
+        var max = 1.5;
+        var yscale = constellationCanvas.height/(max - min);
+        var xscale = constellationCanvas.width/(max - min);
+        for (var i = 0; i < symbols.length; i++) {
+            var x = (symbols[i].real - min) * scale;
+            var y = (symbols[i].imag - min) * scale;
+            constellationCanvasCtx.beginPath();
+            constellationCanvasCtx.moveTo(x - 1, y - 1);
+            constellationCanvasCtx.lineTo(x + 1, y + 1);
+            constellationCanvasCtx.moveTo(x - 1, y + 1);
+            constellationCanvasCtx.lineTo(x + 1, y - 1);
+            constellationCanvasCtx.stroke();
         }
     };
 
@@ -273,7 +295,7 @@ var QuietLab = (function() {
 
     function initInstrumentData() {
         instrumentData = {
-            "packets-received": 0
+            "packets-received": 0,
         };
 
     };
@@ -281,8 +303,8 @@ var QuietLab = (function() {
     function onDOMLoad() {
         warningbox = document.querySelector("[data-quiet-lab-warning]");
 
-        canvas = document.querySelector("[data-quiet-lab-canvas]");
-        canvasCtx = canvas.getContext('2d');
+        fftCanvas = document.querySelector("[data-quiet-lab-fft]");
+        fftCanvasCtx = fftCanvas.getContext('2d');
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioCtx.createAnalyser();
         analyser.fftSize = 512;
@@ -290,6 +312,9 @@ var QuietLab = (function() {
         analyser.minDecibels = -90;
         analyser.maxDecibels = -10;
         fftBuffer = new Float32Array(analyser.frequencyBinCount);
+
+        constellationCanvas = document.querySelector("[data-quiet-lab-constellation]");
+        constellationCanvasCtx = constellationCanvas.getContext('2d');
 
         var modelist = document.querySelectorAll("input[name=mode]");
         for (var i = 0; i < modelist.length; i++) {
