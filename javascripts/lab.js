@@ -82,7 +82,8 @@ var QuietLab = (function() {
             receiver.destroy();
             receiver = Quiet.receiver({profile: profile,
                 onReceive: onReceive,
-                onCreateFail: onReceiverCreateFail
+                onCreateFail: onReceiverCreateFail,
+                onReceiverStatsUpdate: onReceiverStatsUpdate
             });
             initInstrumentData();
             updateInstruments();
@@ -134,12 +135,19 @@ var QuietLab = (function() {
         warningbox.textContent = "Sorry, it looks like this example is not supported by your browser. Please give permission to use the microphone or try again in Google Chrome or Microsoft Edge."
     };
 
+    function onReceiverStatsUpdate(stats) {
+        for (var i = 0; i < stats.length; i++) {
+            console.log(stats[i].symbols);
+        }
+    };
+
     function onLabStart() {
         transmitter = Quiet.transmitter({profile: profile, onFinish: onTransmitFinish});
         transmitter.transmit(Quiet.str2ab("foo"));
         receiver = Quiet.receiver({profile: profile,
             onReceive: onReceive,
-            onCreateFail: onReceiverCreateFail
+            onCreateFail: onReceiverCreateFail,
+            onReceiverStatsUpdate: onReceiverStatsUpdate
         });
 
         pausedBlock.classList.add("hidden");
