@@ -78,6 +78,14 @@ var QuietLab = (function() {
             transmitter = Quiet.transmitter({profile: profile, onFinish: onTransmitFinish});
             transmitter.transmit(Quiet.str2ab("foo"));
         }
+        if (receiver !== undefined) {
+            receiver.destroy();
+            receiver = Quiet.receiver({profile: profile,
+                onReceive: onReceive,
+                onCreateFail: onReceiverCreateFail
+            });
+            initInstrumentData();
+        }
     };
 
     function onInputChange(e) {
@@ -130,7 +138,7 @@ var QuietLab = (function() {
         transmitter.transmit(Quiet.str2ab("foo"));
         receiver = Quiet.receiver({profile: profile,
             onReceive: onReceive,
-            onCreateFail: onReceiverCreateFail,
+            onCreateFail: onReceiverCreateFail
         });
 
         pausedBlock.classList.add("hidden");
@@ -254,6 +262,13 @@ var QuietLab = (function() {
         };
     };
 
+    function initInstrumentData() {
+        instrumentData = {
+            "packets-received": 0
+        };
+
+    };
+
     function onDOMLoad() {
         warningbox = document.querySelector("[data-quiet-lab-warning]");
 
@@ -363,9 +378,7 @@ var QuietLab = (function() {
             "packets-received": document.querySelector("[data-quiet-lab-packets-received]")
         };
 
-        instrumentData = {
-            "packets-received": 0
-        };
+        initInstrumentData();
 
         startBtn = document.querySelector("[data-quiet-lab-start-button]");
 
