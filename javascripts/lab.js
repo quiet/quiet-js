@@ -226,7 +226,7 @@ var QuietLab = (function() {
         fftAxesCtx.beginPath();
         var maxFreq = (audioCtx.sampleRate/2)/1000;
         var xmargin = fftAxesCtx.measureText(analyser.minDecibels).width + 2;
-        var ymargin = fftAxesCtx.measureText(maxFreq.toFixed(0)).height + 2;
+        var ymargin = 12 + 2;
         fftAxesCtx.moveTo(xmargin, 0);
         fftAxesCtx.lineTo(xmargin, fftAxes.height - ymargin);
         fftAxesCtx.lineTo(fftAxes.width, fftAxes.height - ymargin);
