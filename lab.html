@@ -8,12 +8,13 @@
     <link rel="stylesheet" href="stylesheets/bootstrap.min.css">
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/github-dark.css">
-    <style media="screen" type="text/css">
-        @media (max-width: 768px)
-        .instrument-panel {
-            position: fixed;
-            top: 25px;
-            right: 0;
+    <style type="text/css">
+        @media (max-width: 768px) {
+            .instrument-panel {
+                position: fixed;
+                top: 25px;
+                right: 0;
+            }
         }
     </style>
     <script src="javascripts/scale.fix.js"></script>
@@ -421,7 +422,7 @@
                 <p>This will start the transmitter, which plays sound. Please turn down your volume to 20% before starting.</p>
             </div>
             <div data-quiet-lab-instruments class="hidden">
-                <div class="container">
+                <div class="container-fluid">
                     <div class="col-sm-6">
                         <div style="width: 256px; margin: 0 auto">
                             <canvas data-quiet-lab-fft width="256" height="256"></canvas>
@@ -433,7 +434,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="container">
+                <div class="container-fluid">
                     <div class="col-sm-3">Packets Received:</div>
                     <div class="col-sm-3" data-quiet-lab-packets-received>0</div>
                 </div>
