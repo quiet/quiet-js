@@ -238,7 +238,7 @@ var QuietLab = (function() {
         var maxFreq = audioCtx.sampleRate/2;
         var xscale = fftCanvas.width/maxFreq;
         for (var i = 0; i < maxFreq; i += 2000) {
-            fftAxesCtx.strokeText((i/1000).toFixed(0), xmargin + (i * xscale), fftAxes.heigt);
+            fftAxesCtx.strokeText((i/1000).toFixed(0), xmargin + (i * xscale), fftAxes.height);
         }
 
         var constellationAxes = document.querySelector("[data-quiet-lab-constellation-axes]");
