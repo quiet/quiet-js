@@ -233,7 +233,7 @@ var QuietLab = (function() {
         fftAxesCtx.font = "12px monospace";
         var yscale = fftCanvas.height/(analyser.maxDecibels - analyser.minDecibels);
         for (var i = analyser.minDecibels; i <= analyser.maxDecibels; i += 10) {
-            fftAxesCtx.strokeText(i, 0, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
+            fftAxesCtx.strokeText(i, 0, fftCanvas.height - ((i - analyser.minDecibels) * yscale) + 5);
         }
         var maxFreq = audioCtx.sampleRate/2;
         var xscale = fftCanvas.width/maxFreq;
