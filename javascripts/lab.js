@@ -78,7 +78,7 @@ var QuietLab = (function() {
         if (transmitter !== undefined) {
             transmitter.destroy();
             transmitter = Quiet.transmitter({profile: profile, onEnqueue: onTransmitEnqueue});
-            transmitter.transmit(Quiet.str2ab("foo"));
+            transmitter.transmit(buildFrame());
         }
         if (receiver !== undefined) {
             receiver.destroy();
@@ -117,8 +117,18 @@ var QuietLab = (function() {
         updateProfileOutput();
     };
 
+    function buildFrame() {
+        var frame = new ArrayBuffer(transmitter.frameLength);
+        var frameView = new Uint8Array(frame);
+        for (var i = 0; i < frameView.length; i++) {
+            frameView[i] = Math.floor(Math.random() * 256);
+        }
+
+        return frame;
+    }
+
     function onTransmitEnqueue() {
-        window.setTimeout(function() { transmitter.transmit(Quiet.str2ab("foo")); }, 0);
+        window.setTimeout(function() { transmitter.transmit(buildFrame()); }, 0);
     };
 
     function updateInstruments() {
@@ -151,7 +161,7 @@ var QuietLab = (function() {
 
     function onLabStart() {
         transmitter = Quiet.transmitter({profile: profile, onEnqueue: onTransmitEnqueue});
-        transmitter.transmit(Quiet.str2ab("foo"));
+        transmitter.transmit(buildFrame());
         receiver = Quiet.receiver({profile: profile,
             onReceive: onReceive,
             onCreateFail: onReceiverCreateFail,
