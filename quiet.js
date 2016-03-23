@@ -228,6 +228,8 @@ var Quiet = (function() {
      * @property {Number} frameLength - length in bytes of each underlying transmit frame.
      * calls to transmit() will automatically slice passed arraybuffer into frames of
      * this length or shorter
+     * @property {function} getAverageEncodeTime - returns average time in ms spent encoding data
+     * into sound samples over the last 3 runs
      */
 
     /**
@@ -343,6 +345,10 @@ var Quiet = (function() {
         // the way we do this is by writing empty blocks once we're done and *then* we can disconnect
         var empties_written = 0;
 
+        // measure some stats about encoding time for user
+        var last_emit_times = [];
+        var num_emit_times = 3;
+
         // writebuf calls _send and _emit on the encoder
         // first we push as much payload as will fit into encoder's tx queue
         // then we create the next sample block (if played = true)
@@ -373,7 +379,14 @@ var Quiet = (function() {
                 return;
             }
 
+            var before = new Date();
             var written = Module.ccall('quiet_encoder_emit', 'number', ['pointer', 'pointer', 'number'], [encoder, samples, sampleBufferSize]);
+            var after = new Date();
+
+            last_emit_times.push(after - before);
+            if (last_emit_times.length > num_emit_times) {
+                last_emit_times.pop();
+            }
 
             // libquiet notifies us that the payload is finished by
             // returning written < number of samples we asked for
@@ -431,10 +444,22 @@ var Quiet = (function() {
             }
         };
 
+        var getAverageEncodeTime = function() {
+            if (last_emit_times.length === 0) {
+                return 0;
+            }
+            var total = 0;
+            for (var i = 0; i < last_emit_times.length; i++) {
+                total += last_emit_times[i];
+            }
+            return total/(last_emit_times.length);
+        };
+
         return {
             transmit: transmit,
             destroy: destroy,
-            frameLength: frame_len
+            frameLength: frame_len,
+            getAverageEncodeTime: getAverageEncodeTime
         };
     };
 
@@ -527,6 +552,8 @@ var Quiet = (function() {
      * @typedef Receiver
      * @type object
      * @property {function} destroy - immediately stop sampling microphone and release all resources
+     * @property {function} getAverageDecodeTime - returns average time in ms spent decoding data
+     * from sound samples over the last 3 runs
      */
 
     /**
@@ -657,8 +684,17 @@ var Quiet = (function() {
         };
 
         var lastChecksumFailCount = 0;
+        var last_consume_times = [];
+        var num_consume_times = 3;
         var consume = function() {
+            var before = new Date();
             Module.ccall('quiet_decoder_consume', 'number', ['pointer', 'pointer', 'number'], [decoder, samples, sampleBufferSize]);
+            var after = new Date();
+
+            last_consume_times.push(after - before);
+            if (last_consume_times > num_consume_times) {
+                last_consume_times.pop();
+            }
 
             window.setTimeout(readbuf, 0);
 
@@ -727,8 +763,22 @@ var Quiet = (function() {
             Module.ccall('quiet_decoder_destroy', null, ['pointer'], [decoder]);
         };
 
+        var getAverageDecodeTime = function() {
+            if (last_consume_times.length === 0) {
+                return 0;
+            }
+            var total = 0;
+            for (var i = 0; i < last_consume_times.length; i++) {
+                total += last_consume_times[i];
+            }
+            return total/(last_consume_times.length);
+        };
+
+        };
+
         return {
-            destroy: destroy
+            destroy: destroy,
+            getAverageDecodeTime: getAverageDecodeTime
         }
     };
 
