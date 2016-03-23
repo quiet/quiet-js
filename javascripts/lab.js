@@ -158,7 +158,7 @@ var QuietLab = (function() {
         }
 
         lastTransmitted.unshift(frame);
-        if (lastTransmitted.length > 10) {
+        if (lastTransmitted.length > 200) {
             lastTransmitted.pop();
         }
 
