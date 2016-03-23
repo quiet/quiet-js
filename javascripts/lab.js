@@ -251,7 +251,34 @@ var QuietLab = (function() {
         constellationAxesCtx.lineTo(constellationAxes.width, constellationAxes.height/2);
         constellationAxesCtx.moveTo(constellationAxes.width/2, 0);
         constellationAxesCtx.lineTo(constellationAxes.width/2, constellationAxes.height);
+
+        constellationAxesCtx.moveTo(constellationAxes.width/6, constellationAxes.height/2 - 2);
+        constellationAxesCtx.lineTo(constellationAxes.width/6, constellationAxes.height/2 + 2);
+        constellationAxesCtx.moveTo(constellationAxes.width/3, constellationAxes.height/2 - 2);
+        constellationAxesCtx.lineTo(constellationAxes.width/3, constellationAxes.height/2 + 2);
+        constellationAxesCtx.moveTo(2*constellationAxes.width/3, constellationAxes.height/2 - 2);
+        constellationAxesCtx.lineTo(2*constellationAxes.width/3, constellationAxes.height/2 + 2);
+        constellationAxesCtx.moveTo(5*constellationAxes.width/6, constellationAxes.height/2 - 2);
+        constellationAxesCtx.lineTo(5*constellationAxes.width/6, constellationAxes.height/2 + 2);
+
+        constellationAxesCtx.moveTo(constellationAxes.width/2 - 2, constellationAxes.height/6);
+        constellationAxesCtx.lineTo(constellationAxes.width/2 + 2, constellationAxes.height/6);
+        constellationAxesCtx.moveTo(constellationAxes.width/2 - 2, constellationAxes.height/3);
+        constellationAxesCtx.lineTo(constellationAxes.width/2 + 2, constellationAxes.height/3);
+        constellationAxesCtx.moveTo(constellationAxes.width/2 - 2, 2*constellationAxes.height/3);
+        constellationAxesCtx.lineTo(constellationAxes.width/2 + 2, 2*constellationAxes.height/3);
+        constellationAxesCtx.moveTo(constellationAxes.width/2 - 2, 5*constellationAxes.height/6);
+        constellationAxesCtx.lineTo(constellationAxes.width/2 + 2, 5*constellationAxes.height/6);
+
         constellationAxesCtx.stroke();
+
+        constellationAxesCtx.strokeText("-1", constellationAxes.width/6, constellationAxes.height/2 - 4);
+        constellationAxesCtx.strokeText("1", 5*constellationAxes.width/6, constellationAxes.height/2 - 4);
+        constellationAxesCtx.strokeText("-1", constellationAxes.width/2 + 4, constellationAxes.height/6);
+        constellationAxesCtx.strokeText("1", constellationAxes.width/2 + 4, 5*constellationAxes.height/6);
+        constellationAxesCtx.strokeText("I", constellationAxes.width - 4, constellationAxes.height/2 - 4);
+        constellationAxesCtx.strokeText("Q", constellationAxes.width/2 + 4, 4);
+
     };
 
     function drawFFT() {
