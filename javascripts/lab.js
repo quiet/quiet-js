@@ -23,6 +23,7 @@ var QuietLab = (function() {
     var warningbox;
     var instruments;
     var instrumentData;
+    var lastReceived = [];
 
     function disableInput(input) {
         input.setAttribute("disabled", "disabled");
@@ -82,6 +83,7 @@ var QuietLab = (function() {
         }
         if (receiver !== undefined) {
             receiver.destroy();
+            lastReceived = [];
             receiver = Quiet.receiver({profile: profile,
                 onReceive: onReceive,
                 onCreateFail: onReceiverCreateFail,
@@ -139,6 +141,26 @@ var QuietLab = (function() {
 
     function onReceive(recvPayload) {
         instrumentData["packets-received"]++;
+        var info = {};
+        info.time = new Date();
+        info.size = 8*recvPayload.byteLength;
+        lastReceived.unshift(into);
+        if (lastReceived.length > 5) {
+            lastReceived.pop();
+        }
+        var oldest = info.time
+        var totalsize = 0;
+        for (var i = 0; i < lastReceived.length; i++) {
+            if (lastReceived[i].time < oldest) {
+                oldest = lastReceived[i].time;
+            }
+            totalsize += info.size;
+        }
+        if (oldest === info.time) {
+            instrumentData["transfer-rate"] = "---";
+        } else {
+            instrumentData["transfer-rate"] = (1000*(totalsize/(info.time - oldest))).toFixed(0);
+        }
         updateInstruments();
     };
 
@@ -373,7 +395,8 @@ var QuietLab = (function() {
             "rssi": "---",
             "evm": "---",
             "avgEncodeTime": "---",
-            "avgDecodeTime": "---"
+            "avgDecodeTime": "---",
+            "transfer-rate": "---"
         };
 
     };
@@ -493,7 +516,8 @@ var QuietLab = (function() {
             "rssi": document.querySelector("[data-quiet-lab-rssi]"),
             "evm": document.querySelector("[data-quiet-lab-evm]"),
             "avgEncodeTime": document.querySelector("[data-quiet-lab-avg-encode-time]"),
-            "avgDecodeTime": document.querySelector("[data-quiet-lab-avg-decode-time]")
+            "avgDecodeTime": document.querySelector("[data-quiet-lab-avg-decode-time]"),
+            "transfer-rate": document.querySelector("[data-quiet-lab-transfer-rate]")
         };
 
         initInstrumentData();
