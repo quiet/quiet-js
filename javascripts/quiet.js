@@ -286,6 +286,9 @@ var Quiet = (function() {
         var running = false;
         var transmitter;
 
+        // prevent races with callbacks on destroyed in-flight objects
+        var destroyed = false;
+
         var onaudioprocess = function(e) {
             var output_l = e.outputBuffer.getChannelData(0);
 
@@ -305,6 +308,9 @@ var Quiet = (function() {
         };
 
         var startTransmitter = function () {
+            if (destroyed) {
+                return;
+            }
             if (transmitter === undefined) {
                 // we have to start transmitter here because mobile safari wants it to be in response to a
                 // user action
@@ -326,6 +332,9 @@ var Quiet = (function() {
         };
 
         var stopTransmitter = function () {
+            if (destroyed) {
+                return;
+            }
             dummy_osc.disconnect();
             transmitter.disconnect();
             running = false;
@@ -353,6 +362,9 @@ var Quiet = (function() {
         // first we push as much payload as will fit into encoder's tx queue
         // then we create the next sample block (if played = true)
         var writebuf = function() {
+            if (destroyed) {
+                return;
+            }
             // fill as much of quiet's transmit queue as possible
             var frame_available = false;
             while(true) {
@@ -426,6 +438,9 @@ var Quiet = (function() {
         };
 
         var transmit = function(buf) {
+            if (destroyed) {
+                return;
+            }
             // slice up into frames and push the frames to a list
             for (var i = 0; i < buf.byteLength; ) {
                 var frame = buf.slice(i, i + frame_len);
@@ -437,11 +452,15 @@ var Quiet = (function() {
         };
 
         var destroy = function() {
+            if (destroyed) {
+                return;
+            }
             Module.ccall('free', null, ['pointer'], [samples]);
             Module.ccall('quiet_encoder_destroy', null, ['pointer'], [encoder]);
             if (running === true) {
                 stopTransmitter();
             }
+            destroyed = true;
         };
 
         var getAverageEncodeTime = function() {
@@ -671,7 +690,12 @@ var Quiet = (function() {
             Module.ccall('quiet_decoder_enable_stats', null, ['pointer'], [decoder]);
         }
 
+        var destroyed = false;
+
         var readbuf = function() {
+            if (destroyed) {
+                return;
+            }
             while (true) {
                 var read = Module.ccall('quiet_decoder_recv', 'number', ['pointer', 'pointer', 'number'], [decoder, frame, frameBufferSize]);
                 if (read === -1) {
@@ -687,6 +711,9 @@ var Quiet = (function() {
         var last_consume_times = [];
         var num_consume_times = 3;
         var consume = function() {
+            if (destroyed) {
+                return;
+            }
             var before = new Date();
             Module.ccall('quiet_decoder_consume', 'number', ['pointer', 'pointer', 'number'], [decoder, samples, sampleBufferSize]);
             var after = new Date();
@@ -756,11 +783,15 @@ var Quiet = (function() {
         fakeGain.connect(audioCtx.destination);
 
         var destroy = function() {
+            if (destroyed) {
+                return;
+            }
             fakeGain.disconnect();
             scriptProcessor.disconnect();
             Module.ccall('free', null, ['pointer'], [samples]);
             Module.ccall('free', null, ['pointer'], [frame]);
             Module.ccall('quiet_decoder_destroy', null, ['pointer'], [decoder]);
+            destroyed = true;
         };
 
         var getAverageDecodeTime = function() {
