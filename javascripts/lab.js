@@ -124,12 +124,7 @@ var QuietLab = (function() {
     };
 
     function toGray(x) {
-        x ^= (x >> 16);
-        x ^= (x >> 8);
-        x ^= (x >> 4);
-        x ^= (x >> 2);
-        x ^= (x >> 1);
-        return x;
+        return x ^ (x >> 1);
     };
 
     function bitDistance(a, b) {
