@@ -144,7 +144,7 @@ var QuietLab = (function() {
         var info = {};
         info.time = new Date();
         info.size = 8*recvPayload.byteLength;
-        lastReceived.unshift(into);
+        lastReceived.unshift(info);
         if (lastReceived.length > 5) {
             lastReceived.pop();
         }
