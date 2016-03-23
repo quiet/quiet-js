@@ -225,6 +225,9 @@ var Quiet = (function() {
      * @type object
      * @property {transmit} transmit - queue up array buffer and begin transmitting
      * @property {function} destroy - immediately stop playback and release all resources
+     * @property {Number} frameLength - length in bytes of each underlying transmit frame.
+     * calls to transmit() will automatically slice passed arraybuffer into frames of
+     * this length or shorter
      */
 
     /**
@@ -430,7 +433,8 @@ var Quiet = (function() {
 
         return {
             transmit: transmit,
-            destroy: destroy
+            destroy: destroy,
+            frameLength: frame_len
         };
     };
 
