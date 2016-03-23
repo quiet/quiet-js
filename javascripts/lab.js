@@ -232,13 +232,13 @@ var QuietLab = (function() {
         fftAxesCtx.stroke();
         fftAxesCtx.font = "12px monospace";
         var yscale = fftCanvas.height/(analyser.maxDecibels - analyser.minDecibels);
-        for (var i = analyser.minDecibels; i < analyser.maxDecibels; i += 10) {
-            fftAxesCtx.strokeText(i, 0, fftCanvas.height - ((i - analyser.minDecibels) * yscale) + 10);
+        for (var i = analyser.minDecibels; i <= analyser.maxDecibels; i += 10) {
+            fftAxesCtx.strokeText(i, 0, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
         }
         var maxFreq = audioCtx.sampleRate/2;
         var xscale = fftCanvas.width/maxFreq;
         for (var i = 0; i < maxFreq; i += 2000) {
-            fftAxesCtx.strokeText((i/1000).toFixed(0), xmargin + (i * xscale), fftCanvas.height);
+            fftAxesCtx.strokeText((i/1000).toFixed(0), xmargin + (i * xscale), fftAxes.heigt);
         }
 
         var constellationAxes = document.querySelector("[data-quiet-lab-constellation-axes]");
