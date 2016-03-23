@@ -463,10 +463,8 @@ function getSafeHeapType(bytes, isFloat) {
   }
 }
 
-var SAFE_HEAP_COUNTER = 0;
 
 function SAFE_HEAP_STORE(dest, value, bytes, isFloat) {
-  Module.print('SAFE_HEAP store: ' + [dest, value, bytes, isFloat, SAFE_HEAP_COUNTER++]);
   if (dest <= 0) abort('segmentation fault storing ' + bytes + ' bytes to address ' + dest);
   if (dest % bytes !== 0) abort('alignment error storing to address ' + dest + ', which was expected to be aligned to a multiple of ' + bytes);
   if (dest + bytes > Math.max(DYNAMICTOP, STATICTOP)) abort('segmentation fault, exceeded the top of the available heap when storing ' + bytes + ' bytes to address ' + dest + '. STATICTOP=' + STATICTOP + ', DYNAMICTOP=' + DYNAMICTOP);
@@ -485,7 +483,6 @@ function SAFE_HEAP_LOAD(dest, bytes, unsigned, isFloat) {
   var type = getSafeHeapType(bytes, isFloat);
   var ret = getValue(dest, type, 1);
   if (unsigned) ret = unSign(ret, parseInt(type.substr(1)), 1);
-  Module.print('SAFE_HEAP load: ' + [dest, ret, bytes, isFloat, unsigned, SAFE_HEAP_COUNTER++]);
   return ret;
 }
 function SAFE_HEAP_LOAD_D(dest, bytes, unsigned) {
