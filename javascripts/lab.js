@@ -119,7 +119,6 @@ var QuietLab = (function() {
 
     function onTransmitEnqueue() {
         window.setTimeout(function() { transmitter.transmit(Quiet.str2ab("foo")); }, 0);
-        console.log("enqueued");
     };
 
     function updateInstruments() {
