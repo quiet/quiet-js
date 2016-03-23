@@ -117,7 +117,7 @@ var QuietLab = (function() {
         updateProfileOutput();
     };
 
-    function onTransmitFinish(transmitter) {
+    function onTransmitFinish() {
         window.setTimeout(function() { transmitter.transmit(Quiet.str2ab("foo")); }, 0);
     };
 
@@ -127,18 +127,18 @@ var QuietLab = (function() {
         }
     };
 
-    function onReceive(receiver, recvPayload) {
+    function onReceive(recvPayload) {
         instrumentData["packets-received"]++;
         updateInstruments();
     };
 
-    function onReceiverCreateFail(receiver, reason) {
+    function onReceiverCreateFail(reason) {
         console.log("failed to create quiet receiver: " + reason);
         warningbox.classList.remove("hidden");
         warningbox.textContent = "Sorry, it looks like this example is not supported by your browser. Please give permission to use the microphone or try again in Google Chrome or Microsoft Edge."
     };
 
-    function onReceiverStatsUpdate(receiver, stats) {
+    function onReceiverStatsUpdate(stats) {
         if (stats.length > 0) {
             drawConstellation(stats[0].symbols);
             instrumentData.rssi = stats[0].receivedSignalStrengthIndicator.toFixed(2);
@@ -150,10 +150,7 @@ var QuietLab = (function() {
     };
 
     function onLabStart() {
-        transmitter = Quiet.transmitter({
-            profile: profile,
-            onFinish: function() { onTransmitFinish(
-        });
+        transmitter = Quiet.transmitter({profile: profile, onFinish: onTransmitFinish});
         transmitter.transmit(Quiet.str2ab("foo"));
         receiver = Quiet.receiver({profile: profile,
             onReceive: onReceive,
