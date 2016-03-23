@@ -195,12 +195,16 @@ var QuietLab = (function() {
         }
 
         var leastDistance = 33;
+        var thresh = 4;
         var closest;
         var rxView = new Uint32Array(recvPayload, 0, 1);
         // go oldest to newest -- try to find our frame
         for (var i = lastTransmitted.length - 1; i >= 0; i--) {
             var txView = new Uint32Array(lastTransmitted[i], 0, 1);
             var dist = bitDistance(rxView[0], txView[0]);
+            if (dist > thresh) {
+                continue;
+            }
             if (dist < leastDistance) {
                 leastDistance = dist;
                 closest = i;
