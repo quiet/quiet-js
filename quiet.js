@@ -241,6 +241,16 @@ var Quiet = (function() {
      * @param {function} [opts.onFinish] - user callback which will notify user when playback of all data in queue is complete
      *    if the user calls transmit multiple times before waiting for onFinish, then onFinish will be called only once after
      *    all of the data has been played out
+     * @param {function} [opts.onEnqueue] - user callback which will notify user when all data passed
+     *   to transmit() has been written to the transmit queue and has thus entered the transmit
+     *   pipeline. for convenience, quiet.js is designed to hold as much data as you ask it to and
+     *   write it to the libquiet transmit queue over time. this callback is handy because it
+     *   informs the user that all data resides in libquiet, which is useful if you would like
+     *   to stream data to the transmitter. this callback is the appropriate place to stream the
+     *   next chunk. doing so will prevent excess memory bloat while maintaining the maximum
+     *   transmit throughput. if the user calls transmit multiple times before waiting for
+     *   onEnqueue, then onEnqueue will be called only once after all of the data has been
+     *   played out
      * @returns {Transmitter} - Transmitter object
      * @example
      * var tx = transmitter({profile: "robust", onFinish: function () { console.log("transmission complete"); }});
@@ -367,6 +377,7 @@ var Quiet = (function() {
             }
             // fill as much of quiet's transmit queue as possible
             var frame_available = false;
+            var frame_written = false;
             while(true) {
                 var frame = payload.shift();
                 if (frame === undefined) {
@@ -377,6 +388,19 @@ var Quiet = (function() {
                 if (written === -1) {
                     payload.unshift(frame);
                     break;
+                }
+                frame_written = true;
+            }
+
+            if (payload.length === 0 && frame_written === true) {
+                // we wrote at least one frame and emptied out payload, our local (js) tx queue
+                // this means we have transitioned to having all data in libquiet
+                // notify user about this if they like
+                // this is an important transition point because it allows user to control
+                // memory util without sacrificing throughput as would be the case for waiting
+                // for onFinish, which is only called after everything has flushed
+                if (opts.onEnqueue !== undefined) {
+                    window.setTimeout(opts.onEnqueue, 0);
                 }
             }
 
