@@ -764,6 +764,9 @@ var Quiet = (function() {
         }
 
         scriptProcessor.onaudioprocess = function(e) {
+            if (destroyed) {
+                return;
+            }
             var input = e.inputBuffer.getChannelData(0);
             var sample_view = Module.HEAPF32.subarray(samples/4, samples/4 + sampleBufferSize);
             sample_view.set(input);
