@@ -132,7 +132,7 @@ var QuietLab = (function() {
         var c = a ^ b;
         while (c !== 0) {
             d += c & 1;
-            c >>= 1;
+            c >>>= 1;
         }
         return d;
     };
