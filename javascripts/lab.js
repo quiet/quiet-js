@@ -77,7 +77,7 @@ var QuietLab = (function() {
         jsonBlock.textContent = JSON.stringify(profile, null, 4);
         if (transmitter !== undefined) {
             transmitter.destroy();
-            transmitter = Quiet.transmitter({profile: profile, onFinish: onTransmitFinish});
+            transmitter = Quiet.transmitter({profile: profile, onEnqueue: onTransmitEnqueue});
             transmitter.transmit(Quiet.str2ab("foo"));
         }
         if (receiver !== undefined) {
@@ -117,8 +117,9 @@ var QuietLab = (function() {
         updateProfileOutput();
     };
 
-    function onTransmitFinish() {
+    function onTransmitEnqueue() {
         window.setTimeout(function() { transmitter.transmit(Quiet.str2ab("foo")); }, 0);
+        console.log("enqueued");
     };
 
     function updateInstruments() {
@@ -150,7 +151,7 @@ var QuietLab = (function() {
     };
 
     function onLabStart() {
-        transmitter = Quiet.transmitter({profile: profile, onFinish: onTransmitFinish});
+        transmitter = Quiet.transmitter({profile: profile, onEnqueue: onTransmitEnqueue});
         transmitter.transmit(Quiet.str2ab("foo"));
         receiver = Quiet.receiver({profile: profile,
             onReceive: onReceive,
