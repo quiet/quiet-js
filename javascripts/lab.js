@@ -143,8 +143,10 @@ var QuietLab = (function() {
             drawConstellation(stats[0].symbols);
             instrumentData.rssi = stats[0].receivedSignalStrengthIndicator;
             instrumentData.evm = stats[0].errorVectorMagnitude;
-            updateInstruments();
         }
+        instrumentData.avgEncodeTime = (transmitter.getAverageEncodeTime()).toFixed(2);
+        instrumentData.avgDecodeTime = (receiver.getAverageDecodeTime()).toFixed(2);
+        updateInstruments();
     };
 
     function onLabStart() {
@@ -331,8 +333,10 @@ var QuietLab = (function() {
     function initInstrumentData() {
         instrumentData = {
             "packets-received": 0,
-            "rssi": 0,
-            "evm": 0
+            "rssi": "",
+            "evm": "",
+            "avgEncodeTime": "",
+            "avgDecodeTime": ""
         };
 
     };
@@ -450,7 +454,9 @@ var QuietLab = (function() {
         instruments = {
             "packets-received": document.querySelector("[data-quiet-lab-packets-received]"),
             "rssi": document.querySelector("[data-quiet-lab-rssi]"),
-            "evm": document.querySelector("[data-quiet-lab-evm]")
+            "evm": document.querySelector("[data-quiet-lab-evm]"),
+            "avgEncodeTime": document.querySelector("[data-quiet-lab-avg-encode-time]"),
+            "avgDecodeTime": document.querySelector("[data-quiet-lab-avg-decode-time]")
         };
 
         initInstrumentData();
