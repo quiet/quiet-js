@@ -692,7 +692,7 @@ var Quiet = (function() {
             var after = new Date();
 
             last_consume_times.push(after - before);
-            if (last_consume_times > num_consume_times) {
+            if (last_consume_times.length > num_consume_times) {
                 last_consume_times.pop();
             }
 
