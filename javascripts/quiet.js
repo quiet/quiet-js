@@ -383,7 +383,7 @@ var Quiet = (function() {
             var written = Module.ccall('quiet_encoder_emit', 'number', ['pointer', 'pointer', 'number'], [encoder, samples, sampleBufferSize]);
             var after = new Date();
 
-            last_emit_times.push(after - before);
+            last_emit_times.shift(after - before);
             if (last_emit_times.length > num_emit_times) {
                 last_emit_times.pop();
             }
@@ -691,7 +691,7 @@ var Quiet = (function() {
             Module.ccall('quiet_decoder_consume', 'number', ['pointer', 'pointer', 'number'], [decoder, samples, sampleBufferSize]);
             var after = new Date();
 
-            last_consume_times.push(after - before);
+            last_consume_times.shift(after - before);
             if (last_consume_times.length > num_consume_times) {
                 last_consume_times.pop();
             }
