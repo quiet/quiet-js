@@ -141,8 +141,8 @@ var QuietLab = (function() {
     function onReceiverStatsUpdate(stats) {
         if (stats.length > 0) {
             drawConstellation(stats[0].symbols);
-            instrumentData.rssi = stats[0].receivedSignalStrengthIndicator;
-            instrumentData.evm = stats[0].errorVectorMagnitude;
+            instrumentData.rssi = stats[0].receivedSignalStrengthIndicator.toFixed(2);
+            instrumentData.evm = stats[0].errorVectorMagnitude.toFixed(2);
         }
         instrumentData.avgEncodeTime = (transmitter.getAverageEncodeTime()).toFixed(2);
         instrumentData.avgDecodeTime = (receiver.getAverageDecodeTime()).toFixed(2);
@@ -333,10 +333,10 @@ var QuietLab = (function() {
     function initInstrumentData() {
         instrumentData = {
             "packets-received": 0,
-            "rssi": "",
-            "evm": "",
-            "avgEncodeTime": "",
-            "avgDecodeTime": ""
+            "rssi": " ",
+            "evm": " ",
+            "avgEncodeTime": " ",
+            "avgDecodeTime": " "
         };
 
     };
