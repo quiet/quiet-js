@@ -774,8 +774,6 @@ var Quiet = (function() {
             return total/(last_consume_times.length);
         };
 
-        };
-
         return {
             destroy: destroy,
             getAverageDecodeTime: getAverageDecodeTime
