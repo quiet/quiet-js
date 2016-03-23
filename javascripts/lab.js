@@ -24,6 +24,8 @@ var QuietLab = (function() {
     var instruments;
     var instrumentData;
     var lastReceived = [];
+    var frameIndex = 0;
+    var lastTransmitted = [];
 
     function disableInput(input) {
         input.setAttribute("disabled", "disabled");
@@ -78,6 +80,8 @@ var QuietLab = (function() {
         jsonBlock.textContent = JSON.stringify(profile, null, 4);
         if (transmitter !== undefined) {
             transmitter.destroy();
+            frameIndex = 0;
+            lastTransmitted = [];
             transmitter = Quiet.transmitter({profile: profile, onEnqueue: onTransmitEnqueue});
             transmitter.transmit(buildFrame());
         }
@@ -119,15 +123,47 @@ var QuietLab = (function() {
         updateProfileOutput();
     };
 
+    function toGray(x) {
+        x ^= (x >> 16);
+        x ^= (x >> 8);
+        x ^= (x >> 4);
+        x ^= (x >> 2);
+        x ^= (x >> 1);
+        return x;
+    };
+
+    function bitDistance(a, b) {
+        var d = 0;
+        var c = a ^ b;
+        while (c !== 0) {
+            d += c & 1;
+            c >>= 1;
+        }
+        return d;
+    };
+
     function buildFrame() {
         var frame = new ArrayBuffer(transmitter.frameLength);
-        var frameView = new Uint8Array(frame);
-        for (var i = 0; i < frameView.length; i++) {
-            frameView[i] = Math.floor(Math.random() * 256);
+
+        // tag each frame with 4 bytes of gray-coded incrementer
+        // this will let us find it on rx so that we can compute ber
+        var index = toGray(frameIndex);
+        frameIndex++;
+        var intView = new Uint32Array(frame);
+        intView[0] = index;
+
+        var byteView = new Uint8Array(frame);
+        for (var i = 4; i < byteView.length; i++) {
+            byteView[i] = Math.floor(Math.random() * 256);
+        }
+
+        lastTransmitted.unshift(frame);
+        if (lastTransmitted.length > 10) {
+            lastTransmitted.pop();
         }
 
         return frame;
-    }
+    };
 
     function onTransmitEnqueue() {
         window.setTimeout(function() { transmitter.transmit(buildFrame()); }, 0);
@@ -161,6 +197,28 @@ var QuietLab = (function() {
         } else {
             totalsize -= oldest.size;
             instrumentData["transfer-rate"] = (1000*(totalsize/(info.time - oldest.time))).toFixed(0);
+        }
+
+        var leastDistance = 33;
+        var closest;
+        var rxView = new Uint32Array(recvPayload);
+        for (var i = 0; i < lastTransmitted.length; i++) {
+            var txView = new Uint32Array(lastTransmitted[i]);
+            var dist = bitDistance(rxView[0], txView[0]);
+            if (dist < leastDistance) {
+                leastDistance = dist;
+                closest = i;
+            }
+        }
+        var totalDist = 0;
+        if (closest !== undefined) {
+            var rxView = new Uint8Array(recvPayload);
+            var txView = new Uint8Array(lastTransmitted[closest]);
+            for (var i = 0; i < rxView.length; i++) {
+                totalDist += bitDistance(rxView[i], txView[i]);
+            }
+            instrumentData["bit-error-ratio"] = (100 * (totalDist/info.size)).toFixed(2);
+            lastTransmitted.splice(closest, 1);
         }
         updateInstruments();
     };
@@ -397,7 +455,8 @@ var QuietLab = (function() {
             "evm": "---",
             "avgEncodeTime": "---",
             "avgDecodeTime": "---",
-            "transfer-rate": "---"
+            "transfer-rate": "---",
+            "bit-error-ratio": "---",
         };
 
     };
@@ -518,7 +577,8 @@ var QuietLab = (function() {
             "evm": document.querySelector("[data-quiet-lab-evm]"),
             "avgEncodeTime": document.querySelector("[data-quiet-lab-avg-encode-time]"),
             "avgDecodeTime": document.querySelector("[data-quiet-lab-avg-decode-time]"),
-            "transfer-rate": document.querySelector("[data-quiet-lab-transfer-rate]")
+            "transfer-rate": document.querySelector("[data-quiet-lab-transfer-rate]"),
+            "bit-error-ratio": document.querySelector("[data-quiet-lab-bit-error-ratio]")
         };
 
         initInstrumentData();
