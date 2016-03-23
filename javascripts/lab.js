@@ -149,7 +149,7 @@ var QuietLab = (function() {
         // this will let us find it on rx so that we can compute ber
         var index = toGray(frameIndex);
         frameIndex++;
-        var intView = new Uint32Array(frame);
+        var intView = new Uint32Array(frame, 0, 1);
         intView[0] = index;
 
         var byteView = new Uint8Array(frame);
@@ -201,9 +201,9 @@ var QuietLab = (function() {
 
         var leastDistance = 33;
         var closest;
-        var rxView = new Uint32Array(recvPayload);
+        var rxView = new Uint32Array(recvPayload, 0, 1);
         for (var i = 0; i < lastTransmitted.length; i++) {
-            var txView = new Uint32Array(lastTransmitted[i]);
+            var txView = new Uint32Array(lastTransmitted[i], 0, 1);
             var dist = bitDistance(rxView[0], txView[0]);
             if (dist < leastDistance) {
                 leastDistance = dist;
