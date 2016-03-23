@@ -302,10 +302,10 @@ var QuietLab = (function() {
             var x = (symbols[i].real - min) * xscale;
             var y = (symbols[i].imag - min) * yscale;
             constellationCanvasCtx.beginPath();
-            constellationCanvasCtx.moveTo(x - 1, y - 1);
-            constellationCanvasCtx.lineTo(x + 1, y + 1);
-            constellationCanvasCtx.moveTo(x - 1, y + 1);
-            constellationCanvasCtx.lineTo(x + 1, y - 1);
+            constellationCanvasCtx.moveTo(x - 2, y - 2);
+            constellationCanvasCtx.lineTo(x + 2, y + 2);
+            constellationCanvasCtx.moveTo(x - 2, y + 2);
+            constellationCanvasCtx.lineTo(x + 2, y - 2);
             constellationCanvasCtx.stroke();
         }
     };
