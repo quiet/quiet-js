@@ -148,18 +148,19 @@ var QuietLab = (function() {
         if (lastReceived.length > 5) {
             lastReceived.pop();
         }
-        var oldest = info.time
+        var oldest = info;
         var totalsize = 0;
         for (var i = 0; i < lastReceived.length; i++) {
-            if (lastReceived[i].time < oldest) {
-                oldest = lastReceived[i].time;
+            if (lastReceived[i].time < oldest.time) {
+                oldest = lastReceived[i];
             }
             totalsize += info.size;
         }
-        if (oldest === info.time) {
+        if (oldest.time === info.time) {
             instrumentData["transfer-rate"] = "---";
         } else {
-            instrumentData["transfer-rate"] = (1000*(totalsize/(info.time - oldest))).toFixed(0);
+            totalsize -= oldest.size;
+            instrumentData["transfer-rate"] = (1000*(totalsize/(info.time - oldest.time))).toFixed(0);
         }
         updateInstruments();
     };
