@@ -163,7 +163,7 @@ var QuietLab = (function() {
             // we can display it, but if the packet hasn't been found by the
             // receiver, it's gone
             lastTransmitted.pop();
-            instrumentData["packets-lost"}++;
+            instrumentData["packets-lost"]++;
         }
 
         return frame;
