@@ -233,10 +233,10 @@ var QuietLab = (function() {
             totalsize += info.size;
             totalerrors += info.bitErrors;
         }
+        instrumentData["bit-error-ratio"] = (100 * (totalerrors/totalsize)).toFixed(4);
         if (oldest.time === info.time) {
             instrumentData["transfer-rate"] = "---";
         } else {
-            instrumentData["bit-error-ratio"] = (100 * (totalerrors/totalsize)).toFixed(4);
             totalsize -= oldest.size;
             instrumentData["transfer-rate"] = (1000*(totalsize/(info.time - oldest.time))).toFixed(0);
         }
