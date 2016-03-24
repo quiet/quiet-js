@@ -343,6 +343,32 @@
                   <div class="form-group">
                       <div>
                           <div class="control-label">
+                              <label style="display: block" for="interpolationShape">Filter Shape
+                              </label>
+                          </div>
+                          <div>
+                              <select class="form-control" id="interpolationShape">
+                                <option selected value="kaiser">Kaiser</option>
+                                <option value="pm">Parks-McClellan</option>
+                                <option value="rcos">Raised Cosine</option>
+                                <option value="fexp">Flipped Exponential (Nyquist)</option>
+                                <option value="fsech">Flipped Hyperbolic Secant (Nyquist)</option>
+                                <option value="farcsech">Flipped Arc-Hyperbolic Secant (Nyquist)</option>
+                                <option value="arkaiser">Root-Nyquist Kaiser (Approx)</option>
+                                <option value="rkaiser">Root-Nyquist Kaiser</option>
+                                <option value="rrcos">Root Raised Cosine</option>
+                                <option value="hM3">Harris-Moerder-3</option>
+                                <option value="gmsk">GMSK</option>
+                                <option value="rfexp">Flipped Exponential (root-Nyquist)</option>
+                                <option value="rfsech">Flipped Hyperbolic Secant (root-Nyquist)</option>
+                                <option value="rfarcsech">Flipped Arc-Hyperbolic Secant (root-Nyquist)</option>
+                              </select>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <div>
+                          <div class="control-label">
                               <label style="display: block" for="interpolationSamplesPerSymbol">Samples Per Symbol
                               </label>
                           </div>

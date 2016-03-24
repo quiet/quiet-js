@@ -17,6 +17,7 @@
             "gain": 0.15
         },
         "interpolation": {
+            "shape": "kaiser",
             "samples_per_symbol": 2,
             "symbol_delay": 4,
             "excess_bandwidth": 0.35
@@ -38,11 +39,14 @@
         "mod_scheme": "qam256",
         "frame_length": 400,
         "modulation": {
+            "center_frequency": 11025,
+            "gain": 0.15
+        },
+        "interpolation": {
+            "shape": "kaiser",
             "samples_per_symbol": 2,
             "symbol_delay": 4,
-            "excess_bandwidth": 0.35,
-            "center_radians": 1.5708,
-            "gain": 0.15
+            "excess_bandwidth": 0.35
         },
         "encoder_filters": {
             "dc_filter_alpha": 0.01
@@ -65,6 +69,7 @@
             "gain": 0.15
         },
         "interpolation": {
+            "shape": "kaiser",
             "samples_per_symbol": 10,
             "symbol_delay": 4,
             "excess_bandwidth": 0.35
@@ -90,6 +95,7 @@
             "gain": 0.15
         },
         "interpolation": {
+            "shape": "kaiser",
             "samples_per_symbol": 10,
             "symbol_delay": 4,
             "excess_bandwidth": 0.35
@@ -115,6 +121,7 @@
             "gain": 0.15
         },
         "interpolation": {
+            "shape": "kaiser",
             "samples_per_symbol": 10,
             "symbol_delay": 4,
             "excess_bandwidth": 0.35

@@ -541,6 +541,7 @@ var QuietLab = (function() {
                 gain: document.querySelector("#gain")
             },
             interpolation: {
+                shape: document.querySelector("#interpolationShape"),
                 samples_per_symbol: document.querySelector("#interpolationSamplesPerSymbol"),
                 symbol_delay: document.querySelector("#interpolationSymbolDelay"),
                 excess_bandwidth: document.querySelector("#interpolationExcessBandwidth")
