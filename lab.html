@@ -93,7 +93,7 @@
                   <div class="form-group">
                       <div>
                           <div class="control-label">
-                              <label style="display: block" for="frameLength">Frame Length
+                              <label style="display: block" for="frameLength">Maximum Frame Length
                               </label>
                           </div>
                           <div>
@@ -101,6 +101,21 @@
                           </div>
                       </div>
                   </div>
+                  <div class="form-group">
+                      <div>
+                          <div class="control-label">
+                              <label style="display: block" for="clampFrame">Transmitter Frame Length Behavior
+                              </label>
+                          </div>
+                          <div>
+                              <select class="form-control" id="clampFrame">
+                                <option selected value="clamp">Clamp to Single Sample Block</option>
+                                <option value="noClamp">Allow Overlap of Multiple Blocks</option>
+                              </select>
+                          </div>
+                      </div>
+                  </div>
+
                   <div class="form-group">
                       <div>
                           <div class="control-label">
@@ -453,6 +468,8 @@
                     <div class="col-md-6 col-lg-3" data-quiet-lab-transfer-rate>---</div>
                     <div class="col-md-6 col-lg-3">Bit Error Ratio (%):</div>
                     <div class="col-md-6 col-lg-3" data-quiet-lab-bit-error-ratio>---</div>
+                    <div class="col-md-6 col-lg-3">Total Bit Loss (%):</div>
+                    <div class="col-md-6 col-lg-3" data-quiet-lab-total-bit-loss>---</div>
                 </section>
             </div>
 

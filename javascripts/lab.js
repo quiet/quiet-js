@@ -26,6 +26,7 @@ var QuietLab = (function() {
     var lastReceived = [];
     var frameIndex = 345345;
     var lastTransmitted = [];
+    var clampFrame = true;
 
     function disableInput(input) {
         input.setAttribute("disabled", "disabled");
@@ -76,13 +77,25 @@ var QuietLab = (function() {
         updateProfileOutput();
     };
 
+    function onClampFrameChange(e) {
+        if (e.target.value === "clamp") {
+            clampFrame = true;
+        } else {
+            clampFrame = false;
+        }
+        updateProfileOutput();
+    };
+
     function updateProfileOutput() {
         jsonBlock.textContent = JSON.stringify(profile, null, 4);
         if (transmitter !== undefined) {
             transmitter.destroy();
             frameIndex = 345345;
             lastTransmitted = [];
-            transmitter = Quiet.transmitter({profile: profile, onEnqueue: onTransmitEnqueue});
+            transmitter = Quiet.transmitter({profile: profile,
+                onEnqueue: onTransmitEnqueue,
+                clampFrame: clampFrame
+            });
             transmitter.transmit(buildFrame());
         }
         if (receiver !== undefined) {
@@ -202,6 +215,7 @@ var QuietLab = (function() {
                 closest = i;
             }
         }
+        var totalDist = 0;
         if (closest === undefined) {
             // couldn't find it, so just toss it out
             // this will keep this mystery packet from affecting stats
@@ -209,13 +223,11 @@ var QuietLab = (function() {
             // packet loss
             return;
         } else {
-            var totalDist = 0;
             var rxView = new Uint8Array(recvPayload);
             var txView = new Uint8Array(lastTransmitted[closest]);
             for (var i = 0; i < rxView.length; i++) {
                 totalDist += bitDistance(rxView[i], txView[i]);
             }
-            info.bitErrors = totalDist;
             lastTransmitted.splice(closest, 1);
         }
 
@@ -223,17 +235,18 @@ var QuietLab = (function() {
         if (lastReceived.length > 5) {
             lastReceived.pop();
         }
+        instrumentData["bit-errors"] += totalDist;
         var oldest = info;
         var totalsize = 0;
-        var totalerrors = 0;
         for (var i = 0; i < lastReceived.length; i++) {
             if (lastReceived[i].time < oldest.time) {
                 oldest = lastReceived[i];
             }
             totalsize += info.size;
-            totalerrors += info.bitErrors;
         }
         instrumentData["bit-error-ratio"] = (100 * (totalerrors/totalsize)).toFixed(4);
+        var totalLoss = (instrumentData["packets-lost"] * info.size) + totalerrors;
+
         if (oldest.time === info.time) {
             instrumentData["transfer-rate"] = "---";
         } else {
@@ -478,6 +491,8 @@ var QuietLab = (function() {
             "avgDecodeTime": "---",
             "transfer-rate": "---",
             "bit-error-ratio": "---",
+            "bit-errors": 0,
+            "total-bit-loss": "---"
         };
 
     };
@@ -505,6 +520,9 @@ var QuietLab = (function() {
             modelist[i].addEventListener('change', onModeRadioChange, false);
             mode[modelist[i].value] = modelist[i];
         }
+
+        var clampFrame = document.querySelector("#clampFrame");
+        clampFrame.addEventListener('change', onClampFrameChange, false);
 
         inputs = {
             ofdm: {
@@ -600,7 +618,8 @@ var QuietLab = (function() {
             "avgEncodeTime": document.querySelector("[data-quiet-lab-avg-encode-time]"),
             "avgDecodeTime": document.querySelector("[data-quiet-lab-avg-decode-time]"),
             "transfer-rate": document.querySelector("[data-quiet-lab-transfer-rate]"),
-            "bit-error-ratio": document.querySelector("[data-quiet-lab-bit-error-ratio]")
+            "bit-error-ratio": document.querySelector("[data-quiet-lab-bit-error-ratio]"),
+            "total-bit-loss": document.querySelector("[data-quiet-lab-total-bit-loss]")
         };
 
         initInstrumentData();
