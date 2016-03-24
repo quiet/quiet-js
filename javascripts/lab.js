@@ -159,7 +159,11 @@ var QuietLab = (function() {
         // we'll also add a small safety margin
         var keepFrames = Math.ceil((totalQueueSize/transmitter.frameLength) + 10);
         if (lastTransmitted.length > keepFrames) {
+            // count packets as lost here. this introduces a little delay before
+            // we can display it, but if the packet hasn't been found by the
+            // receiver, it's gone
             lastTransmitted.pop();
+            instrumentData["packets-lost"}++;
         }
 
         return frame;
@@ -468,6 +472,7 @@ var QuietLab = (function() {
     function initInstrumentData() {
         instrumentData = {
             "packets-received": 0,
+            "packets-lost": 0,
             "rssi": "---",
             "evm": "---",
             "avgEncodeTime": "---",
@@ -590,6 +595,7 @@ var QuietLab = (function() {
 
         instruments = {
             "packets-received": document.querySelector("[data-quiet-lab-packets-received]"),
+            "packets-lost": document.querySelector("[data-quiet-lab-packets-lost]"),
             "rssi": document.querySelector("[data-quiet-lab-rssi]"),
             "evm": document.querySelector("[data-quiet-lab-evm]"),
             "avgEncodeTime": document.querySelector("[data-quiet-lab-avg-encode-time]"),
