@@ -180,25 +180,8 @@ var QuietLab = (function() {
         var info = {};
         info.time = new Date();
         info.size = 8*recvPayload.byteLength;
-        lastReceived.unshift(info);
-        if (lastReceived.length > 5) {
-            lastReceived.pop();
-        }
-        var oldest = info;
-        var totalsize = 0;
-        for (var i = 0; i < lastReceived.length; i++) {
-            if (lastReceived[i].time < oldest.time) {
-                oldest = lastReceived[i];
-            }
-            totalsize += info.size;
-        }
-        if (oldest.time === info.time) {
-            instrumentData["transfer-rate"] = "---";
-        } else {
-            totalsize -= oldest.size;
-            instrumentData["transfer-rate"] = (1000*(totalsize/(info.time - oldest.time))).toFixed(0);
-        }
 
+        // find it in the frames we have sent
         var leastDistance = 33;
         var thresh = 3;
         var closest;
@@ -216,14 +199,43 @@ var QuietLab = (function() {
             }
         }
         var totalDist = 0;
-        if (closest !== undefined) {
+        if (closest === undefined) {
+            // couldn't find it, so just toss it out
+            // this will keep this mystery packet from affecting stats
+            // if it was supposed to be counted, it will eventually increase
+            // packet loss
+            return;
+        } else {
             var rxView = new Uint8Array(recvPayload);
             var txView = new Uint8Array(lastTransmitted[closest]);
             for (var i = 0; i < rxView.length; i++) {
                 totalDist += bitDistance(rxView[i], txView[i]);
             }
-            instrumentData["bit-error-ratio"] = (100 * (totalDist/info.size)).toFixed(2);
+            info.bitErrors = totalDist;
             lastTransmitted.splice(closest, 1);
+        }
+
+        lastReceived.unshift(info);
+        if (lastReceived.length > 5) {
+            lastReceived.pop();
+        }
+        var oldest = info;
+        var totalsize = 0;
+        var totalerrors = 0;
+        for (var i = 0; i < lastReceived.length; i++) {
+            if (lastReceived[i].time < oldest.time) {
+                oldest = lastReceived[i];
+            }
+            totalsize += info.size;
+            totalerrors += info.bitErrors;
+        }
+        if (oldest.time === info.time) {
+            instrumentData["transfer-rate"] = "---";
+        } else {
+            totalsize -= oldest.size;
+            totalerrors -= oldest.bitErrors;
+            instrumentData["transfer-rate"] = (1000*(totalsize/(info.time - oldest.time))).toFixed(0);
+            instrumentData["bit-error-ratio"] = (100 * (totalerrors/totalsize)).toFixed(4);
         }
         updateInstruments();
     };
