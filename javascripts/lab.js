@@ -24,7 +24,7 @@ var QuietLab = (function() {
     var instruments;
     var instrumentData;
     var lastReceived = [];
-    var frameIndex = 0;
+    var frameIndex = 345345;
     var lastTransmitted = [];
 
     function disableInput(input) {
@@ -80,7 +80,7 @@ var QuietLab = (function() {
         jsonBlock.textContent = JSON.stringify(profile, null, 4);
         if (transmitter !== undefined) {
             transmitter.destroy();
-            frameIndex = 0;
+            frameIndex = 345345;
             lastTransmitted = [];
             transmitter = Quiet.transmitter({profile: profile, onEnqueue: onTransmitEnqueue});
             transmitter.transmit(buildFrame());
@@ -123,8 +123,8 @@ var QuietLab = (function() {
         updateProfileOutput();
     };
 
-    function toGray(x) {
-        return x ^ (x >> 1);
+    function nextLFSR(x) {
+        return ((((x >>> 31) ^ (x >>> 6) ^ (x >>> 4) ^ (x >>> 2) ^ (x >>> 1) ^ x) & 0x0000001) << 31) | (x >>> 1);
     };
 
     function bitDistance(a, b) {
@@ -140,12 +140,11 @@ var QuietLab = (function() {
     function buildFrame() {
         var frame = new ArrayBuffer(transmitter.frameLength);
 
-        // tag each frame with 4 bytes of gray-coded incrementer
+        // tag each frame with 4 bytes of lfsr output
         // this will let us find it on rx so that we can compute ber
-        var index = toGray(frameIndex);
-        frameIndex++;
         var intView = new Uint32Array(frame, 0, 1);
-        intView[0] = index;
+        intView[0] = frameIndex;
+        frameIndex = nextLFSR(frameIndex);
 
         var byteView = new Uint8Array(frame);
         for (var i = 4; i < byteView.length; i++) {
