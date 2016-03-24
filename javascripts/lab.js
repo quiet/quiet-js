@@ -194,7 +194,7 @@ var QuietLab = (function() {
         }
 
         var leastDistance = 33;
-        var thresh = 1;
+        var thresh = 3;
         var closest;
         var rxView = new Uint32Array(recvPayload, 0, 1);
         // go oldest to newest -- try to find our frame
