@@ -727,7 +727,7 @@ var Quiet = (function() {
                 }
                 // convert from emscripten bytes to js string. more pointer arithmetic.
                 var frameArray = Module.HEAP8.slice(frame, frame + read);
-                opts.onReceive(frameArray);
+                opts.onReceive(frameArray.buffer);
             }
         };
 
