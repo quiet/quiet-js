@@ -202,7 +202,6 @@ var QuietLab = (function() {
                 closest = i;
             }
         }
-        var totalDist = 0;
         if (closest === undefined) {
             // couldn't find it, so just toss it out
             // this will keep this mystery packet from affecting stats
@@ -210,6 +209,7 @@ var QuietLab = (function() {
             // packet loss
             return;
         } else {
+            var totalDist = 0;
             var rxView = new Uint8Array(recvPayload);
             var txView = new Uint8Array(lastTransmitted[closest]);
             for (var i = 0; i < rxView.length; i++) {
@@ -236,10 +236,9 @@ var QuietLab = (function() {
         if (oldest.time === info.time) {
             instrumentData["transfer-rate"] = "---";
         } else {
-            totalsize -= oldest.size;
-            totalerrors -= oldest.bitErrors;
-            instrumentData["transfer-rate"] = (1000*(totalsize/(info.time - oldest.time))).toFixed(0);
             instrumentData["bit-error-ratio"] = (100 * (totalerrors/totalsize)).toFixed(4);
+            totalsize -= oldest.size;
+            instrumentData["transfer-rate"] = (1000*(totalsize/(info.time - oldest.time))).toFixed(0);
         }
         updateInstruments();
     };
