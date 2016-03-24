@@ -244,7 +244,7 @@ var QuietLab = (function() {
                 oldest = lastReceived[i];
             }
             totalsize += info.size;
-            totalerrors += info.BitErrors;
+            totalerrors += info.bitErrors;
         }
         instrumentData["bit-error-ratio"] = (100 * (totalerrors/totalsize)).toFixed(4);
 
