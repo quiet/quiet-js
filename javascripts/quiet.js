@@ -251,6 +251,14 @@ var Quiet = (function() {
      *   transmit throughput. if the user calls transmit multiple times before waiting for
      *   onEnqueue, then onEnqueue will be called only once after all of the data has been
      *   played out
+     * @param {boolean} [clampFrame] - Prevent frames from overlapping sample blocks.
+     *   Web Audio collects sound samples in blocks, and the browser ensures that each
+     *   block plays out smoothly and atomically. However, it is possible for playback
+     *   gaps to occur between these blocks due to GC pause or similar conditions.
+     *   This is especially common on mobile. Enabling this flag ensures that data frames do
+     *   not overlap these sample blocks so that no playback gaps will occur within a frame,
+     *   which greatly degrades error performance. Setting this flag to false will increase
+     *   throughput but can significantly increase error rate. Defaults to true.
      * @returns {Transmitter} - Transmitter object
      * @example
      * var tx = transmitter({profile: "robust", onFinish: function () { console.log("transmission complete"); }});
@@ -278,11 +286,20 @@ var Quiet = (function() {
 
         Module.ccall('free', null, ['pointer'], [opt]);
 
-        // enable close_frame which prevents data frames from overlapping multiple
-        // sample buffers. this is very convenient if our system is not fast enough
-        // to feed the sound card without any gaps between subsequent buffers due
-        // to e.g. gc pause. inform quiet about our sample buffer size here
-        var frame_len = Module.ccall('quiet_encoder_clamp_frame_len', 'number', ['pointer', 'number'], [encoder, sampleBufferSize]);
+        if (opts.clampFrame === undefined) {
+            opts.clampFrame = true;
+        }
+
+        var frame_len;
+        if (opts.clampFrame) {
+            // enable close_frame which prevents data frames from overlapping multiple
+            // sample buffers. this is very convenient if our system is not fast enough
+            // to feed the sound card without any gaps between subsequent buffers due
+            // to e.g. gc pause. inform quiet about our sample buffer size here
+            frame_len = Module.ccall('quiet_encoder_clamp_frame_len', 'number', ['pointer', 'number'], [encoder, sampleBufferSize]);
+        } else {
+            frame_len = Module.ccall('quiet_encoder_get_frame_len', 'number', ['pointer'], [encoder]);
+        }
         var samples = Module.ccall('malloc', 'pointer', ['number'], [4 * sampleBufferSize]);
 
         // yes, this is pointer arithmetic, in javascript :)
