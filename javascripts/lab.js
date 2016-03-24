@@ -152,7 +152,13 @@ var QuietLab = (function() {
         }
 
         lastTransmitted.unshift(frame);
-        if (lastTransmitted.length > 200) {
+
+        var totalQueueSize = 1 << 17; // TODO: don't "know" this about libquiet
+        // we need to keep enough frames around that we can search for this one by
+        // the time it's been decoded, after going through all the queues
+        // we'll also add a small safety margin
+        var keepFrames = Math.ceil((totalQueueSize/transmitter.frameLength) + 10);
+        if (lastTransmitted.length > keepFrames) {
             lastTransmitted.pop();
         }
 
