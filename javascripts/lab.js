@@ -411,7 +411,7 @@ var QuietLab = (function() {
         var xscale = constellationCanvas.width/(max - min);
         for (var i = 0; i < symbols.length; i++) {
             var x = (symbols[i].real - min) * xscale;
-            var y = -(symbols[i].imag - min) * yscale;
+            var y = (max- symbols[i].imag) * yscale;
             constellationCanvasCtx.beginPath();
             constellationCanvasCtx.moveTo(x - 2, y - 2);
             constellationCanvasCtx.lineTo(x + 2, y + 2);
