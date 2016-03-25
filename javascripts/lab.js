@@ -410,6 +410,23 @@ var QuietLab = (function() {
             fftAxesCtx.strokeText((i/1000).toFixed(0), xmargin + (i * xscale), fftAxes.height - 5);
         }
 
+        var waveformAxes = document.querySelector("[data-quiet-lab-waveform-axes]");
+        var waveformAxesCtx = waveformAxes.getContext('2d');
+
+        waveformAxesCtx.beginPath();
+        var xmargin = waveformAxes.width - waveformCanvas.width;
+        var ymargin = waveformAxes.height - waveformCanvas.height;
+        waveformAxesCtx.moveTo(xmargin, 0);
+        waveformAxesCtx.lineTo(xmargin, waveformAxes.height - ymargin);
+        waveformAxesCtx.lineTo(waveformAxes.width, waveformAxes.height - ymargin);
+        waveformAxesCtx.stroke();
+        waveformAxesCtx.font = "12px monospace";
+        var maxTime = audioCtx.sampleRate/analyser.frequencyBinCount * 1000;
+        var xscale = waveformCanvas.width/maxTime;
+        for (var i = 0; i < maxTime; i += 2) {
+            waveformAxesCtx.strokeText(i.toFixed(0), xmargin + (i * xscale), waveformAxes.height - 5);
+        }
+
         var constellationAxes = document.querySelector("[data-quiet-lab-constellation-axes]");
         var constellationAxesCtx = constellationAxes.getContext('2d');
 
