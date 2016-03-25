@@ -426,7 +426,7 @@ var QuietLab = (function() {
         for (var i = 0; i < maxTime; i += 1) {
             waveformAxesCtx.strokeText(i.toFixed(0), xmargin + (i * xscale), waveformAxes.height - 5);
         }
-        waveformAxesCtx.strokeText("ms", waveformAxes.width - 15, waveformAxes.height - 15);
+        waveformAxesCtx.strokeText("ms", waveformAxes.width - 15, waveformAxes.height - 25);
 
         var constellationAxes = document.querySelector("[data-quiet-lab-constellation-axes]");
         var constellationAxesCtx = constellationAxes.getContext('2d');
