@@ -295,7 +295,11 @@ var QuietLab = (function() {
     };
 
     function onLabStart() {
-        transmitter = Quiet.transmitter({profile: profile, onEnqueue: onTransmitEnqueue});
+        transmitter = Quiet.transmitter({
+            profile: profile,
+            onEnqueue: onTransmitEnqueue,
+            clampFrame: clampFrame
+        });
         transmitter.transmit(buildFrame());
         receiver = Quiet.receiver({profile: profile,
             onReceive: onReceive,
