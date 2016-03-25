@@ -291,7 +291,7 @@ var QuietLab = (function() {
         waveformContainer.classList.add("hidden");
         fftContainer.classList.remove("hidden");
         spectrumBtn.classList.add("hidden");
-        waveformBtn.classList.hidden("hidden");
+        waveformBtn.classList.remove("hidden");
     };
 
     function onLabStart() {
