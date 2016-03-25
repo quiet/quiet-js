@@ -9,6 +9,7 @@ var QuietLab = (function() {
     var waveformBtn;
     var constellationCanvas;
     var constellationCanvasCtx;
+    var constellationContainer;
     var audioCtx;
     var analyser;
     var source;
@@ -62,12 +63,14 @@ var QuietLab = (function() {
                 profile.ofdm[prop] = enableInput(inputs.ofdm[prop]);
             }
             profile['mod_scheme'] = enableInput(inputs.mod_scheme);
+            constellationContainer.classList.remove('hidden');
         } else if (newMode === "ModemMode") {
             for (var prop in inputs.ofdm) {
                 disableInput(inputs.ofdm[prop]);
             }
             delete profile['ofdm'];
             profile['mod_scheme'] = enableInput(inputs.mod_scheme);
+            constellationContainer.classList.remove('hidden');
         } else {
             for (var prop in inputs.ofdm) {
                 disableInput(inputs.ofdm[prop]);
@@ -75,6 +78,7 @@ var QuietLab = (function() {
             delete profile['ofdm'];
             disableInput(inputs.mod_scheme);
             profile['mod_scheme'] = 'gmsk';
+            constellationContainer.classList.add('hidden');
         }
     };
 
@@ -597,6 +601,7 @@ var QuietLab = (function() {
 
         constellationCanvas = document.querySelector("[data-quiet-lab-constellation]");
         constellationCanvasCtx = constellationCanvas.getContext('2d');
+        constellationContainer = document.querySelector("[data-quiet-lab-constellation-container]");
 
         drawAxes();
 
