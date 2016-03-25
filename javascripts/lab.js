@@ -297,11 +297,9 @@ var QuietLab = (function() {
     function onLabStop() {
         if (transmitter !== undefined) {
             transmitter.destroy();
-            transmitter = undefined;
         }
         if (receiver !== undefined) {
             receiver.destroy();
-            receiver = undefined;
         }
         if (source !== undefined) {
             source.disconnect();
