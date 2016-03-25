@@ -286,7 +286,7 @@ var QuietLab = (function() {
         pausedBlock.classList.add("hidden");
         instrumentsBlock.classList.remove("hidden");
         var gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
-        window.setTimeout(function() { gUM.call(navigator, gUMConstraints(), onGUM, onGUMFail); }, 0);
+        gUM.call(navigator, gUMConstraints(), onGUM, onGUMFail);
 
     };
 
