@@ -204,7 +204,9 @@ var QuietLab = (function() {
     };
 
     function onTransmitEnqueue() {
-        window.setTimeout(function() { transmitter.transmit(buildFrame()); }, 0);
+        if (transmitter !== undefined) {
+            window.setTimeout(function() { transmitter.transmit(buildFrame()); }, 0);
+        }
     };
 
     function updateInstruments() {
@@ -285,6 +287,9 @@ var QuietLab = (function() {
     };
 
     function onReceiverStatsUpdate(stats) {
+        if (receiver === undefined) {
+            return;
+        }
         if (stats.length > 0) {
             drawConstellation(stats[0].symbols);
             instrumentData.rssi = stats[0].receivedSignalStrengthIndicator.toFixed(2);
@@ -341,9 +346,11 @@ var QuietLab = (function() {
     function onLabStop() {
         if (transmitter !== undefined) {
             transmitter.destroy();
+            transmitter = undefined;
         }
         if (receiver !== undefined) {
             receiver.destroy();
+            receiver = undefined;
         }
         if (source !== undefined) {
             source.disconnect();
