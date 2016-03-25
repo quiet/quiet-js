@@ -438,9 +438,11 @@ var QuietLab = (function() {
 
         analyser.getFloatTimeDomainData(fftBuffer);
         waveformCanvasCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
-        var scale = waveformCanvas.height/2;
+        var min = -0.4;
+        var max = 0.4;
+        var scale = waveformCanvas.height/(max - min);
         for (var i = 0; i < analyser.frequencyBinCount; i++) {
-            var magnitude = (1 - fftBuffer[i]) * scale;
+            var magnitude = (max - fftBuffer[i]) * scale;
             waveformCanvasCtx.fillRect(i, magnitude, 1, 1);
         }
     };
