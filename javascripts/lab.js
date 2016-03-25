@@ -409,7 +409,7 @@ var QuietLab = (function() {
         for (var i = 0; i < maxFreq; i += 2000) {
             fftAxesCtx.strokeText((i/1000).toFixed(0), xmargin + (i * xscale), fftAxes.height - 5);
         }
-        fftAxesCtx.strokeText("kHz", fftAxes.width - 15, fftAxes.height - 25);
+        fftAxesCtx.strokeText("kHz", fftAxes.width - 20, fftAxes.height - 25);
 
         var waveformAxes = document.querySelector("[data-quiet-lab-waveform-axes]");
         var waveformAxesCtx = waveformAxes.getContext('2d');
