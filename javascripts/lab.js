@@ -285,9 +285,29 @@ var QuietLab = (function() {
 
         pausedBlock.classList.add("hidden");
         instrumentsBlock.classList.remove("hidden");
-        var gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
-        gUM.call(navigator, gUMConstraints(), onGUM, onGUMFail);
+        if (source === undefined) {
+            var gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
+            gUM.call(navigator, gUMConstraints(), onGUM, onGUMFail);
+        } else {
+            source.connect(analyser);
+            drawFFT();
+        }
+    };
 
+    function onLabStop() {
+        if (transmitter !== undefined) {
+            transmitter.destroy();
+            transmitter = undefined;
+        }
+        if (receiver !== undefined) {
+            receiver.destroy();
+            receiver = undefined;
+        }
+        if (source !== undefined) {
+            source.disconnect();
+        }
+        instrumentsBlock.classList.add("hidden");
+        pausedBlock.classList.remove("hidden");
     };
 
     function onQuietReady() {
@@ -624,6 +644,9 @@ var QuietLab = (function() {
         initInstrumentData();
 
         startBtn = document.querySelector("[data-quiet-lab-start-button]");
+
+        var stopBtn = document.querySelector("[data-quiet-lab-stop-button]");
+        stopBtn.addEventListener('click', onLabStop, false);
 
         pausedBlock = document.querySelector("[data-quiet-lab-paused]");
         instrumentsBlock = document.querySelector("[data-quiet-lab-instruments]");
