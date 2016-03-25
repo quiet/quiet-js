@@ -441,10 +441,13 @@ var QuietLab = (function() {
         var min = -0.2;
         var max = 0.2;
         var scale = waveformCanvas.height/(max - min);
+        waveformCanvasCtx.beginPath();
+        waveformCanvasCtx.moveTo(0, waveformCanvas.height/2);
         for (var i = 0; i < analyser.frequencyBinCount; i++) {
             var magnitude = (max - fftBuffer[i]) * scale;
-            waveformCanvasCtx.fillRect(i, magnitude, 1, 1);
+            waveformCanvasCtx.lineTo(i, magnitude);
         }
+        waveformCanvasCtx.stroke();
     };
 
     function drawConstellation(symbols) {
