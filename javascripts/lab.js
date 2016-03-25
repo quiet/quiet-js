@@ -1,6 +1,8 @@
 var QuietLab = (function() {
     var fftCanvas;
     var fftCanvasCtx;
+    var waveformCanvas;
+    var waveformCanvasCtx;
     var constellationCanvas;
     var constellationCanvasCtx;
     var audioCtx;
@@ -433,6 +435,14 @@ var QuietLab = (function() {
             var magnitude = (fftBuffer[i] - analyser.minDecibels) * scale;
             fftCanvasCtx.fillRect(i, fftCanvas.height, 1, -magnitude);
         }
+
+        analyser.getFloatTimeDomainData(fftBuffer);
+        waveformCanvasCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
+        var scale = waveformCanvas.height/2;
+        for (var i = 0; i < analyser.frequencyBinCount; i++) {
+            var magnitude = (1 - fftBuffer[i]) * scale;
+            waveformCanvasCtx.fillRect(i, magnitude, 1, 1);
+        }
     };
 
     function drawConstellation(symbols) {
@@ -519,6 +529,8 @@ var QuietLab = (function() {
 
         fftCanvas = document.querySelector("[data-quiet-lab-fft]");
         fftCanvasCtx = fftCanvas.getContext('2d');
+        waveformCanvas = document.querySelector("[data-quiet-lab-waveform]");
+        waveformCanvasCtx = waveformCanvas.getContext('2d');
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioCtx.createAnalyser();
         analyser.fftSize = 512;
