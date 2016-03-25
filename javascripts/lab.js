@@ -423,9 +423,10 @@ var QuietLab = (function() {
         waveformAxesCtx.font = "12px monospace";
         var maxTime = analyser.frequencyBinCount/audioCtx.sampleRate * 1000;
         var xscale = waveformCanvas.width/maxTime;
-        for (var i = 0; i < maxTime; i += 2) {
+        for (var i = 0; i < maxTime; i += 1) {
             waveformAxesCtx.strokeText(i.toFixed(0), xmargin + (i * xscale), waveformAxes.height - 5);
         }
+        waveformAxesCtx.strokeText("ms", waveformAxes.width - 5, waveformAxes.height - 5);
 
         var constellationAxes = document.querySelector("[data-quiet-lab-constellation-axes]");
         var constellationAxesCtx = constellationAxes.getContext('2d');
