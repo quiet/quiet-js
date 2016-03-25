@@ -288,7 +288,12 @@ var QuietLab = (function() {
         if (stats.length > 0) {
             drawConstellation(stats[0].symbols);
             instrumentData.rssi = stats[0].receivedSignalStrengthIndicator.toFixed(2);
-            instrumentData.evm = stats[0].errorVectorMagnitude.toFixed(2);
+            var evm = stats[0].errorVectorMagnitude;
+            if (evm === 0) {
+                instrumentData.evm = "---";
+            } else {
+                instrumentData.evm = evm.toFixed(2);
+            }
         }
         instrumentData.avgEncodeTime = (transmitter.getAverageEncodeTime()).toFixed(2);
         instrumentData.avgDecodeTime = (receiver.getAverageDecodeTime()).toFixed(2);
