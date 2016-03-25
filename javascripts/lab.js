@@ -470,7 +470,7 @@ var QuietLab = (function() {
         constellationAxesCtx.strokeText("1", 5*constellationAxes.width/6, constellationAxes.height/2 - 4);
         constellationAxesCtx.strokeText("-1", constellationAxes.width/2 + 4, constellationAxes.height/6);
         constellationAxesCtx.strokeText("1", constellationAxes.width/2 + 4, 5*constellationAxes.height/6);
-        constellationAxesCtx.strokeText("I", constellationAxes.width - 4, constellationAxes.height/2 - 4);
+        constellationAxesCtx.strokeText("I", constellationAxes.width - 8, constellationAxes.height/2 - 4);
         constellationAxesCtx.strokeText("Q", constellationAxes.width/2 + 4, 8);
 
     };
