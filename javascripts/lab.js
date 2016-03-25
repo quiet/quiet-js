@@ -421,7 +421,7 @@ var QuietLab = (function() {
         waveformAxesCtx.lineTo(waveformAxes.width, waveformAxes.height - ymargin);
         waveformAxesCtx.stroke();
         waveformAxesCtx.font = "12px monospace";
-        var maxTime = audioCtx.sampleRate/analyser.frequencyBinCount * 1000;
+        var maxTime = analyser.frequencyBinCount/audioCtx.sampleRate * 1000;
         var xscale = waveformCanvas.width/maxTime;
         for (var i = 0; i < maxTime; i += 2) {
             waveformAxesCtx.strokeText(i.toFixed(0), xmargin + (i * xscale), waveformAxes.height - 5);
