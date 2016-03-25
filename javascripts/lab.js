@@ -425,14 +425,16 @@ var QuietLab = (function() {
         waveformAxesCtx.moveTo(xmargin, 0);
         waveformAxesCtx.lineTo(xmargin, waveformAxes.height - ymargin);
         waveformAxesCtx.lineTo(waveformAxes.width, waveformAxes.height - ymargin);
-        waveformAxesCtx.stroke();
         waveformAxesCtx.font = "12px monospace";
         var maxTime = analyser.frequencyBinCount/audioCtx.sampleRate * 1000;
         var xscale = waveformCanvas.width/maxTime;
         for (var i = 0; i < maxTime; i += 1) {
+            waveformAxesCtx.moveTo(xmargin + (i * xscale), waveformCanvas.height - 4);
+            waveformAxesCtx.lineTo(xmargin + (i * xscale), waveformCanvas.height);
             waveformAxesCtx.strokeText(i.toFixed(0), xmargin + (i * xscale), waveformAxes.height - 5);
         }
         waveformAxesCtx.strokeText("ms", waveformAxes.width - 15, waveformAxes.height - 25);
+        waveformAxesCtx.stroke();
 
         var constellationAxes = document.querySelector("[data-quiet-lab-constellation-axes]");
         var constellationAxesCtx = constellationAxes.getContext('2d');
