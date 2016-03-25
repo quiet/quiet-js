@@ -465,11 +465,11 @@
                 <button data-quiet-lab-stop-button type="button" class="btn btn-default btn-block">Stop Lab</button>
                 <div class="container-fluid" style="padding-top: 10px; padding-bottom: 10px">
                     <div class="col-sm-6">
-                        <div style="height: 275px; width: 285px; margin: 0 auto; position: relative;">
+                        <div style="height: 275px; width: 285px; margin: 0 auto; position: relative;" data-quiet-lab-fft-container>
                             <canvas style="z-index: 1; position: absolute; left: 0px; top: 0px;" data-quiet-lab-fft-axes width="285" height="275"></canvas>
                             <canvas style="z-index: 2; position: absolute; left: 30px; top: 0px;" data-quiet-lab-fft width="256" height="256"></canvas>
                         </div>
-                        <div style="height: 256px; width: 256px; margin: 0 auto; position: relative;">
+                        <div class="hidden" style="height: 256px; width: 256px; margin: 0 auto; position: relative;" data-quiet-lab-waveform-container>
                             <canvas data-quiet-lab-waveform width="256" height="256"></canvas>
                         </div>
                     </div>
@@ -480,6 +480,8 @@
                         </div>
                     </div>
                 </div>
+                <button data-quiet-lab-show-waveform type="button" class="btn btn-default btn-block">Show Waveform</button>
+                <button data-quiet-lab-show-spectrum type="button" class="btn btn-default btn-block hidden">Show Spectrum</button>
                 <section class="container-fluid">
                     <div class="col-md-6 col-lg-3">Packets Received:</div>
                     <div class="col-md-6 col-lg-3" data-quiet-lab-packets-received>0</div>

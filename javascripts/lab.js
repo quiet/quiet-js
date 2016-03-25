@@ -1,8 +1,12 @@
 var QuietLab = (function() {
     var fftCanvas;
     var fftCanvasCtx;
+    var fftContainer;
+    var spectrumBtn;
     var waveformCanvas;
     var waveformCanvasCtx;
+    var waveformContainer;
+    var waveformBtn;
     var constellationCanvas;
     var constellationCanvasCtx;
     var audioCtx;
@@ -276,6 +280,20 @@ var QuietLab = (function() {
         updateInstruments();
     };
 
+    function onShowWaveform() {
+        fftContainer.classList.add("hidden");
+        waveformContainer.classList.remove("hidden");
+        spectrumBtn.classList.add("hidden");
+        waveformBtn.classList.remove("hidden");
+    };
+
+    function onShowSpectrum() {
+        waveformContainer.classList.add("hidden");
+        fftContainer.classList.remove("hidden");
+        waveformBtn.classList.add("hidden");
+        spectrumBtn.classList.remove("hidden");
+    };
+
     function onLabStart() {
         transmitter = Quiet.transmitter({profile: profile, onEnqueue: onTransmitEnqueue});
         transmitter.transmit(buildFrame());
@@ -534,8 +552,10 @@ var QuietLab = (function() {
 
         fftCanvas = document.querySelector("[data-quiet-lab-fft]");
         fftCanvasCtx = fftCanvas.getContext('2d');
+        fftContainer = document.querySelector("[data-quiet-lab-fft-container]");
         waveformCanvas = document.querySelector("[data-quiet-lab-waveform]");
         waveformCanvasCtx = waveformCanvas.getContext('2d');
+        waveformContainer = document.querySelector("[data-quiet-lab-waveform-container]");
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioCtx.createAnalyser();
         analyser.fftSize = 512;
@@ -665,6 +685,12 @@ var QuietLab = (function() {
 
         pausedBlock = document.querySelector("[data-quiet-lab-paused]");
         instrumentsBlock = document.querySelector("[data-quiet-lab-instruments]");
+
+        waveformBtn = document.querySelector("[data-quiet-lab-show-waveform]");
+        waveformBtn.addEventListener('click', onShowWaveform, false);
+
+        spectrumBtn = document.querySelector("[data-quiet-lab-show-spectrum]");
+        spectrumBtn.addEventListener('click', onShowSpectrum, false);
 
         jsonBlock = document.querySelector("#quiet-profiles-json");
         updateProfileOutput();
