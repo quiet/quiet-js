@@ -63,7 +63,7 @@ var QuietLab = (function() {
                 profile.ofdm[prop] = enableInput(inputs.ofdm[prop]);
             }
             profile['mod_scheme'] = enableInput(inputs.mod_scheme);
-            constellationContainer.classList.remove('hidden');
+            constellationContainer.parentNode.classList.remove('hidden');
             fftContainer.parentNode.classList.remove('col-sm-12');
             fftContainer.parentNode.classList.add('col-sm-6');
         } else if (newMode === "ModemMode") {
@@ -72,7 +72,7 @@ var QuietLab = (function() {
             }
             delete profile['ofdm'];
             profile['mod_scheme'] = enableInput(inputs.mod_scheme);
-            constellationContainer.classList.remove('hidden');
+            constellationContainer.parentNode.classList.remove('hidden');
             fftContainer.parentNode.classList.remove('col-sm-12');
             fftContainer.parentNode.classList.add('col-sm-6');
         } else {
@@ -82,7 +82,7 @@ var QuietLab = (function() {
             delete profile['ofdm'];
             disableInput(inputs.mod_scheme);
             profile['mod_scheme'] = 'gmsk';
-            constellationContainer.classList.add('hidden');
+            constellationContainer.parentNode.classList.add('hidden');
             fftContainer.parentNode.classList.remove('col-sm-6');
             fftContainer.parentNode.classList.add('col-sm-12');
         }
