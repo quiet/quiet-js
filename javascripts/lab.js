@@ -283,15 +283,15 @@ var QuietLab = (function() {
     function onShowWaveform() {
         fftContainer.classList.add("hidden");
         waveformContainer.classList.remove("hidden");
-        spectrumBtn.classList.add("hidden");
-        waveformBtn.classList.remove("hidden");
+        waveformBtn.classList.add("hidden");
+        spectrumBtn.classList.remove("hidden");
     };
 
     function onShowSpectrum() {
         waveformContainer.classList.add("hidden");
         fftContainer.classList.remove("hidden");
-        waveformBtn.classList.add("hidden");
-        spectrumBtn.classList.remove("hidden");
+        spectrumBtn.classList.add("hidden");
+        waveformBtn.classList.hidden("hidden");
     };
 
     function onLabStart() {
