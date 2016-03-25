@@ -64,8 +64,8 @@ var QuietLab = (function() {
             }
             profile['mod_scheme'] = enableInput(inputs.mod_scheme);
             constellationContainer.classList.remove('hidden');
-            fftContainer.classList.remove('col-sm-12');
-            fftContainer.classList.add('col-sm-6');
+            fftContainer.parentNode.classList.remove('col-sm-12');
+            fftContainer.parentNode.classList.add('col-sm-6');
         } else if (newMode === "ModemMode") {
             for (var prop in inputs.ofdm) {
                 disableInput(inputs.ofdm[prop]);
@@ -73,8 +73,8 @@ var QuietLab = (function() {
             delete profile['ofdm'];
             profile['mod_scheme'] = enableInput(inputs.mod_scheme);
             constellationContainer.classList.remove('hidden');
-            fftContainer.classList.remove('col-sm-12');
-            fftContainer.classList.add('col-sm-6');
+            fftContainer.parentNode.classList.remove('col-sm-12');
+            fftContainer.parentNode.classList.add('col-sm-6');
         } else {
             for (var prop in inputs.ofdm) {
                 disableInput(inputs.ofdm[prop]);
@@ -83,8 +83,8 @@ var QuietLab = (function() {
             disableInput(inputs.mod_scheme);
             profile['mod_scheme'] = 'gmsk';
             constellationContainer.classList.add('hidden');
-            fftContainer.classList.remove('col-sm-6');
-            fftContainer.classList.add('col-sm-12');
+            fftContainer.parentNode.classList.remove('col-sm-6');
+            fftContainer.parentNode.classList.add('col-sm-12');
         }
     };
 
