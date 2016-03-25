@@ -404,6 +404,7 @@ var QuietLab = (function() {
         for (var i = analyser.minDecibels; i <= analyser.maxDecibels; i += 10) {
             fftAxesCtx.strokeText(i, 0, fftCanvas.height - ((i - analyser.minDecibels) * yscale) + 9);
         }
+        fftAxesCtx.strokeText("dB", xmargin + 5, 10);
         var maxFreq = audioCtx.sampleRate/2;
         var xscale = fftCanvas.width/maxFreq;
         for (var i = 0; i < maxFreq; i += 2000) {
@@ -458,6 +459,7 @@ var QuietLab = (function() {
 
         constellationAxesCtx.stroke();
 
+        constellationAxesCtx.font = "12px monospace";
         constellationAxesCtx.strokeText("-1", constellationAxes.width/6, constellationAxes.height/2 - 4);
         constellationAxesCtx.strokeText("1", 5*constellationAxes.width/6, constellationAxes.height/2 - 4);
         constellationAxesCtx.strokeText("-1", constellationAxes.width/2 + 4, constellationAxes.height/6);
