@@ -47,12 +47,17 @@ var QuietLab = (function() {
     function enableInput(input) {
         input.removeAttribute("disabled");
         if (input.type === "select-one") {
-            input.selectedIndex = input.querySelector("option[selected]").index;
+            if (input.selectedIndex === -1) {
+                input.selectedIndex = input.querySelector("option[selected]").index;
+            }
             return input.value;
         } else if (input.type === "number") {
-            var val = Number(input.getAttribute("value"));
-            input.value = val;
-            return val;
+            if (input.value === "") {
+                var val = Number(input.getAttribute("value"));
+                input.value = val;
+                return val;
+            }
+            return input.value;
         }
     };
 
