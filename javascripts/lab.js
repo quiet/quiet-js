@@ -398,19 +398,23 @@ var QuietLab = (function() {
         fftAxesCtx.moveTo(xmargin, 0);
         fftAxesCtx.lineTo(xmargin, fftAxes.height - ymargin);
         fftAxesCtx.lineTo(fftAxes.width, fftAxes.height - ymargin);
-        fftAxesCtx.stroke();
         fftAxesCtx.font = "12px monospace";
         var yscale = fftCanvas.height/(analyser.maxDecibels - analyser.minDecibels);
         for (var i = analyser.minDecibels; i <= analyser.maxDecibels; i += 10) {
+            fftAxesCtx.moveTo(xmargin, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
+            fftAxesCtx.lineTo(xmargin + 2, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
             fftAxesCtx.strokeText(i, 0, fftCanvas.height - ((i - analyser.minDecibels) * yscale) + 9);
         }
         fftAxesCtx.strokeText("dB", xmargin + 5, 10);
         var maxFreq = audioCtx.sampleRate/2;
         var xscale = fftCanvas.width/maxFreq;
         for (var i = 0; i < maxFreq; i += 2000) {
+            fftAxesCtx.moveTo(xmargin + (i * xscale), fftAxes.height - 2);
+            fftAxesCtx.lineTo(xmargin + (i * xscale), fftAxes.height);
             fftAxesCtx.strokeText((i/1000).toFixed(0), xmargin + (i * xscale), fftAxes.height - 5);
         }
         fftAxesCtx.strokeText("kHz", fftAxes.width - 25, fftAxes.height - 25);
+        fftAxesCtx.stroke();
 
         var waveformAxes = document.querySelector("[data-quiet-lab-waveform-axes]");
         var waveformAxesCtx = waveformAxes.getContext('2d');
