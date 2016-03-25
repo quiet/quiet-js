@@ -409,8 +409,8 @@ var QuietLab = (function() {
         var maxFreq = audioCtx.sampleRate/2;
         var xscale = fftCanvas.width/maxFreq;
         for (var i = 0; i < maxFreq; i += 2000) {
-            fftAxesCtx.moveTo(xmargin + (i * xscale), fftAxes.height - 2);
-            fftAxesCtx.lineTo(xmargin + (i * xscale), fftAxes.height);
+            fftAxesCtx.moveTo(xmargin + (i * xscale), fftCanvas.height - 2);
+            fftAxesCtx.lineTo(xmargin + (i * xscale), fftCanvas.height);
             fftAxesCtx.strokeText((i/1000).toFixed(0), xmargin + (i * xscale), fftAxes.height - 5);
         }
         fftAxesCtx.strokeText("kHz", fftAxes.width - 25, fftAxes.height - 25);
