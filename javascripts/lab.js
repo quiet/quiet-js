@@ -384,8 +384,8 @@ var QuietLab = (function() {
             presets.appendChild(opt);
         }
 
-        presets.value = "audible";
-        loadPreset("audible");
+        presets.value = "audible-psk";
+        loadPreset("audible-psk");
     };
 
     function drawAxes() {
