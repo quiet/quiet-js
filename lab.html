@@ -480,8 +480,12 @@
                         </div>
                     </div>
                 </div>
-                <button data-quiet-lab-show-waveform type="button" class="btn btn-default btn-block">Show Waveform</button>
-                <button data-quiet-lab-show-spectrum type="button" class="btn btn-default btn-block hidden">Show Spectrum</button>
+                <div data-quiet-lab-show-waveform>
+                    <button type="button" class="btn btn-default btn-block">Show Waveform</button>
+                </div>
+                <div data-quiet-lab-show-spectrum class="hidden">
+                    <button type="button" class="btn btn-default btn-block">Show Spectrum</button>
+                </div>
                 <section class="container-fluid">
                     <div class="col-md-6 col-lg-3">Packets Received:</div>
                     <div class="col-md-6 col-lg-3" data-quiet-lab-packets-received>0</div>
