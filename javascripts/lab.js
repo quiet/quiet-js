@@ -402,14 +402,14 @@ var QuietLab = (function() {
         var yscale = fftCanvas.height/(analyser.maxDecibels - analyser.minDecibels);
         for (var i = analyser.minDecibels; i <= analyser.maxDecibels; i += 10) {
             fftAxesCtx.moveTo(xmargin, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
-            fftAxesCtx.lineTo(xmargin + 2, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
+            fftAxesCtx.lineTo(xmargin + 4, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
             fftAxesCtx.strokeText(i, 0, fftCanvas.height - ((i - analyser.minDecibels) * yscale) + 9);
         }
         fftAxesCtx.strokeText("dB", xmargin + 5, 10);
         var maxFreq = audioCtx.sampleRate/2;
         var xscale = fftCanvas.width/maxFreq;
         for (var i = 0; i < maxFreq; i += 2000) {
-            fftAxesCtx.moveTo(xmargin + (i * xscale), fftCanvas.height - 2);
+            fftAxesCtx.moveTo(xmargin + (i * xscale), fftCanvas.height - 4);
             fftAxesCtx.lineTo(xmargin + (i * xscale), fftCanvas.height);
             fftAxesCtx.strokeText((i/1000).toFixed(0), xmargin + (i * xscale), fftAxes.height - 5);
         }
