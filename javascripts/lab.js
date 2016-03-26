@@ -156,7 +156,7 @@ var QuietLab = (function() {
         }
         try {
             updateProfileOutput();
-        } catch (e) {
+        } catch (exc) {
             var warning = e.target.parentNode.querySelector(".alert");
             warning.classList.remove('hidden');
         }
