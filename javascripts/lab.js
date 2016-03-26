@@ -119,7 +119,7 @@ var QuietLab = (function() {
                     clampFrame: clampFrame
                 });
             } catch (e) {
-                console.log("creating transmitter failed: " e);
+                console.log("creating transmitter failed: " + e);
             }
             transmitter.transmit(buildFrame());
         }
