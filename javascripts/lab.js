@@ -108,19 +108,14 @@ var QuietLab = (function() {
     };
 
     function updateProfileOutput() {
-        jsonBlock.textContent = JSON.stringify(profile, null, 4);
         if (transmitter !== undefined) {
             transmitter.destroy();
             frameIndex = 345345;
             lastTransmitted = [];
-            try {
-                transmitter = Quiet.transmitter({profile: profile,
-                    onEnqueue: onTransmitEnqueue,
-                    clampFrame: clampFrame
-                });
-            } catch (e) {
-                console.log("creating transmitter failed: " + e);
-            }
+            transmitter = Quiet.transmitter({profile: profile,
+                onEnqueue: onTransmitEnqueue,
+                clampFrame: clampFrame
+            });
             transmitter.transmit(buildFrame());
         }
         if (receiver !== undefined) {
@@ -135,6 +130,7 @@ var QuietLab = (function() {
             updateInstruments();
             drawConstellation([]);
         }
+        jsonBlock.textContent = JSON.stringify(profile, null, 4);
     };
 
     function onInputChange(e) {
@@ -158,7 +154,12 @@ var QuietLab = (function() {
         } else {
             profile[index[0]] = val;
         }
-        updateProfileOutput();
+        try {
+            updateProfileOutput();
+        } catch (e) {
+            var warning = e.target.parentNode.querySelector(".alert");
+            warning.classList.remove('hidden');
+        }
     };
 
     function nextLFSR(x) {
