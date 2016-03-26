@@ -154,10 +154,11 @@ var QuietLab = (function() {
         } else {
             profile[index[0]] = val;
         }
+        var warning = e.target.parentNode.parentNode.querySelector(".alert");
         try {
             updateProfileOutput();
+            warning.classList.add('hidden');
         } catch (exc) {
-            var warning = e.target.parentNode.querySelector(".alert");
             warning.classList.remove('hidden');
         }
     };
