@@ -204,9 +204,11 @@ var QuietLab = (function() {
     };
 
     function onTransmitEnqueue() {
-        if (transmitter !== undefined) {
-            window.setTimeout(function() { transmitter.transmit(buildFrame()); }, 0);
-        }
+        window.setTimeout(function() {
+            if (transmitter !== undefined) {
+                transmitter.transmit(buildFrame());
+            }
+        }, 0);
     };
 
     function updateInstruments() {
