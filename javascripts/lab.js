@@ -113,10 +113,14 @@ var QuietLab = (function() {
             transmitter.destroy();
             frameIndex = 345345;
             lastTransmitted = [];
-            transmitter = Quiet.transmitter({profile: profile,
-                onEnqueue: onTransmitEnqueue,
-                clampFrame: clampFrame
-            });
+            try {
+                transmitter = Quiet.transmitter({profile: profile,
+                    onEnqueue: onTransmitEnqueue,
+                    clampFrame: clampFrame
+                });
+            } catch (e) {
+                console.log("creating transmitter failed: " e);
+            }
             transmitter.transmit(buildFrame());
         }
         if (receiver !== undefined) {
