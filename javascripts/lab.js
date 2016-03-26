@@ -130,7 +130,7 @@ var QuietLab = (function() {
             updateInstruments();
             drawConstellation([]);
         }
-        jsonBlock.value = JSON.stringify(profile, null, 4);
+        jsonBlock.value = JSON.stringify(profile, null, 2);
     };
 
     function onInputChange(e) {
