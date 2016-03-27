@@ -602,6 +602,7 @@ var QuietLab = (function() {
 
     function drawFFT() {
         drawVisual = requestAnimationFrame(drawFFT);
+        fixDPI(fftCanvasCtx);
         analyser.getFloatFrequencyData(fftBuffer);
         fftCanvasCtx.clearRect(0, 0, fftCanvas.width, fftCanvas.height);
         var scale = fftCanvas.height/(analyser.maxDecibels - analyser.minDecibels);
@@ -610,6 +611,7 @@ var QuietLab = (function() {
             fftCanvasCtx.fillRect(i, fftCanvas.height, 1, -magnitude);
         }
 
+        fixDPI(waveformCanvasCtx);
         analyser.getFloatTimeDomainData(fftBuffer);
         waveformCanvasCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
         var min = -0.2;
@@ -625,6 +627,7 @@ var QuietLab = (function() {
     };
 
     function drawConstellation(symbols) {
+        fixDPI(constellationCanvasCtx);
         constellationCanvasCtx.clearRect(0, 0, constellationCanvas.width, constellationCanvas.height);
         var min = -1.5;
         var max = 1.5;
@@ -720,11 +723,9 @@ var QuietLab = (function() {
 
         fftCanvas = document.querySelector("[data-quiet-lab-fft]");
         fftCanvasCtx = fftCanvas.getContext('2d');
-        fixDPI(fftCanvasCtx);
         fftContainer = document.querySelector("[data-quiet-lab-fft-container]");
         waveformCanvas = document.querySelector("[data-quiet-lab-waveform]");
         waveformCanvasCtx = waveformCanvas.getContext('2d');
-        fixDPI(waveformCanvasCtx);
         waveformContainer = document.querySelector("[data-quiet-lab-waveform-container]");
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioCtx.createAnalyser();
@@ -736,7 +737,6 @@ var QuietLab = (function() {
 
         constellationCanvas = document.querySelector("[data-quiet-lab-constellation]");
         constellationCanvasCtx = constellationCanvas.getContext('2d');
-        fixDPI(constellationCanvasCtx);
         constellationContainer = document.querySelector("[data-quiet-lab-constellation-container]");
 
         drawAxes();
