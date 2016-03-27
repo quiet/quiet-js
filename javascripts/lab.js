@@ -568,7 +568,7 @@ var QuietLab = (function() {
         var yscale = fftCanvas.height/(analyser.maxDecibels - analyser.minDecibels);
         for (var i = analyser.minDecibels; i <= analyser.maxDecibels; i += 10) {
             fftAxes.ctx.moveTo(xmargin, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
-            fftAxes.ctx.lineTo(xmargin + 4, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
+            fftAxes.ctx.lineTo(xmargin + 8, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
             fftAxes.ctx.fillText(i, 0, fftCanvas.height - ((i - analyser.minDecibels) * yscale) + 18);
         }
         fftAxes.ctx.fillText("dB", xmargin + 10, 20);
