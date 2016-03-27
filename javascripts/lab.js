@@ -470,6 +470,7 @@ var QuietLab = (function() {
         pausedBlock.classList.add("hidden");
         instrumentsBlock.classList.remove("hidden");
 
+        drawAxes();
         if (source === undefined) {
             var gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
             gUM.call(navigator, gUMConstraints(), onGUM, onGUMFail);
