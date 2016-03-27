@@ -569,17 +569,17 @@ var QuietLab = (function() {
         for (var i = analyser.minDecibels; i <= analyser.maxDecibels; i += 10) {
             fftAxes.ctx.moveTo(xmargin, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
             fftAxes.ctx.lineTo(xmargin + 4, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
-            fftAxes.ctx.fillText(i, 0, fftCanvas.height - ((i - analyser.minDecibels) * yscale) + 9);
+            fftAxes.ctx.fillText(i, 0, fftCanvas.height - ((i - analyser.minDecibels) * yscale) + 18);
         }
-        fftAxes.ctx.fillText("dB", xmargin + 5, 10);
+        fftAxes.ctx.fillText("dB", xmargin + 10, 20);
         var maxFreq = audioCtx.sampleRate/2;
         var xscale = fftCanvas.width/maxFreq;
         for (var i = 0; i < maxFreq; i += 2000) {
-            fftAxes.ctx.moveTo(xmargin + (i * xscale), fftCanvas.height - 4);
+            fftAxes.ctx.moveTo(xmargin + (i * xscale), fftCanvas.height - 8);
             fftAxes.ctx.lineTo(xmargin + (i * xscale), fftCanvas.height);
-            fftAxes.ctx.fillText((i/1000).toFixed(0), xmargin + (i * xscale), fftAxes.height - 5);
+            fftAxes.ctx.fillText((i/1000).toFixed(0), xmargin + (i * xscale), fftAxes.height - 10);
         }
-        fftAxes.ctx.fillText("kHz", fftAxes.width - 25, fftAxes.height - 25);
+        fftAxes.ctx.fillText("kHz", fftAxes.width - 50, fftAxes.height - 50);
         fftAxes.ctx.stroke();
 
         waveformAxes.rescale();
@@ -593,11 +593,11 @@ var QuietLab = (function() {
         var maxTime = analyser.frequencyBinCount/audioCtx.sampleRate * 1000;
         var xscale = waveformCanvas.width/maxTime;
         for (var i = 0; i < maxTime; i += 1) {
-            waveformAxes.ctx.moveTo(xmargin + (i * xscale), waveformCanvas.height - 4);
+            waveformAxes.ctx.moveTo(xmargin + (i * xscale), waveformCanvas.height - 8);
             waveformAxes.ctx.lineTo(xmargin + (i * xscale), waveformCanvas.height);
-            waveformAxes.ctx.fillText(i.toFixed(0), xmargin + (i * xscale), waveformAxes.height - 5);
+            waveformAxes.ctx.fillText(i.toFixed(0), xmargin + (i * xscale), waveformAxes.height - 10);
         }
-        waveformAxes.ctx.fillText("ms", waveformAxes.width - 15, waveformAxes.height - 25);
+        waveformAxes.ctx.fillText("ms", waveformAxes.width - 30, waveformAxes.height - 50);
         waveformAxes.ctx.stroke();
 
         constellationAxes.rescale();
