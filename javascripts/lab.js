@@ -124,8 +124,8 @@ var QuietLab = (function() {
     function canvasWrapper(canvas) {
         var initHeight = canvas.getAttribute('height');
         var initWidth = canvas.getAttribute('width');
-        var initHeightBox = canvas.style.getPropertyValue('height');
-        var initWidthBox = canvas.style.getPropertyValue('width');
+        var initHeightBox = parseInt(canvas.style.getPropertyValue('height'), 10);
+        var initWidthBox = parseInt(canvas.style.getPropertyValue('width'), 10);
         var ctx = canvas.getContext('2d');
         ctx.mozImageSmoothingEnabled = false;
         ctx.webkitImageSmoothingEnabled = false;
