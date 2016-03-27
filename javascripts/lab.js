@@ -513,6 +513,7 @@ var QuietLab = (function() {
     function drawAxes() {
         var fftAxes = document.querySelector("[data-quiet-lab-fft-axes]");
         var fftAxesCtx = fftAxes.getContext('2d');
+        disableSmoothing(fftAxesCtx);
 
         fftAxesCtx.beginPath();
         var xmargin = fftAxes.width - fftCanvas.width;
@@ -540,6 +541,7 @@ var QuietLab = (function() {
 
         var waveformAxes = document.querySelector("[data-quiet-lab-waveform-axes]");
         var waveformAxesCtx = waveformAxes.getContext('2d');
+        disableSmoothing(waveformAxesCtx);
 
         waveformAxesCtx.beginPath();
         var xmargin = waveformAxes.width - waveformCanvas.width;
@@ -560,6 +562,7 @@ var QuietLab = (function() {
 
         var constellationAxes = document.querySelector("[data-quiet-lab-constellation-axes]");
         var constellationAxesCtx = constellationAxes.getContext('2d');
+        disableSmoothing(constellationAxesCtx);
 
         constellationAxesCtx.beginPath();
         constellationAxesCtx.moveTo(0, constellationAxes.height/2);
@@ -700,14 +703,23 @@ var QuietLab = (function() {
 
     };
 
+    function disableSmoothing(ctx) {
+        ctx.mozImageSmoothingEnabled = false;
+        ctx.webkitImageSmoothingEnabled = false;
+        ctx.msImageSmoothingEnabled = false;
+        ctx.imageSmoothingEnabled = false;
+    };
+
     function onDOMLoad() {
         warningbox = document.querySelector("[data-quiet-lab-warning]");
 
         fftCanvas = document.querySelector("[data-quiet-lab-fft]");
         fftCanvasCtx = fftCanvas.getContext('2d');
+        disableSmoothing(fftCanvasCtx);
         fftContainer = document.querySelector("[data-quiet-lab-fft-container]");
         waveformCanvas = document.querySelector("[data-quiet-lab-waveform]");
         waveformCanvasCtx = waveformCanvas.getContext('2d');
+        disableSmoothing(waveformCanvasCtx);
         waveformContainer = document.querySelector("[data-quiet-lab-waveform-container]");
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioCtx.createAnalyser();
@@ -719,6 +731,7 @@ var QuietLab = (function() {
 
         constellationCanvas = document.querySelector("[data-quiet-lab-constellation]");
         constellationCanvasCtx = constellationCanvas.getContext('2d');
+        disableSmoothing(constellationCanvasCtx);
         constellationContainer = document.querySelector("[data-quiet-lab-constellation-container]");
 
         drawAxes();
