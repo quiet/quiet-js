@@ -752,7 +752,7 @@ var QuietLab = (function() {
         analyser.maxDecibels = -10;
         fftBuffer = new Float32Array(analyser.frequencyBinCount);
 
-        constelletionAxes = canvasWrapper(document.querySelector("[data-quiet-lab-constellation-axes]"));
+        constellationAxes = canvasWrapper(document.querySelector("[data-quiet-lab-constellation-axes]"));
         constellationCanvas = canvasWrapper(document.querySelector("[data-quiet-lab-constellation]"));
         constellationContainer = document.querySelector("[data-quiet-lab-constellation-container]");
 
