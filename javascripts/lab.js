@@ -716,6 +716,7 @@ var QuietLab = (function() {
         var dpi = window.devicePixelRatio;
         canvas.width = Math.round(dpi * rect.right) - Math.round(dpi * rect.left);
         canvas.height = Math.round(dpi * rect.bottom) - Math.round(dpi * rect.top);
+        ctx.scale(dpi, dpi);
     };
 
     function onDOMLoad() {
