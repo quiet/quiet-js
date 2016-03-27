@@ -563,7 +563,7 @@ var QuietLab = (function() {
         fftAxes.ctx.font = "24px monospace";
         var yscale = fftCanvas.height/(analyser.maxDecibels - analyser.minDecibels);
         for (var i = analyser.minDecibels; i <= analyser.maxDecibels - 10; i += 10) {
-            if (i !== anaylser.minDecibles) {
+            if (i !== analyser.minDecibles) {
                 fftAxes.ctx.moveTo(xmargin, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
                 fftAxes.ctx.lineTo(xmargin + 8, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
             }
