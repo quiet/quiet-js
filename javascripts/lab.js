@@ -429,6 +429,8 @@ var QuietLab = (function() {
 
         pausedBlock.classList.add("hidden");
         instrumentsBlock.classList.remove("hidden");
+        drawAxes();
+
         if (source === undefined) {
             var gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
             gUM.call(navigator, gUMConstraints(), onGUM, onGUMFail);
@@ -739,8 +741,6 @@ var QuietLab = (function() {
         constellationCanvas = document.querySelector("[data-quiet-lab-constellation]");
         constellationCanvasCtx = constellationCanvas.getContext('2d');
         constellationContainer = document.querySelector("[data-quiet-lab-constellation-container]");
-
-        drawAxes();
 
         var modelist = document.querySelectorAll("input[name=mode]");
         for (var i = 0; i < modelist.length; i++) {
