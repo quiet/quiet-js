@@ -20,6 +20,7 @@ var QuietLab = (function() {
     var inputsIndex = {};
     var profile = {};
     var jsonBlock;
+    var shortBlock;
     var presets;
     var presetsObj;
     var transmitter;
@@ -34,6 +35,91 @@ var QuietLab = (function() {
     var frameIndex = 345345;
     var lastTransmitted = [];
     var clampFrame = true;
+
+    var shortener = function() {
+        var ablen = 42;
+        var b64len = 58;
+        function ab2b64(ab) {
+            var data = "";
+            var u8 = new Uint8Array(ab);
+            for (var i = 0; i < u8.length; i++) {
+                data += String.fromCharCode(u8[i]);
+            }
+            return window.btoa(data);
+        };
+
+        function b642ab(b64) {
+            var data = window.atob(b64);
+            var ab = new ArrayBuffer(ablen);
+            var u8 = new Uint8Array(ab);
+            for (var i = 0; i < data.length; i++) {
+                u8[i] = String.charCodeAt(data[i]);
+            }
+            return ab;
+        };
+
+        function shorten(profile) {
+            var ab = new ArrayBuffer(ablen);
+            var f32 = new Float32Array(ab, 0, 6);
+            f32[0] = inputs['modulation']['center_frequency'].value;
+            f32[1] = inputs['modulation']['gain'].value;
+            f32[2] = inputs['encoder_filters']['dc_filter_alpha'].value;
+            f32[3] = inputs['interpolation']['excess_bandwidth'].value;
+            f32[4] = inputs['resampler']['bandwidth'].value;
+            f32[5] = inputs['resampler']['attenuation'].value;
+
+            var u16 = new Uint16Array(ab, 24, 1);
+            u16[0] = inputs['frame_length'].value;
+
+            var u8 = new Uint8Array(ab, 26, 11);
+            u8[0] = inputs['interpolation']['samples_per_symbol'].value;
+            u8[1] = inputs['interpolation']['symbol_delay'].value;
+            u8[2] = inputs['ofdm']['num_subcarriers'].value;
+            u8[3] = inputs['ofdm']['cyclic_prefix_len'].value;
+            u8[4] = inputs['ofdm']['taper_length'].value;
+            u8[5] = inputs['ofdm']['left_band'].value;
+            u8[6] = inputs['ofdm']['right_band'].value;
+            u8[7] = inputs['resampler']['delay'].value;
+            u8[8] = inputs['resampler']['filter_bank_size'].value;
+            u8[9] = clampFrame;
+
+            for (var i = 0; i < mode.length; i++) {
+                if (mode[i].checked === true) {
+                    u8[10] = i;
+                }
+            }
+
+            var i8 = new Int8Array(ab, 37, 5);
+            i8[0] = profile['mod_scheme'].selectedIndex;
+            i8[1] = profile['checksum_scheme'].selectedIndex;
+            i8[2] = profile['inner_fec_scheme'].selectedIndex;
+            i8[3] = profile['outer_fec_scheme'].selectedIndex;
+            i8[4] = profile['interpolation']['shape'].selectedIndex;
+
+            return "Q0" + ab2b64(ab);
+        };
+
+        function expand(b64) {
+            if (b64[0] !== "Q") {
+                return;
+            }
+
+            if (b64[1] !== "0") {
+                return;
+            }
+
+            if (b64.length !== b64len) {
+                return;
+            }
+
+            var ab = b642ab(b64);
+        };
+
+        return {
+            shorten: shorten,
+            expand: expand
+        };
+    }();
 
     function disableInput(input) {
         input.setAttribute("disabled", "disabled");
@@ -131,6 +217,7 @@ var QuietLab = (function() {
             drawConstellation([]);
         }
         jsonBlock.value = JSON.stringify(profile, null, 2);
+        shortBlock.value = shortener.shorten();
     };
 
     function onInputChange(e) {
@@ -760,6 +847,7 @@ var QuietLab = (function() {
         spectrumBtn.addEventListener('click', onShowSpectrum, false);
 
         jsonBlock = document.querySelector("#quiet-profiles-json");
+        shortBlock = document.querySelector("#quiet-short-profile");
         updateProfileOutput();
 
         Quiet.addReadyCallback(onQuietReady, onQuietFail);
