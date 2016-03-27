@@ -58,7 +58,7 @@ var QuietLab = (function() {
             return ab;
         };
 
-        function shorten(profile) {
+        function shorten() {
             var ab = new ArrayBuffer(ablen);
             var f32 = new Float32Array(ab, 0, 6);
             f32[0] = inputs['modulation']['center_frequency'].value;
@@ -90,11 +90,11 @@ var QuietLab = (function() {
             }
 
             var i8 = new Int8Array(ab, 37, 5);
-            i8[0] = profile['mod_scheme'].selectedIndex;
-            i8[1] = profile['checksum_scheme'].selectedIndex;
-            i8[2] = profile['inner_fec_scheme'].selectedIndex;
-            i8[3] = profile['outer_fec_scheme'].selectedIndex;
-            i8[4] = profile['interpolation']['shape'].selectedIndex;
+            i8[0] = inputs['mod_scheme'].selectedIndex;
+            i8[1] = inputs['checksum_scheme'].selectedIndex;
+            i8[2] = inputs['inner_fec_scheme'].selectedIndex;
+            i8[3] = inputs['outer_fec_scheme'].selectedIndex;
+            i8[4] = inputs['interpolation']['shape'].selectedIndex;
 
             return "Q0" + ab2b64(ab);
         };
