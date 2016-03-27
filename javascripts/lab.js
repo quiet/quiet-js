@@ -566,7 +566,7 @@ var QuietLab = (function() {
         fftAxes.ctx.lineTo(fftAxes.width, fftAxes.height - ymargin);
         fftAxes.ctx.font = "24px monospace";
         var yscale = fftCanvas.height/(analyser.maxDecibels - analyser.minDecibels);
-        for (var i = analyser.minDecibels; i <= analyser.maxDecibels; i += 10) {
+        for (var i = analyser.minDecibels; i <= analyser.maxDecibels - 10; i += 10) {
             fftAxes.ctx.moveTo(xmargin, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
             fftAxes.ctx.lineTo(xmargin + 8, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
             fftAxes.ctx.fillText(i, 0, fftCanvas.height - ((i - analyser.minDecibels) * yscale) + 18);
@@ -574,7 +574,7 @@ var QuietLab = (function() {
         fftAxes.ctx.fillText("dB", xmargin + 10, 20);
         var maxFreq = audioCtx.sampleRate/2;
         var xscale = fftCanvas.width/maxFreq;
-        for (var i = 0; i < maxFreq; i += 2000) {
+        for (var i = 0; i < maxFreq - 2000; i += 2000) {
             fftAxes.ctx.moveTo(xmargin + (i * xscale), fftCanvas.height - 8);
             fftAxes.ctx.lineTo(xmargin + (i * xscale), fftCanvas.height);
             fftAxes.ctx.fillText((i/1000).toFixed(0), xmargin + (i * xscale), fftAxes.height - 10);
