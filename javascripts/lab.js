@@ -1,14 +1,14 @@
 var QuietLab = (function() {
+    var fftAxes;
     var fftCanvas;
-    var fftCanvasCtx;
     var fftContainer;
     var spectrumBtn;
+    var waveformAxes;
     var waveformCanvas;
-    var waveformCanvasCtx;
     var waveformContainer;
     var waveformBtn;
+    var constellationAxes;
     var constellationCanvas;
-    var constellationCanvasCtx;
     var constellationContainer;
     var audioCtx;
     var analyser;
@@ -120,6 +120,42 @@ var QuietLab = (function() {
             expand: expand
         };
     }();
+
+    function canvasWrapper(canvas) {
+        var initHeight = canvas.height;
+        var initWidth = canvas.width;
+        var ctx = canvas.getContext('2d');
+        ctx.mozImageSmoothingEnabled = false;
+        ctx.webkitImageSmoothingEnabled = false;
+        ctx.msImageSmoothingEnabled = false;
+        ctx.imageSmoothingEnabled = false;
+
+        function rescale() {
+            // our canvas has a CSS width and height and a canvas property width and height
+            // the css will lock us to the right size no matter how large we make the canvas
+            // we need to be aware of a few things
+            // a) are we zoomed? this will change the bounding box dimensions
+            //    because of the css styles, we otherwise will not see the bounding box grow
+            //    in this case we upscale to ceil() of zoom ratio
+            // b) are on a high dpi screen? this will change devicePixelRatio
+            //    if we are in this case, we will upscale the canvas by the ratio
+            // a and b can apply separately or together
+            var rect = canvas.getBoundingClientRect();
+            var horizZoom =(rect.right - rect.left)/initWidth;
+            var vertZoom = (rect.bottom - rect.top)/initHeight;
+            var dpr = window.devicePixelRatio;
+
+            canvas.width = Math.ceil(dpr * horizZoom);
+            canvas.height = Math.ceil(dpr * vertZoom);
+        };
+
+        return {
+            ctx: ctx,
+            height: initHeight,
+            width: initWidth,
+            rescale: rescale
+        };
+    };
 
     function disableInput(input) {
         input.setAttribute("disabled", "disabled");
@@ -513,124 +549,115 @@ var QuietLab = (function() {
     };
 
     function drawAxes() {
-        var fftAxes = document.querySelector("[data-quiet-lab-fft-axes]");
-        var fftAxesCtx = fftAxes.getContext('2d');
-        fixDPI(fftAxesCtx);
-
-        fftAxesCtx.beginPath();
+        fftAxes.rescale();
+        fftAxes.ctx.beginPath();
         var xmargin = fftAxes.width - fftCanvas.width;
         var ymargin = fftAxes.height - fftCanvas.height;
-        fftAxesCtx.moveTo(xmargin, 0);
-        fftAxesCtx.lineTo(xmargin, fftAxes.height - ymargin);
-        fftAxesCtx.lineTo(fftAxes.width, fftAxes.height - ymargin);
-        fftAxesCtx.font = "12px monospace";
+        fftAxes.ctx.moveTo(xmargin, 0);
+        fftAxes.ctx.lineTo(xmargin, fftAxes.height - ymargin);
+        fftAxes.ctx.lineTo(fftAxes.width, fftAxes.height - ymargin);
+        fftAxes.ctx.font = "12px monospace";
         var yscale = fftCanvas.height/(analyser.maxDecibels - analyser.minDecibels);
         for (var i = analyser.minDecibels; i <= analyser.maxDecibels; i += 10) {
-            fftAxesCtx.moveTo(xmargin, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
-            fftAxesCtx.lineTo(xmargin + 4, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
-            fftAxesCtx.strokeText(i, 0, fftCanvas.height - ((i - analyser.minDecibels) * yscale) + 9);
+            fftAxes.ctx.moveTo(xmargin, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
+            fftAxes.ctx.lineTo(xmargin + 4, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
+            fftAxes.ctx.strokeText(i, 0, fftCanvas.height - ((i - analyser.minDecibels) * yscale) + 9);
         }
-        fftAxesCtx.strokeText("dB", xmargin + 5, 10);
+        fftAxes.ctx.strokeText("dB", xmargin + 5, 10);
         var maxFreq = audioCtx.sampleRate/2;
         var xscale = fftCanvas.width/maxFreq;
         for (var i = 0; i < maxFreq; i += 2000) {
-            fftAxesCtx.moveTo(xmargin + (i * xscale), fftCanvas.height - 4);
-            fftAxesCtx.lineTo(xmargin + (i * xscale), fftCanvas.height);
-            fftAxesCtx.strokeText((i/1000).toFixed(0), xmargin + (i * xscale), fftAxes.height - 5);
+            fftAxes.ctx.moveTo(xmargin + (i * xscale), fftCanvas.height - 4);
+            fftAxes.ctx.lineTo(xmargin + (i * xscale), fftCanvas.height);
+            fftAxes.ctx.strokeText((i/1000).toFixed(0), xmargin + (i * xscale), fftAxes.height - 5);
         }
-        fftAxesCtx.strokeText("kHz", fftAxes.width - 25, fftAxes.height - 25);
-        fftAxesCtx.stroke();
+        fftAxes.ctx.strokeText("kHz", fftAxes.width - 25, fftAxes.height - 25);
+        fftAxes.ctx.stroke();
 
-        var waveformAxes = document.querySelector("[data-quiet-lab-waveform-axes]");
-        var waveformAxesCtx = waveformAxes.getContext('2d');
-        fixDPI(waveformAxesCtx);
-
-        waveformAxesCtx.beginPath();
+        waveformAxes.rescale();
+        waveformAxes.ctx.beginPath();
         var xmargin = waveformAxes.width - waveformCanvas.width;
         var ymargin = waveformAxes.height - waveformCanvas.height;
-        waveformAxesCtx.moveTo(xmargin, 0);
-        waveformAxesCtx.lineTo(xmargin, waveformAxes.height - ymargin);
-        waveformAxesCtx.lineTo(waveformAxes.width, waveformAxes.height - ymargin);
-        waveformAxesCtx.font = "12px monospace";
+        waveformAxes.ctx.moveTo(xmargin, 0);
+        waveformAxes.ctx.lineTo(xmargin, waveformAxes.height - ymargin);
+        waveformAxes.ctx.lineTo(waveformAxes.width, waveformAxes.height - ymargin);
+        waveformAxes.ctx.font = "12px monospace";
         var maxTime = analyser.frequencyBinCount/audioCtx.sampleRate * 1000;
         var xscale = waveformCanvas.width/maxTime;
         for (var i = 0; i < maxTime; i += 1) {
-            waveformAxesCtx.moveTo(xmargin + (i * xscale), waveformCanvas.height - 4);
-            waveformAxesCtx.lineTo(xmargin + (i * xscale), waveformCanvas.height);
-            waveformAxesCtx.strokeText(i.toFixed(0), xmargin + (i * xscale), waveformAxes.height - 5);
+            waveformAxes.ctx.moveTo(xmargin + (i * xscale), waveformCanvas.height - 4);
+            waveformAxes.ctx.lineTo(xmargin + (i * xscale), waveformCanvas.height);
+            waveformAxes.ctx.strokeText(i.toFixed(0), xmargin + (i * xscale), waveformAxes.height - 5);
         }
-        waveformAxesCtx.strokeText("ms", waveformAxes.width - 15, waveformAxes.height - 25);
-        waveformAxesCtx.stroke();
+        waveformAxes.ctx.strokeText("ms", waveformAxes.width - 15, waveformAxes.height - 25);
+        waveformAxes.ctx.stroke();
 
-        var constellationAxes = document.querySelector("[data-quiet-lab-constellation-axes]");
-        var constellationAxesCtx = constellationAxes.getContext('2d');
-        fixDPI(constellationAxesCtx);
+        constellationAxes.rescale();
+        constellationAxes.ctx.beginPath();
+        constellationAxes.ctx.moveTo(0, constellationAxes.height/2);
+        constellationAxes.ctx.lineTo(constellationAxes.width, constellationAxes.height/2);
+        constellationAxes.ctx.moveTo(constellationAxes.width/2, 0);
+        constellationAxes.ctx.lineTo(constellationAxes.width/2, constellationAxes.height);
 
-        constellationAxesCtx.beginPath();
-        constellationAxesCtx.moveTo(0, constellationAxes.height/2);
-        constellationAxesCtx.lineTo(constellationAxes.width, constellationAxes.height/2);
-        constellationAxesCtx.moveTo(constellationAxes.width/2, 0);
-        constellationAxesCtx.lineTo(constellationAxes.width/2, constellationAxes.height);
+        constellationAxes.ctx.moveTo(constellationAxes.width/6, constellationAxes.height/2 - 2);
+        constellationAxes.ctx.lineTo(constellationAxes.width/6, constellationAxes.height/2 + 2);
+        constellationAxes.ctx.moveTo(constellationAxes.width/3, constellationAxes.height/2 - 2);
+        constellationAxes.ctx.lineTo(constellationAxes.width/3, constellationAxes.height/2 + 2);
+        constellationAxes.ctx.moveTo(2*constellationAxes.width/3, constellationAxes.height/2 - 2);
+        constellationAxes.ctx.lineTo(2*constellationAxes.width/3, constellationAxes.height/2 + 2);
+        constellationAxes.ctx.moveTo(5*constellationAxes.width/6, constellationAxes.height/2 - 2);
+        constellationAxes.ctx.lineTo(5*constellationAxes.width/6, constellationAxes.height/2 + 2);
 
-        constellationAxesCtx.moveTo(constellationAxes.width/6, constellationAxes.height/2 - 2);
-        constellationAxesCtx.lineTo(constellationAxes.width/6, constellationAxes.height/2 + 2);
-        constellationAxesCtx.moveTo(constellationAxes.width/3, constellationAxes.height/2 - 2);
-        constellationAxesCtx.lineTo(constellationAxes.width/3, constellationAxes.height/2 + 2);
-        constellationAxesCtx.moveTo(2*constellationAxes.width/3, constellationAxes.height/2 - 2);
-        constellationAxesCtx.lineTo(2*constellationAxes.width/3, constellationAxes.height/2 + 2);
-        constellationAxesCtx.moveTo(5*constellationAxes.width/6, constellationAxes.height/2 - 2);
-        constellationAxesCtx.lineTo(5*constellationAxes.width/6, constellationAxes.height/2 + 2);
+        constellationAxes.ctx.moveTo(constellationAxes.width/2 - 2, constellationAxes.height/6);
+        constellationAxes.ctx.lineTo(constellationAxes.width/2 + 2, constellationAxes.height/6);
+        constellationAxes.ctx.moveTo(constellationAxes.width/2 - 2, constellationAxes.height/3);
+        constellationAxes.ctx.lineTo(constellationAxes.width/2 + 2, constellationAxes.height/3);
+        constellationAxes.ctx.moveTo(constellationAxes.width/2 - 2, 2*constellationAxes.height/3);
+        constellationAxes.ctx.lineTo(constellationAxes.width/2 + 2, 2*constellationAxes.height/3);
+        constellationAxes.ctx.moveTo(constellationAxes.width/2 - 2, 5*constellationAxes.height/6);
+        constellationAxes.ctx.lineTo(constellationAxes.width/2 + 2, 5*constellationAxes.height/6);
 
-        constellationAxesCtx.moveTo(constellationAxes.width/2 - 2, constellationAxes.height/6);
-        constellationAxesCtx.lineTo(constellationAxes.width/2 + 2, constellationAxes.height/6);
-        constellationAxesCtx.moveTo(constellationAxes.width/2 - 2, constellationAxes.height/3);
-        constellationAxesCtx.lineTo(constellationAxes.width/2 + 2, constellationAxes.height/3);
-        constellationAxesCtx.moveTo(constellationAxes.width/2 - 2, 2*constellationAxes.height/3);
-        constellationAxesCtx.lineTo(constellationAxes.width/2 + 2, 2*constellationAxes.height/3);
-        constellationAxesCtx.moveTo(constellationAxes.width/2 - 2, 5*constellationAxes.height/6);
-        constellationAxesCtx.lineTo(constellationAxes.width/2 + 2, 5*constellationAxes.height/6);
+        constellationAxes.ctx.stroke();
 
-        constellationAxesCtx.stroke();
-
-        constellationAxesCtx.font = "12px monospace";
-        constellationAxesCtx.strokeText("-1", constellationAxes.width/6, constellationAxes.height/2 - 4);
-        constellationAxesCtx.strokeText("1", 5*constellationAxes.width/6, constellationAxes.height/2 - 4);
-        constellationAxesCtx.strokeText("-1", constellationAxes.width/2 + 4, constellationAxes.height/6);
-        constellationAxesCtx.strokeText("1", constellationAxes.width/2 + 4, 5*constellationAxes.height/6);
-        constellationAxesCtx.strokeText("I", constellationAxes.width - 8, constellationAxes.height/2 - 4);
-        constellationAxesCtx.strokeText("Q", constellationAxes.width/2 + 4, 8);
+        constellationAxes.ctx.font = "12px monospace";
+        constellationAxes.ctx.strokeText("-1", constellationAxes.width/6, constellationAxes.height/2 - 4);
+        constellationAxes.ctx.strokeText("1", 5*constellationAxes.width/6, constellationAxes.height/2 - 4);
+        constellationAxes.ctx.strokeText("-1", constellationAxes.width/2 + 4, constellationAxes.height/6);
+        constellationAxes.ctx.strokeText("1", constellationAxes.width/2 + 4, 5*constellationAxes.height/6);
+        constellationAxes.ctx.strokeText("I", constellationAxes.width - 8, constellationAxes.height/2 - 4);
+        constellationAxes.ctx.strokeText("Q", constellationAxes.width/2 + 4, 8);
 
     };
 
     function drawFFT() {
+        fftCanvas.rescale();
         drawVisual = requestAnimationFrame(drawFFT);
-        fixDPI(fftCanvasCtx);
         analyser.getFloatFrequencyData(fftBuffer);
-        fftCanvasCtx.clearRect(0, 0, fftCanvas.width, fftCanvas.height);
+        fftCanvas.ctx.clearRect(0, 0, fftCanvas.width, fftCanvas.height);
         var scale = fftCanvas.height/(analyser.maxDecibels - analyser.minDecibels);
         for (var i = 0; i < analyser.frequencyBinCount; i++) {
             var magnitude = (fftBuffer[i] - analyser.minDecibels) * scale;
-            fftCanvasCtx.fillRect(i, fftCanvas.height, 1, -magnitude);
+            fftCanvas.ctx.fillRect(i, fftCanvas.height, 1, -magnitude);
         }
 
-        fixDPI(waveformCanvasCtx);
+        waveformCanvas.rescale();
         analyser.getFloatTimeDomainData(fftBuffer);
-        waveformCanvasCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
+        waveformCanvas.ctx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
         var min = -0.2;
         var max = 0.2;
         var scale = waveformCanvas.height/(max - min);
-        waveformCanvasCtx.beginPath();
-        waveformCanvasCtx.moveTo(0, waveformCanvas.height/2);
+        waveformCanvas.ctx.beginPath();
+        waveformCanvas.ctx.moveTo(0, waveformCanvas.height/2);
         for (var i = 0; i < analyser.frequencyBinCount; i++) {
             var magnitude = (max - fftBuffer[i]) * scale;
-            waveformCanvasCtx.lineTo(i, magnitude);
+            waveformCanvas.ctx.lineTo(i, magnitude);
         }
-        waveformCanvasCtx.stroke();
+        waveformCanvas.ctx.stroke();
     };
 
     function drawConstellation(symbols) {
-        fixDPI(constellationCanvasCtx);
-        constellationCanvasCtx.clearRect(0, 0, constellationCanvas.width, constellationCanvas.height);
+        constellationCanvas.rescale();
+        constellationCanvas.ctx.clearRect(0, 0, constellationCanvas.width, constellationCanvas.height);
         var min = -1.5;
         var max = 1.5;
         var yscale = constellationCanvas.height/(max - min);
@@ -638,12 +665,12 @@ var QuietLab = (function() {
         for (var i = 0; i < symbols.length; i++) {
             var x = (symbols[i].real - min) * xscale;
             var y = (max- symbols[i].imag) * yscale;
-            constellationCanvasCtx.beginPath();
-            constellationCanvasCtx.moveTo(x - 2, y - 2);
-            constellationCanvasCtx.lineTo(x + 2, y + 2);
-            constellationCanvasCtx.moveTo(x - 2, y + 2);
-            constellationCanvasCtx.lineTo(x + 2, y - 2);
-            constellationCanvasCtx.stroke();
+            constellationCanvas.ctx.beginPath();
+            constellationCanvas.ctx.moveTo(x - 2, y - 2);
+            constellationCanvas.ctx.lineTo(x + 2, y + 2);
+            constellationCanvas.ctx.moveTo(x - 2, y + 2);
+            constellationCanvas.ctx.lineTo(x + 2, y - 2);
+            constellationCanvas.ctx.stroke();
         }
     };
 
@@ -708,26 +735,14 @@ var QuietLab = (function() {
 
     };
 
-    function fixDPI(ctx) {
-        ctx.mozImageSmoothingEnabled = false;
-        ctx.webkitImageSmoothingEnabled = false;
-        ctx.msImageSmoothingEnabled = false;
-        ctx.imageSmoothingEnabled = false;
-        var canvas = ctx.canvas;
-        var rect = canvas.getBoundingClientRect();
-        var dpi = window.devicePixelRatio;
-        canvas.width = Math.round(dpi * rect.right) - Math.round(dpi * rect.left);
-        canvas.height = Math.round(dpi * rect.bottom) - Math.round(dpi * rect.top);
-    };
-
     function onDOMLoad() {
         warningbox = document.querySelector("[data-quiet-lab-warning]");
 
-        fftCanvas = document.querySelector("[data-quiet-lab-fft]");
-        fftCanvasCtx = fftCanvas.getContext('2d');
+        fftAxes = canvasWrapper(document.querySelector("[data-quiet-lab-fft-axes]");
+        fftCanvas = canvasWrapper(document.querySelector("[data-quiet-lab-fft]"));
         fftContainer = document.querySelector("[data-quiet-lab-fft-container]");
-        waveformCanvas = document.querySelector("[data-quiet-lab-waveform]");
-        waveformCanvasCtx = waveformCanvas.getContext('2d');
+        waveformAxes = canvasWrapper(document.querySelector("[data-quiet-lab-waveform-axes]");
+        waveformCanvas = canvasWrapper(document.querySelector("[data-quiet-lab-waveform]"));
         waveformContainer = document.querySelector("[data-quiet-lab-waveform-container]");
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioCtx.createAnalyser();
@@ -737,8 +752,8 @@ var QuietLab = (function() {
         analyser.maxDecibels = -10;
         fftBuffer = new Float32Array(analyser.frequencyBinCount);
 
-        constellationCanvas = document.querySelector("[data-quiet-lab-constellation]");
-        constellationCanvasCtx = constellationCanvas.getContext('2d');
+        constelletionAxes = canvasWrapper(document.querySelector("[data-quiet-lab-constellation-axes]");
+        constellationCanvas = canvasWrapper(document.querySelector("[data-quiet-lab-constellation]"));
         constellationContainer = document.querySelector("[data-quiet-lab-constellation-container]");
 
         var modelist = document.querySelectorAll("input[name=mode]");
