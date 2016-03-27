@@ -127,10 +127,6 @@ var QuietLab = (function() {
         var initHeightBox = parseInt(canvas.style.getPropertyValue('height'), 10);
         var initWidthBox = parseInt(canvas.style.getPropertyValue('width'), 10);
         var ctx = canvas.getContext('2d');
-        ctx.mozImageSmoothingEnabled = false;
-        ctx.webkitImageSmoothingEnabled = false;
-        ctx.msImageSmoothingEnabled = false;
-        ctx.imageSmoothingEnabled = false;
 
         function rescale() {
             // our canvas has a CSS width and height and a canvas property width and height
