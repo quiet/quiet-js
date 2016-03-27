@@ -124,6 +124,8 @@ var QuietLab = (function() {
     function canvasWrapper(canvas) {
         var initHeight = canvas.getAttribute('height');
         var initWidth = canvas.getAttribute('width');
+        var initHeightBox = canvas.style.getPropertyValue('height');
+        var initWidthBox = canvas.style.getPropertyValue('width');
         var ctx = canvas.getContext('2d');
         ctx.mozImageSmoothingEnabled = false;
         ctx.webkitImageSmoothingEnabled = false;
@@ -141,8 +143,8 @@ var QuietLab = (function() {
             //    if we are in this case, we will upscale the canvas by the ratio
             // a and b can apply separately or together
             var rect = canvas.getBoundingClientRect();
-            var horizZoom =(rect.right - rect.left)/initWidth;
-            var vertZoom = (rect.bottom - rect.top)/initHeight;
+            var horizZoom = (rect.right - rect.left)/initWidthBox;
+            var vertZoom = (rect.bottom - rect.top)/initHeightBox;
             var dpr = window.devicePixelRatio;
             var horizScale = Math.ceil(dpr * horizZoom);
             var vertScale = Math.ceil(dpr * vertZoom);
