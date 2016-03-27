@@ -445,6 +445,7 @@ var QuietLab = (function() {
         waveformContainer.classList.remove("hidden");
         waveformBtn.classList.add("hidden");
         spectrumBtn.classList.remove("hidden");
+        drawAxes();
     };
 
     function onShowSpectrum() {
@@ -452,6 +453,7 @@ var QuietLab = (function() {
         fftContainer.classList.remove("hidden");
         spectrumBtn.classList.add("hidden");
         waveformBtn.classList.remove("hidden");
+        drawAxes();
     };
 
     function onLabStart() {
