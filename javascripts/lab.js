@@ -469,7 +469,6 @@ var QuietLab = (function() {
 
         pausedBlock.classList.add("hidden");
         instrumentsBlock.classList.remove("hidden");
-        drawAxes();
 
         if (source === undefined) {
             var gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
@@ -634,6 +633,7 @@ var QuietLab = (function() {
     };
 
     function drawFFT() {
+        drawAxes();
         fftCanvas.rescale();
         drawVisual = requestAnimationFrame(drawFFT);
         analyser.getFloatFrequencyData(fftBuffer);
