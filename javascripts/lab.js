@@ -567,17 +567,17 @@ var QuietLab = (function() {
         for (var i = analyser.minDecibels; i <= analyser.maxDecibels; i += 10) {
             fftAxes.ctx.moveTo(xmargin, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
             fftAxes.ctx.lineTo(xmargin + 4, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
-            fftAxes.ctx.strokeText(i, 0, fftCanvas.height - ((i - analyser.minDecibels) * yscale) + 9);
+            fftAxes.ctx.fillText(i, 0, fftCanvas.height - ((i - analyser.minDecibels) * yscale) + 9);
         }
-        fftAxes.ctx.strokeText("dB", xmargin + 5, 10);
+        fftAxes.ctx.fillText("dB", xmargin + 5, 10);
         var maxFreq = audioCtx.sampleRate/2;
         var xscale = fftCanvas.width/maxFreq;
         for (var i = 0; i < maxFreq; i += 2000) {
             fftAxes.ctx.moveTo(xmargin + (i * xscale), fftCanvas.height - 4);
             fftAxes.ctx.lineTo(xmargin + (i * xscale), fftCanvas.height);
-            fftAxes.ctx.strokeText((i/1000).toFixed(0), xmargin + (i * xscale), fftAxes.height - 5);
+            fftAxes.ctx.fillText((i/1000).toFixed(0), xmargin + (i * xscale), fftAxes.height - 5);
         }
-        fftAxes.ctx.strokeText("kHz", fftAxes.width - 25, fftAxes.height - 25);
+        fftAxes.ctx.fillText("kHz", fftAxes.width - 25, fftAxes.height - 25);
         fftAxes.ctx.stroke();
 
         waveformAxes.rescale();
@@ -593,9 +593,9 @@ var QuietLab = (function() {
         for (var i = 0; i < maxTime; i += 1) {
             waveformAxes.ctx.moveTo(xmargin + (i * xscale), waveformCanvas.height - 4);
             waveformAxes.ctx.lineTo(xmargin + (i * xscale), waveformCanvas.height);
-            waveformAxes.ctx.strokeText(i.toFixed(0), xmargin + (i * xscale), waveformAxes.height - 5);
+            waveformAxes.ctx.fillText(i.toFixed(0), xmargin + (i * xscale), waveformAxes.height - 5);
         }
-        waveformAxes.ctx.strokeText("ms", waveformAxes.width - 15, waveformAxes.height - 25);
+        waveformAxes.ctx.fillText("ms", waveformAxes.width - 15, waveformAxes.height - 25);
         waveformAxes.ctx.stroke();
 
         constellationAxes.rescale();
@@ -626,12 +626,12 @@ var QuietLab = (function() {
         constellationAxes.ctx.stroke();
 
         constellationAxes.ctx.font = "12px monospace";
-        constellationAxes.ctx.strokeText("-1", constellationAxes.width/6, constellationAxes.height/2 - 4);
-        constellationAxes.ctx.strokeText("1", 5*constellationAxes.width/6, constellationAxes.height/2 - 4);
-        constellationAxes.ctx.strokeText("-1", constellationAxes.width/2 + 4, constellationAxes.height/6);
-        constellationAxes.ctx.strokeText("1", constellationAxes.width/2 + 4, 5*constellationAxes.height/6);
-        constellationAxes.ctx.strokeText("I", constellationAxes.width - 8, constellationAxes.height/2 - 4);
-        constellationAxes.ctx.strokeText("Q", constellationAxes.width/2 + 4, 8);
+        constellationAxes.ctx.fillText("-1", constellationAxes.width/6, constellationAxes.height/2 - 4);
+        constellationAxes.ctx.fillText("1", 5*constellationAxes.width/6, constellationAxes.height/2 - 4);
+        constellationAxes.ctx.fillText("-1", constellationAxes.width/2 + 4, constellationAxes.height/6);
+        constellationAxes.ctx.fillText("1", constellationAxes.width/2 + 4, 5*constellationAxes.height/6);
+        constellationAxes.ctx.fillText("I", constellationAxes.width - 8, constellationAxes.height/2 - 4);
+        constellationAxes.ctx.fillText("Q", constellationAxes.width/2 + 4, 8);
 
     };
 
