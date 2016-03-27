@@ -144,9 +144,13 @@ var QuietLab = (function() {
             var horizZoom =(rect.right - rect.left)/initWidth;
             var vertZoom = (rect.bottom - rect.top)/initHeight;
             var dpr = window.devicePixelRatio;
+            var horizScale = Math.ceil(dpr * horizZoom);
+            var vertScale = Math.ceil(dpr * vertZoom);
 
-            canvas.width = Math.ceil(dpr * horizZoom) * initWidth;
-            canvas.height = Math.ceil(dpr * vertZoom) * initHeight;
+            canvas.width = horizScale * initWidth;
+            canvas.height = vertScale * initHeight;
+
+            ctx.scale(horizScale, vertScale);
         };
 
         return {
