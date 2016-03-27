@@ -563,16 +563,20 @@ var QuietLab = (function() {
         fftAxes.ctx.font = "24px monospace";
         var yscale = fftCanvas.height/(analyser.maxDecibels - analyser.minDecibels);
         for (var i = analyser.minDecibels; i <= analyser.maxDecibels - 10; i += 10) {
-            fftAxes.ctx.moveTo(xmargin, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
-            fftAxes.ctx.lineTo(xmargin + 8, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
+            if (i !== anaylser.minDecibles) {
+                fftAxes.ctx.moveTo(xmargin, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
+                fftAxes.ctx.lineTo(xmargin + 8, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
+            }
             fftAxes.ctx.fillText(i, 0, fftCanvas.height - ((i - analyser.minDecibels) * yscale) + 18);
         }
         fftAxes.ctx.fillText("dB", xmargin + 10, 20);
         var maxFreq = audioCtx.sampleRate/2;
         var xscale = fftCanvas.width/maxFreq;
         for (var i = 0; i < maxFreq - 2000; i += 2000) {
-            fftAxes.ctx.moveTo(xmargin + (i * xscale), fftCanvas.height - 8);
-            fftAxes.ctx.lineTo(xmargin + (i * xscale), fftCanvas.height);
+            if (i !== 0) {
+                fftAxes.ctx.moveTo(xmargin + (i * xscale), fftCanvas.height - 8);
+                fftAxes.ctx.lineTo(xmargin + (i * xscale), fftCanvas.height);
+            }
             fftAxes.ctx.fillText((i/1000).toFixed(0), xmargin + (i * xscale), fftAxes.height - 10);
         }
         fftAxes.ctx.fillText("kHz", fftAxes.width - 50, fftAxes.height - 50);
@@ -589,8 +593,10 @@ var QuietLab = (function() {
         var maxTime = analyser.frequencyBinCount/audioCtx.sampleRate * 1000;
         var xscale = waveformCanvas.width/maxTime;
         for (var i = 0; i < maxTime; i += 1) {
-            waveformAxes.ctx.moveTo(xmargin + (i * xscale), waveformCanvas.height - 8);
-            waveformAxes.ctx.lineTo(xmargin + (i * xscale), waveformCanvas.height);
+            if (i !== 0) {
+                waveformAxes.ctx.moveTo(xmargin + (i * xscale), waveformCanvas.height - 8);
+                waveformAxes.ctx.lineTo(xmargin + (i * xscale), waveformCanvas.height);
+            }
             waveformAxes.ctx.fillText(i.toFixed(0), xmargin + (i * xscale), waveformAxes.height - 10);
         }
         waveformAxes.ctx.fillText("ms", waveformAxes.width - 30, waveformAxes.height - 50);
