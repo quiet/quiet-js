@@ -562,7 +562,7 @@ var QuietLab = (function() {
         fftAxes.ctx.moveTo(xmargin, 0);
         fftAxes.ctx.lineTo(xmargin, fftAxes.height - ymargin);
         fftAxes.ctx.lineTo(fftAxes.width, fftAxes.height - ymargin);
-        fftAxes.ctx.font = "12px monospace";
+        fftAxes.ctx.font = "24px monospace";
         var yscale = fftCanvas.height/(analyser.maxDecibels - analyser.minDecibels);
         for (var i = analyser.minDecibels; i <= analyser.maxDecibels; i += 10) {
             fftAxes.ctx.moveTo(xmargin, fftCanvas.height - ((i - analyser.minDecibels) * yscale));
@@ -587,7 +587,7 @@ var QuietLab = (function() {
         waveformAxes.ctx.moveTo(xmargin, 0);
         waveformAxes.ctx.lineTo(xmargin, waveformAxes.height - ymargin);
         waveformAxes.ctx.lineTo(waveformAxes.width, waveformAxes.height - ymargin);
-        waveformAxes.ctx.font = "12px monospace";
+        waveformAxes.ctx.font = "24px monospace";
         var maxTime = analyser.frequencyBinCount/audioCtx.sampleRate * 1000;
         var xscale = waveformCanvas.width/maxTime;
         for (var i = 0; i < maxTime; i += 1) {
