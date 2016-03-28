@@ -62,8 +62,8 @@ var QuietLab = (function() {
                 return undefined;
             }
 
-            var ab = b642ab(b64.slice(2));
-            var data = window.atob(b64);
+            var b64payload = b64.slice(2);
+            var data = window.atob(b64payload);
             var ab = new ArrayBuffer(ablen);
             var u8 = new Uint8Array(ab);
             for (var i = 0; i < data.length; i++) {
