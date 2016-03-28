@@ -182,7 +182,7 @@ var QuietLab = (function() {
             var backup = backupInputs();
             var backup_mode;
             for (var i = 0; i < mode.length; i++) {
-                if (mode[i].checked ==== true) {
+                if (mode[i].checked === true) {
                     backup_mode = mode[i].value;
                     break;
                 }
