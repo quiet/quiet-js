@@ -203,12 +203,12 @@ var QuietLab = (function() {
             mode[mode_val].checked = true;
             onModeChange(mode_val);
 
-            setInputValue(inputs['modulation']['center_frequency'], deserializeFloat[0]));
-            setInputValue(inputs['modulation']['gain'], deserializeFloat[1]));
-            setInputValue(inputs['encoder_filters']['dc_filter_alpha'], deserializeFloat[2]));
-            setInputValue(inputs['interpolation']['excess_bandwidth'], deserializeFloat[3]));
-            setInputValue(inputs['resampler']['bandwidth'], deserializeFloat[4]));
-            setInputValue(inputs['resampler']['attenuation'], deserializeFloat[5]));
+            setInputValue(inputs['modulation']['center_frequency'], deserializeFloat([0]));
+            setInputValue(inputs['modulation']['gain'], deserializeFloat([1]));
+            setInputValue(inputs['encoder_filters']['dc_filter_alpha'], deserializeFloat([2]));
+            setInputValue(inputs['interpolation']['excess_bandwidth'], deserializeFloat([3]));
+            setInputValue(inputs['resampler']['bandwidth'], deserializeFloat([4]));
+            setInputValue(inputs['resampler']['attenuation'], deserializeFloat([5]));
 
             setInputValue(inputs['frame_length'], u16[0]);
 
