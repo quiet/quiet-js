@@ -408,6 +408,7 @@ var QuietLab = (function() {
         }
         jsonBlock.value = JSON.stringify(profile, null, 2);
         shortBlock.value = shortener.shorten();
+        onShortProfileUpdate();
     };
 
     function updateInput(input) {
@@ -710,7 +711,7 @@ var QuietLab = (function() {
         loadPreset("audible-psk");
     };
 
-    function onShortProfileChange(e) {
+    function onShortProfileUpdate() {
         var gain = shortener.peekGain(shortBlock.value);
         if (gain === false) {
             loadShortBtn.textContent = "Load Profile";
@@ -718,6 +719,10 @@ var QuietLab = (function() {
             loadShortBtn.textContent = "Load Profile [gain=" + gain + "]";
         }
     };
+
+    function onShortProfileChange(e) {
+        onShortProfileUpdate();
+    }
 
     function onLoadShortProfile(e) {
         shortener.expand(shortBlock.value);
