@@ -1057,7 +1057,7 @@ var QuietLab = (function() {
         shortBlock = document.querySelector("#quiet-short-profile");
         shortBlock.addEventListener('change', onShortProfileChange, false);
         loadShortBtn = document.querySelector("#loadShortProfile");
-        loadShortBtn.addEventListener('click', onLoadShortProfile, false);
+        loadShortBtn.addEventListener('input', onLoadShortProfile, false);
         updateProfileOutput();
 
         Quiet.addReadyCallback(onQuietReady, onQuietFail);
