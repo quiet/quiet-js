@@ -190,8 +190,9 @@ var QuietLab = (function() {
 
             // first handle the mode since it reshapes profile
             var mode_index = u8[10];
-            mode[mode_index].checked = true;
-            onModeChange(mode[mode_index].value);
+            var mode_val = document.querySelectorAll('input[name=mode]')[mode_index];
+            mode[mode_val].checked = true;
+            onModeChange(mode_val);
 
             inputs['modulation']['center_frequency'].value = f32[0];
             inputs['modulation']['gain'].value = f32[1];
