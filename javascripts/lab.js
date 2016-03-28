@@ -1011,6 +1011,8 @@ var QuietLab = (function() {
 
         jsonBlock = document.querySelector("#quiet-profiles-json");
         shortBlock = document.querySelector("#quiet-short-profile");
+        var loadShortBtn = document.querySelector("#loadShortProfile");
+        loadShortBtn.addEventListener('click', onLoadShortProfile, false);
         updateProfileOutput();
 
         Quiet.addReadyCallback(onQuietReady, onQuietFail);
