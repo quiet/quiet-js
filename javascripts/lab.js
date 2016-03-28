@@ -632,8 +632,8 @@ var QuietLab = (function() {
         constellationAxes.ctx.font = "12px monospace";
         constellationAxes.ctx.fillText("-1", constellationAxes.width/6, constellationAxes.height/2 - 4);
         constellationAxes.ctx.fillText("1", 5*constellationAxes.width/6, constellationAxes.height/2 - 4);
-        constellationAxes.ctx.fillText("-1", constellationAxes.width/2 + 4, constellationAxes.height/6);
-        constellationAxes.ctx.fillText("1", constellationAxes.width/2 + 4, 5*constellationAxes.height/6);
+        constellationAxes.ctx.fillText("1", constellationAxes.width/2 + 4, constellationAxes.height/6);
+        constellationAxes.ctx.fillText("-1", constellationAxes.width/2 + 4, 5*constellationAxes.height/6);
         constellationAxes.ctx.fillText("I", constellationAxes.width - 8, constellationAxes.height/2 - 4);
         constellationAxes.ctx.fillText("Q", constellationAxes.width/2 + 4, 8);
 
