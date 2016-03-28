@@ -300,8 +300,8 @@ var QuietLab = (function() {
             var newWidth = horizScale * initWidth;
             var newHeight = vertScale * initHeight;
             if (canvas.width != newWidth || canvas.height != newHeight) {
-                canvas.width = horizScale * initWidth;
-                canvas.height = vertScale * initHeight;
+                canvas.width = newWidth;
+                canvas.height = newHeight;
 
                 ctx.scale(horizScale, vertScale);
             }
