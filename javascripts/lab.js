@@ -59,11 +59,11 @@ var QuietLab = (function() {
         };
 
         function serializeFloat(f) {
-            return f * 100000;
+            return f * 10000;
         };
 
         function deserializeFloat(f) {
-            return f / 100000;
+            return f / 10000;
         }
 
         function getInputValue(input) {
