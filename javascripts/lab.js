@@ -794,16 +794,16 @@ var QuietLab = (function() {
         var max = 2;
         var yscale = constellationCanvas.height/(max - min);
         var xscale = constellationCanvas.width/(max - min);
+        constellationCanvas.ctx.beginPath();
         for (var i = 0; i < symbols.length; i++) {
             var x = (symbols[i].real - min) * xscale;
             var y = (max- symbols[i].imag) * yscale;
-            constellationCanvas.ctx.beginPath();
             constellationCanvas.ctx.moveTo(x - 2, y - 2);
             constellationCanvas.ctx.lineTo(x + 2, y + 2);
             constellationCanvas.ctx.moveTo(x - 2, y + 2);
             constellationCanvas.ctx.lineTo(x + 2, y - 2);
-            constellationCanvas.ctx.stroke();
         }
+        constellationCanvas.ctx.stroke();
     };
 
     function onGUMFail() {
