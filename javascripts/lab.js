@@ -70,7 +70,7 @@ var QuietLab = (function() {
             if (input.type === "select-one") {
                 input.selectedIndex = val;
             } else if (input.type === "number") {
-                input.value = val;
+                input.value = Math.round(val/Number(input.step)) * Number(input.step);
             }
         };
 
@@ -195,32 +195,32 @@ var QuietLab = (function() {
             mode[mode_val].checked = true;
             onModeChange(mode_val);
 
-            inputs['modulation']['center_frequency'].value = f32[0];
-            inputs['modulation']['gain'].value = f32[1];
-            inputs['encoder_filters']['dc_filter_alpha'].value = f32[2];
-            inputs['interpolation']['excess_bandwidth'].value = f32[3];
-            inputs['resampler']['bandwidth'].value = f32[4];
-            inputs['resampler']['attenuation'].value = f32[5];
+            setInputValue(inputs['modulation']['center_frequency'], f32[0]);
+            setInputValue(inputs['modulation']['gain'], f32[1]);
+            setInputValue(inputs['encoder_filters']['dc_filter_alpha'], f32[2]);
+            setInputValue(inputs['interpolation']['excess_bandwidth'], f32[3]);
+            setInputValue(inputs['resampler']['bandwidth'], f32[4]);
+            setInputValue(inputs['resampler']['attenuation'], f32[5]);
 
-            inputs['frame_length'].value = u16[0];
+            setInputValue(inputs['frame_length'], u16[0]);
 
-            inputs['interpolation']['samples_per_symbol'].value = u8[0];
-            inputs['interpolation']['symbol_delay'].value = u8[1];
-            inputs['ofdm']['num_subcarriers'].value = u8[2];
-            inputs['ofdm']['cyclic_prefix_length'].value = u8[3];
-            inputs['ofdm']['taper_length'].value = u8[4];
-            inputs['ofdm']['left_band'].value = u8[5];
-            inputs['ofdm']['right_band'].value = u8[6];
-            inputs['resampler']['delay'].value = u8[7];
-            inputs['resampler']['filter_bank_size'].value = u8[8];
+            setInputValue(inputs['interpolation']['samples_per_symbol'], u8[0]);
+            setInputValue(inputs['interpolation']['symbol_delay'], u8[1]);
+            setInputValue(inputs['ofdm']['num_subcarriers'], u8[2]);
+            setInputValue(inputs['ofdm']['cyclic_prefix_length'], u8[3]);
+            setInputValue(inputs['ofdm']['taper_length'], u8[4]);
+            setInputValue(inputs['ofdm']['left_band'], u8[5]);
+            setInputValue(inputs['ofdm']['right_band'], u8[6]);
+            setInputValue(inputs['resampler']['delay'], u8[7]);
+            setInputValue(inputs['resampler']['filter_bank_size'], u8[8]);
             clampFrame = Boolean(u8[9]);
             document.querySelector("#clampFrame").selectedIndex = clampFrame ? 0 : 1;
 
-            inputs['mod_scheme'].selectedIndex = i8[0];
-            inputs['checksum_scheme'].selectedIndex = i8[1];
-            inputs['inner_fec_scheme'].selectedIndex = i8[2];
-            inputs['outer_fec_scheme'].selectedIndex = i8[3];
-            inputs['interpolation']['shape'].selectedIndex = i8[4];
+            setInputValue(inputs['mod_scheme'], i8[0]);
+            setInputValue(inputs['checksum_scheme'], i8[1]);
+            setInputValue(inputs['inner_fec_scheme'], i8[2]);
+            setInputValue(inputs['outer_fec_scheme'], i8[3]);
+            setInputValue(inputs['interpolation']['shape'], i8[4]);
 
             updateAllInputs();
             try {
