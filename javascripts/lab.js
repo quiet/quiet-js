@@ -53,7 +53,7 @@ var QuietLab = (function() {
             var ab = new ArrayBuffer(ablen);
             var u8 = new Uint8Array(ab);
             for (var i = 0; i < data.length; i++) {
-                u8[i] = String.charCodeAt(data[i]);
+                u8[i] = data.charCodeAt(i);
             }
             return ab;
         };
