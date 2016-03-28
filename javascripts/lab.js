@@ -58,6 +58,66 @@ var QuietLab = (function() {
             return ab;
         };
 
+        function getInputValue(input) {
+            if (input.type === "select-one") {
+                return input.selectedIndex;
+            } else if (input.type === "number") {
+                return input.value;
+            }
+        };
+
+        function setInputValue(input, val) {
+            if (input.type === "select-one") {
+                input.selectedIndex = val;
+            } else if (input.type === "number") {
+                input.value = val;
+            }
+        };
+
+        function backupInputs() {
+            var backup = {};
+            for (var k in inputs) {
+                var input = inputs[k];
+                if (input instanceof Node) {
+                    backup[k] = getInputValue(inputs[k]);
+                } else {
+                    backup[k] = {};
+                    for (var nestedK in input) {
+                        backup[k][nestedK] = getInputValue(input[nestedK]);
+                    }
+                }
+            }
+            return backup;
+        };
+
+        function restoreBackup(backup) {
+            for (k in inputs) {
+                var input = inputs[k];
+                if (input instanceof Node) {
+                    inputs[k] = backup[k];
+                    updateInput(inputs[k]);
+                } else {
+                    for (var nestedK in input) {
+                        inputs[k][nestedK] = backup[k][nestedK];
+                        updateInput(inputs[k][nestedK]);
+                    }
+                }
+            }
+        };
+
+        function updateAllInputs() {
+            for (var k in inputs) {
+                var input = inputs[k];
+                if (input instanceof Node) {
+                    updateInput(input);
+                } else {
+                    for (var nestedK in input) {
+                        updateInput(input[nestedK]);
+                    }
+                }
+            }
+        };
+
         function shorten() {
             var ab = new ArrayBuffer(ablen);
             var f32 = new Float32Array(ab, 0, 6);
@@ -101,18 +161,75 @@ var QuietLab = (function() {
 
         function expand(b64) {
             if (b64[0] !== "Q") {
-                return;
+                return false;
             }
 
             if (b64[1] !== "0") {
-                return;
+                return false;
             }
 
             if (b64.length !== b64len) {
-                return;
+                return false;
             }
 
             var ab = b642ab(b64);
+
+            var f32 = new Float32Array(ab, 0, 6);
+            var u16 = new Uint16Array(ab, 24, 1);
+            var u8 = new Uint8Array(ab, 26, 11);
+            var i8 = new Int8Array(ab, 37, 5);
+
+            var backup = backupInputs();
+            var backup_mode;
+            for (var i = 0; i < mode.length; i++) {
+                if (mode[i].checked ==== true) {
+                    backup_mode = mode[i].value;
+                    break;
+                }
+            }
+
+            // first handle the mode since it reshapes profile
+            var mode_index = u8[10];
+            mode[mode_index].checked = true;
+            onModeChange(mode[mode_index].value);
+
+            inputs['modulation']['center_frequency'].value = f32[0];
+            inputs['modulation']['gain'].value = f32[1];
+            inputs['encoder_filters']['dc_filter_alpha'].value = f32[2];
+            inputs['interpolation']['excess_bandwidth'].value = f32[3];
+            inputs['resampler']['bandwidth'].value = f32[4];
+            inputs['resampler']['attenuation'].value = f32[5];
+
+            inputs['frame_length'].value = u16[0];
+
+            inputs['interpolation']['samples_per_symbol'].value = u8[0];
+            inputs['interpolation']['symbol_delay'].value = u8[1];
+            inputs['ofdm']['num_subcarriers'].value = u8[2];
+            inputs['ofdm']['cyclic_prefix_length'].value = u8[3];
+            inputs['ofdm']['taper_length'].value = u8[4];
+            inputs['ofdm']['left_band'].value = u8[5];
+            inputs['ofdm']['right_band'].value = u8[6];
+            inputs['resampler']['delay'].value = u8[7];
+            inputs['resampler']['filter_bank_size'].value = u8[8];
+            clampFrame = Boolean(u8[9]);
+            document.querySelector("#clampFrame").selectedIndex = clampFrame ? 0 : 1;
+
+            inputs['mod_scheme'].selectedIndex = i8[0];
+            inputs['checksum_scheme'].selectedIndex = i8[1];
+            inputs['inner_fec_scheme'].selectedIndex = i8[2];
+            inputs['outer_fec_scheme'].selectedIndex = i8[3];
+            inputs['interpolation']['shape'].selectedIndex = i8[4];
+
+            updateAllInputs();
+            try {
+                updateProfileOutput();
+                return true;
+            } catch (e) {
+                restoreBackup(backup);
+                updateProfileOutput();
+                return false;
+            }
+
         };
 
         return {
@@ -258,27 +375,32 @@ var QuietLab = (function() {
         shortBlock.value = shortener.shorten();
     };
 
-    function onInputChange(e) {
-        var index = inputsIndex[e.target.id].split(".");
-        var val = e.target.value;
-        if (e.target.type === "number") {
+    function updateInput(input) {
+        var val = input.value;
+        if (input.type === "number") {
             val = Number(val);
-            max = Number(e.target.max);
-            min = Number(e.target.min);
+            max = Number(input.max);
+            min = Number(input.min);
             if (val > max) {
-                e.target.value = max;
+                input.value = max;
                 val = max;
             }
             if (val < min) {
-                e.target.value = min;
+                input.value = min;
                 val = min;
             }
         }
+        var index = inputsIndex[input.id].split(".");
         if (index.length === 2) {
             profile[index[0]][index[1]] = val;
         } else {
             profile[index[0]] = val;
         }
+        return val;
+    };
+
+    function onInputChange(e) {
+        updateInput(e.target);
         var warning = e.target.parentNode.parentNode.querySelector(".alert");
         try {
             updateProfileOutput();
@@ -551,6 +673,10 @@ var QuietLab = (function() {
 
         presets.value = "audible-psk";
         loadPreset("audible-psk");
+    };
+
+    function onLoadShortProfile(e) {
+        shortener.expand(shortBlock.value);
     };
 
     function drawAxes() {
