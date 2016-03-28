@@ -609,31 +609,23 @@ var QuietLab = (function() {
         constellationAxes.ctx.moveTo(constellationAxes.width/2, 0);
         constellationAxes.ctx.lineTo(constellationAxes.width/2, constellationAxes.height);
 
-        constellationAxes.ctx.moveTo(constellationAxes.width/6, constellationAxes.height/2 - 2);
-        constellationAxes.ctx.lineTo(constellationAxes.width/6, constellationAxes.height/2 + 2);
-        constellationAxes.ctx.moveTo(constellationAxes.width/3, constellationAxes.height/2 - 2);
-        constellationAxes.ctx.lineTo(constellationAxes.width/3, constellationAxes.height/2 + 2);
-        constellationAxes.ctx.moveTo(2*constellationAxes.width/3, constellationAxes.height/2 - 2);
-        constellationAxes.ctx.lineTo(2*constellationAxes.width/3, constellationAxes.height/2 + 2);
-        constellationAxes.ctx.moveTo(5*constellationAxes.width/6, constellationAxes.height/2 - 2);
-        constellationAxes.ctx.lineTo(5*constellationAxes.width/6, constellationAxes.height/2 + 2);
-
-        constellationAxes.ctx.moveTo(constellationAxes.width/2 - 2, constellationAxes.height/6);
-        constellationAxes.ctx.lineTo(constellationAxes.width/2 + 2, constellationAxes.height/6);
-        constellationAxes.ctx.moveTo(constellationAxes.width/2 - 2, constellationAxes.height/3);
-        constellationAxes.ctx.lineTo(constellationAxes.width/2 + 2, constellationAxes.height/3);
-        constellationAxes.ctx.moveTo(constellationAxes.width/2 - 2, 2*constellationAxes.height/3);
-        constellationAxes.ctx.lineTo(constellationAxes.width/2 + 2, 2*constellationAxes.height/3);
-        constellationAxes.ctx.moveTo(constellationAxes.width/2 - 2, 5*constellationAxes.height/6);
-        constellationAxes.ctx.lineTo(constellationAxes.width/2 + 2, 5*constellationAxes.height/6);
-
+        var min = -2;
+        var max = 2;
+        var step = 0.5;
+        for (var i = min + step; i < max; i += step) {
+            var pos = (i - min)/(max - min);
+            constellationAxes.ctx.moveTo(pos * constellationAxes.width, constellationAxes.height/2 - 2);
+            constellationAxes.ctx.lineTo(pos * constellationAxes.width, constellationAxes.height/2 + 2);
+            constellationAxes.ctx.moveTo(constellationAxes.width/2 - 2, pos * constellationAxes.height);
+            constellationAxes.ctx.lineTo(constellationAxes.width/2 + 2, pos * constellationAxes.height);
+        }
         constellationAxes.ctx.stroke();
 
         constellationAxes.ctx.font = "12px monospace";
-        constellationAxes.ctx.fillText("-1", constellationAxes.width/6, constellationAxes.height/2 - 4);
-        constellationAxes.ctx.fillText("1", 5*constellationAxes.width/6, constellationAxes.height/2 - 4);
-        constellationAxes.ctx.fillText("1", constellationAxes.width/2 + 4, constellationAxes.height/6);
-        constellationAxes.ctx.fillText("-1", constellationAxes.width/2 + 4, 5*constellationAxes.height/6);
+        constellationAxes.ctx.fillText("-1", constellationAxes.width/4, constellationAxes.height/2 - 4);
+        constellationAxes.ctx.fillText("1", 5*constellationAxes.width/4, constellationAxes.height/2 - 4);
+        constellationAxes.ctx.fillText("1", constellationAxes.width/2 + 4, constellationAxes.height/4);
+        constellationAxes.ctx.fillText("-1", constellationAxes.width/2 + 4, 5*constellationAxes.height/4);
         constellationAxes.ctx.fillText("I", constellationAxes.width - 8, constellationAxes.height/2 - 4);
         constellationAxes.ctx.fillText("Q", constellationAxes.width/2 + 4, 8);
 
@@ -669,8 +661,8 @@ var QuietLab = (function() {
     function drawConstellation(symbols) {
         constellationCanvas.rescale();
         constellationCanvas.ctx.clearRect(0, 0, constellationCanvas.width, constellationCanvas.height);
-        var min = -1.5;
-        var max = 1.5;
+        var min = -2;
+        var max = 2;
         var yscale = constellationCanvas.height/(max - min);
         var xscale = constellationCanvas.width/(max - min);
         for (var i = 0; i < symbols.length; i++) {
