@@ -173,7 +173,7 @@ var QuietLab = (function() {
                 return false;
             }
 
-            var ab = b642ab(b64);
+            var ab = b642ab(b64.slice(2));
 
             var f32 = new Float32Array(ab, 0, 6);
             var u16 = new Uint16Array(ab, 24, 1);
