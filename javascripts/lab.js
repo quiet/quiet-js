@@ -75,6 +75,9 @@ var QuietLab = (function() {
         };
 
         function setInputValue(input, val) {
+            if (input.getAttribute("disabled") === "disabled") {
+                return;
+            }
             if (input.type === "select-one") {
                 input.selectedIndex = val;
             } else if (input.type === "number") {
@@ -117,10 +120,14 @@ var QuietLab = (function() {
             for (var k in inputs) {
                 var input = inputs[k];
                 if (input instanceof Node) {
-                    updateInput(input);
+                    if (input.getAttribute("disabled") !== "disabled") {
+                        updateInput(input);
+                    }
                 } else {
                     for (var nestedK in input) {
-                        updateInput(input[nestedK]);
+                        if (input[nestedK].getAttribute("disabled") !== "disabled") {
+                            updateInput(input[nestedK]);
+                        }
                     }
                 }
             }
