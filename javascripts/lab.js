@@ -58,6 +58,14 @@ var QuietLab = (function() {
             return ab;
         };
 
+        function serializeFloat(f) {
+            return f * 100000;
+        };
+
+        function deserializeFloat(f) {
+            return f / 100000;
+        }
+
         function getInputValue(input) {
             if (input.type === "select-one") {
                 return input.selectedIndex;
@@ -70,7 +78,7 @@ var QuietLab = (function() {
             if (input.type === "select-one") {
                 input.selectedIndex = val;
             } else if (input.type === "number") {
-                input.value = Math.round(val/Number(input.step)) * Number(input.step);
+                input.value = val;
             }
         };
 
@@ -121,12 +129,12 @@ var QuietLab = (function() {
         function shorten() {
             var ab = new ArrayBuffer(ablen);
             var f32 = new Float32Array(ab, 0, 6);
-            f32[0] = inputs['modulation']['center_frequency'].value;
-            f32[1] = inputs['modulation']['gain'].value;
-            f32[2] = inputs['encoder_filters']['dc_filter_alpha'].value;
-            f32[3] = inputs['interpolation']['excess_bandwidth'].value;
-            f32[4] = inputs['resampler']['bandwidth'].value;
-            f32[5] = inputs['resampler']['attenuation'].value;
+            f32[0] = serializeFloat(inputs['modulation']['center_frequency'].value);
+            f32[1] = serializeFloat(inputs['modulation']['gain'].value);
+            f32[2] = serializeFloat(inputs['encoder_filters']['dc_filter_alpha'].value);
+            f32[3] = serializeFloat(inputs['interpolation']['excess_bandwidth'].value);
+            f32[4] = serializeFloat(inputs['resampler']['bandwidth'].value);
+            f32[5] = serializeFloat(inputs['resampler']['attenuation'].value);
 
             var u16 = new Uint16Array(ab, 24, 1);
             u16[0] = inputs['frame_length'].value;
@@ -195,12 +203,12 @@ var QuietLab = (function() {
             mode[mode_val].checked = true;
             onModeChange(mode_val);
 
-            setInputValue(inputs['modulation']['center_frequency'], f32[0]);
-            setInputValue(inputs['modulation']['gain'], f32[1]);
-            setInputValue(inputs['encoder_filters']['dc_filter_alpha'], f32[2]);
-            setInputValue(inputs['interpolation']['excess_bandwidth'], f32[3]);
-            setInputValue(inputs['resampler']['bandwidth'], f32[4]);
-            setInputValue(inputs['resampler']['attenuation'], f32[5]);
+            setInputValue(inputs['modulation']['center_frequency'], deserializeFloat[0]));
+            setInputValue(inputs['modulation']['gain'], deserializeFloat[1]));
+            setInputValue(inputs['encoder_filters']['dc_filter_alpha'], deserializeFloat[2]));
+            setInputValue(inputs['interpolation']['excess_bandwidth'], deserializeFloat[3]));
+            setInputValue(inputs['resampler']['bandwidth'], deserializeFloat[4]));
+            setInputValue(inputs['resampler']['attenuation'], deserializeFloat[5]));
 
             setInputValue(inputs['frame_length'], u16[0]);
 
