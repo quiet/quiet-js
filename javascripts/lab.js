@@ -725,7 +725,13 @@ var QuietLab = (function() {
     }
 
     function onLoadShortProfile(e) {
-        shortener.expand(shortBlock.value);
+        var succeeded = shortener.expand(shortBlock.value);
+        var warningbox = shortBlock.parentNode.querySelector(".alert");
+        if (succeeded === false) {
+            warningbox.classList.remove('hidden');
+        } else {
+            warningbox.classList.add('hidden');
+        }
     };
 
     function drawAxes() {
