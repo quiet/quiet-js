@@ -143,8 +143,9 @@ var QuietLab = (function() {
             u8[8] = inputs['resampler']['filter_bank_size'].value;
             u8[9] = clampFrame;
 
-            for (var i = 0; i < mode.length; i++) {
-                if (mode[i].checked === true) {
+            var mode_nodes = document.querySelectorAll('input[name=mode]');
+            for (var i = 0; i < mode_nodes.length; i++) {
+                if (mode_nodes[i].checked === true) {
                     u8[10] = i;
                 }
             }
