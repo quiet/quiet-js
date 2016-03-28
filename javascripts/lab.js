@@ -21,6 +21,7 @@ var QuietLab = (function() {
     var profile = {};
     var jsonBlock;
     var shortBlock;
+    var loadShortBtn;
     var presets;
     var presetsObj;
     var transmitter;
@@ -45,10 +46,23 @@ var QuietLab = (function() {
             for (var i = 0; i < u8.length; i++) {
                 data += String.fromCharCode(u8[i]);
             }
-            return window.btoa(data);
+            return "Q0" + window.btoa(data);
         };
 
         function b642ab(b64) {
+            if (b64[0] !== "Q") {
+                return undefined;
+            }
+
+            if (b64[1] !== "0") {
+                return undefined;
+            }
+
+            if (b64.length !== b64len) {
+                return undefined;
+            }
+
+            var ab = b642ab(b64.slice(2));
             var data = window.atob(b64);
             var ab = new ArrayBuffer(ablen);
             var u8 = new Uint8Array(ab);
@@ -172,23 +186,15 @@ var QuietLab = (function() {
             i8[3] = inputs['outer_fec_scheme'].selectedIndex;
             i8[4] = inputs['interpolation']['shape'].selectedIndex;
 
-            return "Q0" + ab2b64(ab);
+            return ab2b64(ab);
         };
 
         function expand(b64) {
-            if (b64[0] !== "Q") {
+            var ab = b642ab(b64);
+
+            if (ab === undefined) {
                 return false;
             }
-
-            if (b64[1] !== "0") {
-                return false;
-            }
-
-            if (b64.length !== b64len) {
-                return false;
-            }
-
-            var ab = b642ab(b64.slice(2));
 
             var f32 = new Float32Array(ab, 0, 6);
             var u16 = new Uint16Array(ab, 24, 1);
@@ -249,9 +255,21 @@ var QuietLab = (function() {
 
         };
 
+        function peekGain(b64) {
+            var ab = b642ab(b64);
+
+            if (ab === undefined) {
+                return false;
+            }
+
+            var f32 = new Float32Array(ab, 0, 6);
+            return deserializeFloat(f32[1]);
+        };
+
         return {
             shorten: shorten,
-            expand: expand
+            expand: expand,
+            peekGain: peekGain
         };
     }();
 
@@ -692,6 +710,15 @@ var QuietLab = (function() {
         loadPreset("audible-psk");
     };
 
+    function onShortProfileChange(e) {
+        var gain = shortener.peekGain(shortBlock.value);
+        if (gain === false) {
+            loadShortBtn.textContent = "Load Profile";
+        } else {
+            loadShortBtn.textContent = "Load Profile [gain=" + gain + "]";
+        }
+    };
+
     function onLoadShortProfile(e) {
         shortener.expand(shortBlock.value);
     };
@@ -1028,7 +1055,8 @@ var QuietLab = (function() {
 
         jsonBlock = document.querySelector("#quiet-profiles-json");
         shortBlock = document.querySelector("#quiet-short-profile");
-        var loadShortBtn = document.querySelector("#loadShortProfile");
+        shortBlock.addEventListener('change', onShortProfileChange, false);
+        loadShortBtn = document.querySelector("#loadShortProfile");
         loadShortBtn.addEventListener('click', onLoadShortProfile, false);
         updateProfileOutput();
 
