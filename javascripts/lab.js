@@ -190,7 +190,7 @@ var QuietLab = (function() {
 
             // first handle the mode since it reshapes profile
             var mode_index = u8[10];
-            var mode_val = document.querySelectorAll('input[name=mode]')[mode_index];
+            var mode_val = document.querySelectorAll('input[name=mode]')[mode_index].value;
             mode[mode_val].checked = true;
             onModeChange(mode_val);
 
