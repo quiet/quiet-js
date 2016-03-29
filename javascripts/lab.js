@@ -407,7 +407,7 @@ var QuietLab = (function() {
             if (transmitter.frameLength < 4) {
                 throw "Frame too short";
             }
-            transmitter.transmit(buildFrame());
+            initTxQueue();
         }
         if (receiver !== undefined) {
             receiver.destroy();
@@ -478,6 +478,26 @@ var QuietLab = (function() {
         return d;
     };
 
+    function calcTxQueueFrames() {
+        var totalQueueSize = 1 << 16; // TODO: don't "know" this about libquiet
+        // we need to keep enough frames around that we can search for this one by
+        // the time it's been decoded, after going through all the queues
+        // we'll also add a small safety margin
+        return Math.ceil(totalQueueSize/transmitter.frameLength);
+    };
+
+    // warm up transmitter queue so that it starts full
+    // this prevents little underflows at the start
+    // this is necessary only to have a smooth throughput all the way
+    function initTxQueue() {
+        var numFrames = calcTxQueueFrames();
+        var frames = new ArrayBuffer(0);
+        for (var i = 0; i < numFrames; i++) {
+            frames = Quiet.mergeab(frames, buildFrame());
+        }
+        transmitter.transmit(frames);
+    };
+
     function buildFrame() {
         var frame = new ArrayBuffer(transmitter.frameLength);
 
@@ -494,11 +514,7 @@ var QuietLab = (function() {
 
         lastTransmitted.unshift(frame);
 
-        var totalQueueSize = 1 << 16; // TODO: don't "know" this about libquiet
-        // we need to keep enough frames around that we can search for this one by
-        // the time it's been decoded, after going through all the queues
-        // we'll also add a small safety margin
-        var keepFrames = Math.ceil((totalQueueSize/transmitter.frameLength) + 15);
+        var keepFrames = calcTxQueueFrames() + 15;
         if (lastTransmitted.length > keepFrames) {
             // count frames as lost here. this introduces a little delay before
             // we can display it, but if the frame hasn't been found by the
@@ -652,7 +668,7 @@ var QuietLab = (function() {
             if (transmitter.frameLength < 4) {
                 throw "Frame too short";
             }
-            transmitter.transmit(buildFrame());
+            initTxQueue();
             receiver = Quiet.receiver({profile: profile,
                 onReceive: onReceive,
                 onCreate: function() {
