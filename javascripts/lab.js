@@ -407,7 +407,7 @@ var QuietLab = (function() {
             if (transmitter.frameLength < 4) {
                 throw "Frame too short";
             }
-            instrumentData['frame-length']: transmitter.frameLength;
+            instrumentData['frame-length'] = transmitter.frameLength;
             initTxQueue();
         }
         if (receiver !== undefined) {
@@ -669,7 +669,7 @@ var QuietLab = (function() {
             if (transmitter.frameLength < 4) {
                 throw "Frame too short";
             }
-            instrumentData['frame-length']: transmitter.frameLength;
+            instrumentData['frame-length'] = transmitter.frameLength;
             initTxQueue();
             receiver = Quiet.receiver({profile: profile,
                 onReceive: onReceive,
