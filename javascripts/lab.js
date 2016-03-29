@@ -652,7 +652,7 @@ var QuietLab = (function() {
             });
         } catch (exc) {
             warningbox.classList.remove("hidden");
-            warningbox.textContent = "Sorry, it looks like there was a problem with this profile";
+            warningbox.textContent = "Sorry, it looks like there was a problem with this profile. Revert to your last working settings or load a preset.";
             onLabStop();
             return;
         }
