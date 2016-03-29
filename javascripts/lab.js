@@ -428,7 +428,7 @@ var QuietLab = (function() {
         shortBlock.value = shortened;
         var link = "https://quiet.github.io/quiet-js/lab.html?profile=" + shortened;
         shortBlockLink.href = link;
-        shortBlock.textContent = link;
+        shortBlockLink.textContent = link;
         onShortProfileUpdate();
     };
 
