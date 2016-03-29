@@ -631,6 +631,7 @@ var QuietLab = (function() {
     };
 
     function onLabStart() {
+        stopped = false;
         pausedBlock.classList.add("hidden");
         instrumentsBlock.classList.remove("hidden");
         warningbox.classList.add("hidden");
