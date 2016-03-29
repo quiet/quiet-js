@@ -676,6 +676,7 @@ var Quiet = (function() {
      * @param {object} opts - receiver params
      * @param {string|object} opts.profile - name of profile to use, must be a key in quiet-profiles.json OR an object which contains a complete profile
      * @param {onReceive} opts.onReceive - callback which receiver will call to send user received data
+     * @param {function} [opts.onCreate] - callback to notify user that receiver has been created and is ready to receive. if the user needs to grant permission to use the microphone, this callback fires after that permission is granted.
      * @param {onReceiverCreateFail} [opts.onCreateFail] - callback to notify user that receiver could not be created
      * @param {onReceiveFail} [opts.onReceiveFail] - callback to notify user that receiver received corrupted data
      * @param {onReceiverStatsUpdate} [opts.onReceiverStatsUpdate] - callback to notify user with new decode stats
@@ -818,6 +819,9 @@ var Quiet = (function() {
         // if this is the first receiver object created, wait for our input node to be created
         addAudioInputReadyCallback(function() {
             audioInput.connect(scriptProcessor);
+            if (opts.onCreate !== undefined) {
+                window.setTimeout(opts.onCreate, 0);
+            }
         }, opts.onCreateFail);
 
         // more unused nodes in the graph that some browsers insist on having
