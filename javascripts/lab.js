@@ -23,6 +23,7 @@ var QuietLab = (function() {
     var loadJSONBtn;
     var shortBlock;
     var loadShortBtn;
+    var shortBlockLink;
     var presets;
     var presetsObj;
     var transmitter;
@@ -423,7 +424,11 @@ var QuietLab = (function() {
         }
         jsonBlock.value = JSON.stringify(profile, null, 2);
         onJSONProfileUpdate();
-        shortBlock.value = shortener.shorten();
+        var shortened = shortener.shorten();
+        shortBlock.value = shortened;
+        var link = "https://quiet.github.io/quiet-js/lab.html?profile=" + shortened;
+        shortBlockLink.href = link;
+        shortBlock.textContent = link;
         onShortProfileUpdate();
     };
 
@@ -1145,6 +1150,7 @@ var QuietLab = (function() {
         shortBlock.addEventListener('input', onShortProfileChange, false);
         loadShortBtn = document.querySelector("#loadShortProfile");
         loadShortBtn.addEventListener('click', onLoadShortProfile, false);
+        shortBlockLink = document.querySelector("#quiet-short-profile-link");
         updateProfileOutput();
 
         Quiet.addReadyCallback(onQuietReady, onQuietFail);
