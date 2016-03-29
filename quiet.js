@@ -595,17 +595,19 @@ var Quiet = (function() {
 
     function createAudioInput() {
         audioInput = 0; // prevent others from trying to create
-        gUM.call(navigator, gUMConstraints(),
-            function(e) {
-                audioInput = audioCtx.createMediaStreamSource(e);
+        window.setTimeout(function() {
+            gUM.call(navigator, gUMConstraints(),
+                function(e) {
+                    audioInput = audioCtx.createMediaStreamSource(e);
 
-                // stash a very permanent reference so this isn't collected
-                window.quiet_receiver_anti_gc = audioInput;
+                    // stash a very permanent reference so this isn't collected
+                    window.quiet_receiver_anti_gc = audioInput;
 
-                audioInputReady();
-            }, function(reason) {
-                audioInputFailed(reason.name);
-        });
+                    audioInputReady();
+                }, function(reason) {
+                    audioInputFailed(reason.name);
+                });
+        }, 0);
     };
 
     /**
