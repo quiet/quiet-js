@@ -680,6 +680,7 @@ var QuietLab = (function() {
         }
         if (source !== undefined) {
             source.disconnect();
+            source = undefined;
         }
         instrumentsBlock.classList.add("hidden");
         pausedBlock.classList.remove("hidden");
