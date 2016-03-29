@@ -21,8 +21,6 @@ var QuietLab = (function() {
     var profile = {};
     var jsonBlock;
     var loadJSONBtn;
-    var shortBlock;
-    var loadShortBtn;
     var shortBlockLink;
     var presets;
     var presetsObj;
@@ -425,7 +423,6 @@ var QuietLab = (function() {
         jsonBlock.value = JSON.stringify(profile, null, 2);
         onJSONProfileUpdate();
         var shortened = shortener.shorten();
-        shortBlock.value = shortened;
         var link = "https://quiet.github.io/quiet-js/lab.html?profile=" + shortened;
         shortBlockLink.href = link;
         shortBlockLink.textContent = link;
@@ -802,29 +799,6 @@ var QuietLab = (function() {
         }
     };
 
-    function onShortProfileUpdate() {
-        var gain = shortener.peekGain(shortBlock.value);
-        if (gain === false) {
-            loadShortBtn.textContent = "Load Profile";
-        } else {
-            loadShortBtn.textContent = "Load Profile [gain=" + gain + "]";
-        }
-    };
-
-    function onShortProfileChange(e) {
-        onShortProfileUpdate();
-    };
-
-    function onLoadShortProfile(e) {
-        var succeeded = shortener.expand(shortBlock.value);
-        var warningbox = shortBlock.parentNode.querySelector(".alert");
-        if (succeeded === false) {
-            warningbox.classList.remove('hidden');
-        } else {
-            warningbox.classList.add('hidden');
-        }
-    };
-
     function drawAxes() {
         fftAxes.rescale();
         fftAxes.ctx.beginPath();
@@ -1159,10 +1133,6 @@ var QuietLab = (function() {
         jsonBlock.addEventListener('input', onJSONProfileChange, false);
         loadJSONBtn = document.querySelector('#loadJSONProfile');
         loadJSONBtn.addEventListener('click', onLoadJSONProfile, false);
-        shortBlock = document.querySelector("#quiet-short-profile");
-        shortBlock.addEventListener('input', onShortProfileChange, false);
-        loadShortBtn = document.querySelector("#loadShortProfile");
-        loadShortBtn.addEventListener('click', onLoadShortProfile, false);
         shortBlockLink = document.querySelector("#quiet-short-profile-link");
         updateProfileOutput();
 
