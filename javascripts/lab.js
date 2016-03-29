@@ -407,7 +407,6 @@ var QuietLab = (function() {
             if (transmitter.frameLength < 4) {
                 throw "Frame too short";
             }
-            instrumentData['frame-length'] = transmitter.frameLength;
             initTxQueue();
         }
         if (receiver !== undefined) {
@@ -422,6 +421,7 @@ var QuietLab = (function() {
             updateInstruments();
             drawConstellation([]);
         }
+        instrumentData['frame-length'] = transmitter.frameLength;
         jsonBlock.value = JSON.stringify(profile, null, 2);
         onJSONProfileUpdate();
         var shortened = shortener.shorten();
