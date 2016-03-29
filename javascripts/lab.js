@@ -749,7 +749,20 @@ var QuietLab = (function() {
         }
 
         presets.value = "audible-psk";
-        loadProfileObj(profilesObj["audible-psk"]);
+        var qs = document.location.search.replace("?", "").split("&");
+        var linkProfile;
+        for (var i = 0; i < qs.length; i++) {
+            var name_param = qs[i].split("=");
+            if (name_param[0] === "profile") {
+                linkProfile = name_param[1];
+                break;
+            }
+        }
+        if (linkProfile !== undefined) {
+            shortener.expand(linkProfile);
+        } else {
+            loadProfileObj(profilesObj["audible-psk"]);
+        }
     };
 
     function onJSONProfileUpdate() {
