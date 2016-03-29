@@ -904,6 +904,21 @@ var Quiet = (function() {
         return tmp.buffer;
     };
 
+    /**
+     * Disconnect quiet.js from its microphone source
+     * This will disconnect quiet.js's microphone fully from all receivers
+     * This is useful to cause the browser to stop displaying the microphone icon
+     * Browser support is limited for disconnecting a single destination, so this
+     * call will disconnect all receivers.
+     * It is highly recommended to call this only after destroying any receivers.
+     * @function disconnect
+     */
+    function disconnect() {
+        if (audioInput !== undefined) {
+            audioInput.disconnect();
+        }
+    };
+
     return {
         emscriptenInitialized: onEmscriptenInitialized,
         addReadyCallback: addReadyCallback,
@@ -913,7 +928,8 @@ var Quiet = (function() {
         str2ab: str2ab,
         ab2str: ab2str,
         mergeab: mergeab,
-        receivers: receivers
+        receivers: receivers,
+        disconnect: disconnect
     };
 })();
 
