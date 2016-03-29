@@ -20,6 +20,7 @@ var QuietLab = (function() {
     var inputsIndex = {};
     var profile = {};
     var jsonBlock;
+    var loadJSONBtn;
     var shortBlock;
     var loadShortBtn;
     var presets;
@@ -78,56 +79,6 @@ var QuietLab = (function() {
 
         function deserializeFloat(f) {
             return f / 10000;
-        }
-
-        function getInputValue(input) {
-            if (input.type === "select-one") {
-                return input.selectedIndex;
-            } else if (input.type === "number") {
-                return input.value;
-            }
-        };
-
-        function setInputValue(input, val) {
-            if (input.getAttribute("disabled") === "disabled") {
-                return;
-            }
-            if (input.type === "select-one") {
-                input.selectedIndex = val;
-            } else if (input.type === "number") {
-                input.value = val;
-            }
-        };
-
-        function backupInputs() {
-            var backup = {};
-            for (var k in inputs) {
-                var input = inputs[k];
-                if (input instanceof Node) {
-                    backup[k] = getInputValue(inputs[k]);
-                } else {
-                    backup[k] = {};
-                    for (var nestedK in input) {
-                        backup[k][nestedK] = getInputValue(input[nestedK]);
-                    }
-                }
-            }
-            return backup;
-        };
-
-        function restoreBackup(backup) {
-            for (k in inputs) {
-                var input = inputs[k];
-                if (input instanceof Node) {
-                    inputs[k] = backup[k];
-                    updateInput(inputs[k]);
-                } else {
-                    for (var nestedK in input) {
-                        inputs[k][nestedK] = backup[k][nestedK];
-                        updateInput(inputs[k][nestedK]);
-                    }
-                }
-            }
         };
 
         function updateAllInputs() {
@@ -202,13 +153,6 @@ var QuietLab = (function() {
             var i8 = new Int8Array(ab, 37, 5);
 
             var backup = backupInputs();
-            var backup_mode;
-            for (var i = 0; i < mode.length; i++) {
-                if (mode[i].checked === true) {
-                    backup_mode = mode[i].value;
-                    break;
-                }
-            }
 
             // first handle the mode since it reshapes profile
             var mode_index = u8[10];
@@ -315,6 +259,70 @@ var QuietLab = (function() {
         };
     };
 
+    function getInputValue(input) {
+        if (input.type === "select-one") {
+            return input.selectedIndex;
+        } else if (input.type === "number") {
+            return input.value;
+        }
+    };
+
+    function setInputValue(input, val) {
+        if (input.getAttribute("disabled") === "disabled") {
+            return;
+        }
+        if (input.type === "select-one") {
+            input.selectedIndex = val;
+        } else if (input.type === "number") {
+            input.value = val;
+        }
+    };
+
+    function backupInputs() {
+        var backup_mode;
+        for (var i = 0; i < mode.length; i++) {
+            if (mode[i].checked === true) {
+                backup_mode = mode[i].value;
+                break;
+            }
+        }
+
+        var backup = {};
+        for (var k in inputs) {
+            var input = inputs[k];
+            if (input instanceof Node) {
+                backup[k] = getInputValue(inputs[k]);
+            } else {
+                backup[k] = {};
+                for (var nestedK in input) {
+                    backup[k][nestedK] = getInputValue(input[nestedK]);
+                }
+            }
+        }
+
+        backup.mode = backup_mode;
+        return backup;
+    };
+
+    function restoreBackup(backup) {
+        var mode_val = backup.backup_mode;
+        mode[mode_val].checked = true;
+        onModeChange(mode_val);
+        delete backup.backup_mode;
+        for (k in inputs) {
+            var input = inputs[k];
+            if (input instanceof Node) {
+                inputs[k] = backup[k];
+                updateInput(inputs[k]);
+            } else {
+                for (var nestedK in input) {
+                    inputs[k][nestedK] = backup[k][nestedK];
+                    updateInput(inputs[k][nestedK]);
+                }
+            }
+        }
+    };
+
     function disableInput(input) {
         input.setAttribute("disabled", "disabled");
         if (input.type === "select-one") {
@@ -411,6 +419,7 @@ var QuietLab = (function() {
             drawConstellation([]);
         }
         jsonBlock.value = JSON.stringify(profile, null, 2);
+        onJSONProfileUpdate();
         shortBlock.value = shortener.shorten();
         onShortProfileUpdate();
     };
@@ -669,36 +678,45 @@ var QuietLab = (function() {
         warningbox.textContent = "Sorry, it looks like there was a problem with this example (" + reason + ")";
     };
 
-    function loadPreset(presetname) {
-        var preset = profilesObj[presetname];
-        if (preset.ofdm !== undefined) {
+    function loadProfileObj(p) {
+        if (p.ofdm !== undefined) {
             mode["OFDMMode"].checked = true;
             onModeChange("OFDMMode");
-        } else if (preset.mod_scheme === "gmsk") {
+        } else if (p.mod_scheme === "gmsk") {
             mode["GMSKMode"].checked = true;
             onModeChange("GMSKMode");
         } else {
             mode["ModemMode"].checked = true;
             onModeChange("ModemMode");
         }
+        var backup = backupInputs();
         for (var k in profile) {
             var input = inputs[k];
             if (input instanceof Node) {
-                profile[k] = preset[k];  // copy so that we can reload pristine later
+                profile[k] = p[k];  // copy so that we can reload pristine later
                 input.value = profile[k];
             } else {
                 for (var nestedK in input) {
                     var nestedInput = input[nestedK];
-                    profile[k][nestedK] = preset[k][nestedK];
-                    nestedInput.value = profile[k][nestedK];
+                    if (typeof p[k] === "object") {
+                        profile[k][nestedK] = p[k][nestedK];
+                        nestedInput.value = profile[k][nestedK];
+                    }
                 }
             }
         }
-        updateProfileOutput();
+        try {
+            updateProfileOutput();
+            return true;
+        } catch (exc) {
+            restoreBackup(backup);
+            updateProfileOutput();
+            return false;
+        }
     };
 
     function onLoadPreset(e) {
-        loadPreset(presets.value);
+        loadProfileObj(profilesObj[presets.value]);
     };
 
     function onProfilesFetch(resp) {
@@ -712,7 +730,44 @@ var QuietLab = (function() {
         }
 
         presets.value = "audible-psk";
-        loadPreset("audible-psk");
+        loadProfileObj(profilesObj["audible-psk"]);
+    };
+
+    function onJSONProfileUpdate() {
+        var p = {};
+        try {
+            p = JSON.parse(jsonBlock.value);
+        } catch (exc) {
+        }
+        var gain;
+        if (typeof p.modulation === "object") {
+            gain = p.modulation.gain;
+        }
+        if (gain === undefined) {
+            loadJSONBtn.textContent = "Load Profile";
+        } else {
+            loadJSONBtn.textContent = "Load Profile [gain=" + gain + "]";
+        }
+
+    };
+
+    function onJSONProfileChange(e) {
+        onJSONProfileUpdate();
+    };
+
+    function onLoadJSONProfile(e) {
+        var p = {};
+        try {
+            p = JSON.parse(jsonBlock.value);
+        } catch (exc) {
+        }
+        var succeeded = loadProfileObj(p);
+        var warningbox = jsonBlock.parentNode.querySelector(".alert");
+        if (succeeded === false) {
+            warningbox.classList.remove('hidden');
+        } else {
+            warningbox.classList.add('hidden');
+        }
     };
 
     function onShortProfileUpdate() {
@@ -726,7 +781,7 @@ var QuietLab = (function() {
 
     function onShortProfileChange(e) {
         onShortProfileUpdate();
-    }
+    };
 
     function onLoadShortProfile(e) {
         var succeeded = shortener.expand(shortBlock.value);
@@ -1069,6 +1124,9 @@ var QuietLab = (function() {
         spectrumBtn.addEventListener('click', onShowSpectrum, false);
 
         jsonBlock = document.querySelector("#quiet-profiles-json");
+        jsonBlock.addEventListener('input', onJSONProfileChange, false);
+        loadJSONBtn = document.querySelector('#loadJSONProfile');
+        loadJSONBtn.addEventListener('click', onLoadJSONProfile, false);
         shortBlock = document.querySelector("#quiet-short-profile");
         shortBlock.addEventListener('input', onShortProfileChange, false);
         loadShortBtn = document.querySelector("#loadShortProfile");
