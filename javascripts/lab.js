@@ -514,7 +514,7 @@ var QuietLab = (function() {
 
         lastTransmitted.unshift(frame);
 
-        var keepFrames = calcTxQueueFrames() + 15;
+        var keepFrames = calcTxQueueFrames() + 30;
         if (lastTransmitted.length > keepFrames) {
             // count frames as lost here. this introduces a little delay before
             // we can display it, but if the frame hasn't been found by the
