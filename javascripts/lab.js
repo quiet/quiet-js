@@ -36,6 +36,7 @@ var QuietLab = (function() {
     var frameIndex = 345345;
     var lastTransmitted = [];
     var clampFrame = false;
+    var stopped = false;
 
     var shortener = function() {
         var ablen = 42;
@@ -682,6 +683,7 @@ var QuietLab = (function() {
         instrumentsBlock.classList.add("hidden");
         pausedBlock.classList.remove("hidden");
         Quiet.disconnect();
+        stopped = true;
     };
 
     function onQuietReady() {
@@ -879,6 +881,9 @@ var QuietLab = (function() {
     };
 
     function drawFFT() {
+        if (stopped === true) {
+            return;
+        }
         drawAxes();
         fftCanvas.rescale();
         drawVisual = requestAnimationFrame(drawFFT);
