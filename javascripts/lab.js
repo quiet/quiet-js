@@ -759,9 +759,11 @@ var QuietLab = (function() {
                 break;
             }
         }
+        var loadedLink = false;
         if (linkProfile !== undefined) {
-            shortener.expand(linkProfile);
-        } else {
+            loadedLink = shortener.expand(linkProfile);
+        }
+        if (loadedLink === false) {
             loadProfileObj(profilesObj["hello-world"]);
         }
     };
