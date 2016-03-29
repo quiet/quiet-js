@@ -634,20 +634,26 @@ var QuietLab = (function() {
 
         drawAxes();
 
-        transmitter = Quiet.transmitter({
-            profile: profile,
-            onEnqueue: onTransmitEnqueue,
-            clampFrame: clampFrame
-        });
-        if (transmitter.frameLength < 4) {
-            throw "Frame too short";
+        try {
+            transmitter = Quiet.transmitter({
+                profile: profile,
+                onEnqueue: onTransmitEnqueue,
+                clampFrame: clampFrame
+            });
+            if (transmitter.frameLength < 4) {
+                throw "Frame too short";
+            }
+            transmitter.transmit(buildFrame());
+            receiver = Quiet.receiver({profile: profile,
+                onReceive: onReceive,
+                onCreateFail: onReceiverCreateFail,
+                onReceiverStatsUpdate: onReceiverStatsUpdate
+            });
+        } catch (exc) {
+            warningbox.classList.remove("hidden");
+            warningbox.textContent = "Sorry, it looks like there was a problem with this profile";
+            return;
         }
-        transmitter.transmit(buildFrame());
-        receiver = Quiet.receiver({profile: profile,
-            onReceive: onReceive,
-            onCreateFail: onReceiverCreateFail,
-            onReceiverStatsUpdate: onReceiverStatsUpdate
-        });
 
         if (source === undefined) {
             var gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
