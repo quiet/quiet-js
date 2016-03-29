@@ -396,6 +396,9 @@ var QuietLab = (function() {
     };
 
     function updateProfileOutput() {
+        initInstrumentData();
+        updateInstruments();
+        drawConstellation([]);
         if (transmitter !== undefined) {
             transmitter.destroy();
             frameIndex = 345345;
@@ -407,6 +410,7 @@ var QuietLab = (function() {
             if (transmitter.frameLength < 4) {
                 throw "Frame too short";
             }
+            instrumentData['frame-length'] = transmitter.frameLength;
             initTxQueue();
         }
         if (receiver !== undefined) {
@@ -417,11 +421,7 @@ var QuietLab = (function() {
                 onCreateFail: onReceiverCreateFail,
                 onReceiverStatsUpdate: onReceiverStatsUpdate
             });
-            initInstrumentData();
-            updateInstruments();
-            drawConstellation([]);
         }
-        instrumentData['frame-length'] = transmitter.frameLength;
         jsonBlock.value = JSON.stringify(profile, null, 2);
         onJSONProfileUpdate();
         var shortened = shortener.shorten();
