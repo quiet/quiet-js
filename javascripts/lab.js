@@ -655,6 +655,15 @@ var QuietLab = (function() {
             transmitter.transmit(buildFrame());
             receiver = Quiet.receiver({profile: profile,
                 onReceive: onReceive,
+                onCreate: function() {
+                    if (source === undefined) {
+                        var gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
+                        gUM.call(navigator, gUMConstraints(), onGUM, onGUMFail);
+                    } else {
+                        source.connect(analyser);
+                        drawFFT();
+                    }
+                },
                 onCreateFail: onReceiverCreateFail,
                 onReceiverStatsUpdate: onReceiverStatsUpdate
             });
@@ -665,13 +674,6 @@ var QuietLab = (function() {
             return;
         }
 
-        if (source === undefined) {
-            var gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
-            gUM.call(navigator, gUMConstraints(), onGUM, onGUMFail);
-        } else {
-            source.connect(analyser);
-            drawFFT();
-        }
     };
 
     function onLabStop() {
