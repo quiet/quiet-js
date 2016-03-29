@@ -35,7 +35,7 @@ var QuietLab = (function() {
     var lastReceived = [];
     var frameIndex = 345345;
     var lastTransmitted = [];
-    var clampFrame = true;
+    var clampFrame = false;
 
     var shortener = function() {
         var ablen = 42;
