@@ -918,6 +918,8 @@ var Quiet = (function() {
     function disconnect() {
         if (audioInput !== undefined) {
             audioInput.disconnect();
+            audioInput = undefined;
+            delete window.quiet_receiver_anti_gc;
         }
     };
 
