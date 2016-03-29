@@ -407,6 +407,7 @@ var QuietLab = (function() {
             if (transmitter.frameLength < 4) {
                 throw "Frame too short";
             }
+            instrumentData['frame-length']: transmitter.frameLength;
             initTxQueue();
         }
         if (receiver !== undefined) {
@@ -668,6 +669,7 @@ var QuietLab = (function() {
             if (transmitter.frameLength < 4) {
                 throw "Frame too short";
             }
+            instrumentData['frame-length']: transmitter.frameLength;
             initTxQueue();
             receiver = Quiet.receiver({profile: profile,
                 onReceive: onReceive,
@@ -905,12 +907,16 @@ var QuietLab = (function() {
         constellationAxes.ctx.fillText("I", constellationAxes.width - 8, constellationAxes.height/2 - 4);
         constellationAxes.ctx.fillText("Q", constellationAxes.width/2 + 4, 8);
 
+        instrumentData['sample-rate'] = audioCtx.sampleRate;
+        instrumentData['sample-block-samples'] = 16384;
+        instrumentData['sample-block-ms'] = (16384/audioCtx.sampleRate * 1000).toFixed(0);
     };
 
     function drawFFT() {
         if (stopped === true) {
             return;
         }
+
         drawAxes();
         fftCanvas.rescale();
         drawVisual = requestAnimationFrame(drawFFT);
@@ -1012,7 +1018,11 @@ var QuietLab = (function() {
             "avgEncodeTime": "---",
             "avgDecodeTime": "---",
             "transfer-rate": "---",
-            "bit-error-ratio": "---"
+            "bit-error-ratio": "---",
+            "sample-rate": "---",
+            "frame-length": "---",
+            "sample-block-samples": "---",
+            "sample-block-ms": "---"
         };
 
     };
@@ -1142,7 +1152,11 @@ var QuietLab = (function() {
             "avgEncodeTime": document.querySelector("[data-quiet-lab-avg-encode-time]"),
             "avgDecodeTime": document.querySelector("[data-quiet-lab-avg-decode-time]"),
             "transfer-rate": document.querySelector("[data-quiet-lab-transfer-rate]"),
-            "bit-error-ratio": document.querySelector("[data-quiet-lab-bit-error-ratio]")
+            "bit-error-ratio": document.querySelector("[data-quiet-lab-bit-error-ratio]"),
+            "sample-rate": document.querySelector("[data-quiet-lab-sample-rate]"),
+            "frame-length": document.querySelector("[data-quiet-frame-length]"),
+            "sample-block-samples": document.querySelector("[data-quiet-sample-block-samples]"),
+            "sample-block-ms": document.querySelector("[data-quiet-sample-block-ms]")
         };
 
         initInstrumentData();
