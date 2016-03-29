@@ -744,7 +744,7 @@ var QuietLab = (function() {
             presets.appendChild(opt);
         }
 
-        presets.value = "audible-psk";
+        presets.value = "hello-world";
         var qs = document.location.search.replace("?", "").split("&");
         var linkProfile;
         for (var i = 0; i < qs.length; i++) {
@@ -757,7 +757,7 @@ var QuietLab = (function() {
         if (linkProfile !== undefined) {
             shortener.expand(linkProfile);
         } else {
-            loadProfileObj(profilesObj["audible-psk"]);
+            loadProfileObj(profilesObj["hello-world"]);
         }
     };
 
