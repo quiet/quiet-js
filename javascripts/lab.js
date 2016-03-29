@@ -1154,9 +1154,9 @@ var QuietLab = (function() {
             "transfer-rate": document.querySelector("[data-quiet-lab-transfer-rate]"),
             "bit-error-ratio": document.querySelector("[data-quiet-lab-bit-error-ratio]"),
             "sample-rate": document.querySelector("[data-quiet-lab-sample-rate]"),
-            "frame-length": document.querySelector("[data-quiet-frame-length]"),
-            "sample-block-samples": document.querySelector("[data-quiet-sample-block-samples]"),
-            "sample-block-ms": document.querySelector("[data-quiet-sample-block-ms]")
+            "frame-length": document.querySelector("[data-quiet-lab-frame-length]"),
+            "sample-block-samples": document.querySelector("[data-quiet-lab-sample-block-samples]"),
+            "sample-block-ms": document.querySelector("[data-quiet-lab-sample-block-ms]")
         };
 
         initInstrumentData();
