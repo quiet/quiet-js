@@ -638,7 +638,12 @@ var QuietLab = (function() {
 
         drawAxes();
 
+        initInstrumentData();
+        updateInstruments();
+        drawConstellation([]);
+
         try {
+            lastTransmitted = [];
             transmitter = Quiet.transmitter({
                 profile: profile,
                 onEnqueue: onTransmitEnqueue,
