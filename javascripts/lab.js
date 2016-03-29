@@ -482,8 +482,8 @@ var QuietLab = (function() {
         var totalQueueSize = 1 << 16; // TODO: don't "know" this about libquiet
         // we need to keep enough frames around that we can search for this one by
         // the time it's been decoded, after going through all the queues
-        // we'll also add a small safety margin
-        return Math.ceil(totalQueueSize/transmitter.frameLength);
+        // also, each frame occupies 4 bytes additional in the ring buffer
+        return Math.ceil(totalQueueSize/(transmitter.frameLength + 4));
     };
 
     // warm up transmitter queue so that it starts full
