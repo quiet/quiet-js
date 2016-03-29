@@ -631,6 +631,7 @@ var QuietLab = (function() {
     function onLabStart() {
         pausedBlock.classList.add("hidden");
         instrumentsBlock.classList.remove("hidden");
+        warningbox.classList.add("hidden");
 
         drawAxes();
 
@@ -652,6 +653,7 @@ var QuietLab = (function() {
         } catch (exc) {
             warningbox.classList.remove("hidden");
             warningbox.textContent = "Sorry, it looks like there was a problem with this profile";
+            onLabStop();
             return;
         }
 
