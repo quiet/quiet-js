@@ -500,11 +500,11 @@ var QuietLab = (function() {
         // we'll also add a small safety margin
         var keepFrames = Math.ceil((totalQueueSize/transmitter.frameLength) + 15);
         if (lastTransmitted.length > keepFrames) {
-            // count packets as lost here. this introduces a little delay before
-            // we can display it, but if the packet hasn't been found by the
+            // count frames as lost here. this introduces a little delay before
+            // we can display it, but if the frame hasn't been found by the
             // receiver, it's gone
             lastTransmitted.pop();
-            instrumentData["packets-lost"]++;
+            instrumentData["frames-lost"]++;
         }
 
         return frame;
@@ -525,7 +525,7 @@ var QuietLab = (function() {
     };
 
     function onReceive(recvPayload) {
-        instrumentData["packets-received"]++;
+        instrumentData["frames-received"]++;
         var info = {};
         info.time = new Date();
         info.size = 8*recvPayload.byteLength;
@@ -549,9 +549,9 @@ var QuietLab = (function() {
         }
         if (closest === undefined) {
             // couldn't find it, so just toss it out
-            // this will keep this mystery packet from affecting stats
+            // this will keep this mystery frame from affecting stats
             // if it was supposed to be counted, it will eventually increase
-            // packet loss
+            // frame loss
             return;
         } else {
             var totalDist = 0;
@@ -987,8 +987,8 @@ var QuietLab = (function() {
 
     function initInstrumentData() {
         instrumentData = {
-            "packets-received": 0,
-            "packets-lost": 0,
+            "frames-received": 0,
+            "frames-lost": 0,
             "rssi": "---",
             "evm": "---",
             "avgEncodeTime": "---",
@@ -1117,8 +1117,8 @@ var QuietLab = (function() {
         loadPresetBtn.addEventListener('click', onLoadPreset, false);
 
         instruments = {
-            "packets-received": document.querySelector("[data-quiet-lab-packets-received]"),
-            "packets-lost": document.querySelector("[data-quiet-lab-packets-lost]"),
+            "frames-received": document.querySelector("[data-quiet-lab-frames-received]"),
+            "frames-lost": document.querySelector("[data-quiet-lab-frames-lost]"),
             "rssi": document.querySelector("[data-quiet-lab-rssi]"),
             "evm": document.querySelector("[data-quiet-lab-evm]"),
             "avgEncodeTime": document.querySelector("[data-quiet-lab-avg-encode-time]"),
