@@ -36,7 +36,8 @@ var Quiet = (function() {
     var frameBufferSize = Math.pow(2, 14);
 
     // anti-gc
-    var receivers = [];
+    var receivers = {};
+    var receivers_idx = 0;
 
     // isReady tells us if we can start creating transmitters and receivers
     // we need the emscripten portion to be running and we need our
@@ -719,7 +720,9 @@ var Quiet = (function() {
         // TODO investigate if this still needs to be placed on window.
         // seems this was done to keep it from being collected
         var scriptProcessor = audioCtx.createScriptProcessor(16384, 2, 1);
-        receivers.push(scriptProcessor);
+        var idx = receivers_idx;
+        receivers[idx] = scriptProcessor;
+        receivers_idx++;
 
         // inform quiet about our local sound card's sample rate so that it can resample to its internal sample rate
         var decoder = Module.ccall('quiet_decoder_create', 'pointer', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
@@ -841,6 +844,7 @@ var Quiet = (function() {
             Module.ccall('free', null, ['pointer'], [samples]);
             Module.ccall('free', null, ['pointer'], [frame]);
             Module.ccall('quiet_decoder_destroy', null, ['pointer'], [decoder]);
+            delete receivers[idx];
             destroyed = true;
         };
 
@@ -932,7 +936,6 @@ var Quiet = (function() {
         str2ab: str2ab,
         ab2str: ab2str,
         mergeab: mergeab,
-        receivers: receivers,
         disconnect: disconnect
     };
 })();
