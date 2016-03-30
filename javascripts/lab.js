@@ -522,6 +522,7 @@ var QuietLab = (function() {
             // receiver, it's gone
             lastTransmitted.pop();
             instrumentData["frames-lost"]++;
+            instrumentData["bit-fail"] += 8 * transmitter.frameLength;
         }
 
         return frame;
@@ -581,6 +582,8 @@ var QuietLab = (function() {
             lastTransmitted.splice(closest, 1);
         }
 
+        instrumentData["bit-success"] += info.size - info.bitErrors;
+        instrumentData["bit-fail"] += info.bitErrors;
         lastReceived.unshift(info);
         if (lastReceived.length > 10) {
             lastReceived.pop();
@@ -603,6 +606,8 @@ var QuietLab = (function() {
             totalsize -= oldest.size;
             instrumentData["transfer-rate"] = (1000*(totalsize/(info.time - oldest.time))).toFixed(0);
         }
+        instrumentData["total-received"] = (instrumentData["bit-success"]/8).toFixed(0)
+        instrumentData["total-loss"] = (100 * instrumentData["bit-fail"]/(instrumentData["bit-success"] + instrumentData["bit-fail"])).toFixed(4)
         updateInstruments();
     };
 
@@ -1011,8 +1016,8 @@ var QuietLab = (function() {
 
     function initInstrumentData() {
         instrumentData = {
-            "frames-received": 0,
-            "frames-lost": 0,
+            "frames-received": "---",
+            "frames-lost": "---",
             "rssi": "---",
             "evm": "---",
             "avgEncodeTime": "---",
@@ -1022,7 +1027,11 @@ var QuietLab = (function() {
             "sample-rate": "---",
             "frame-length": "---",
             "sample-block-samples": "---",
-            "sample-block-ms": "---"
+            "sample-block-ms": "---",
+            "total-received": "---",
+            "total-loss": "---",
+            "bit-success": 0,
+            "bit-fail": 0,
         };
 
     };
@@ -1156,7 +1165,9 @@ var QuietLab = (function() {
             "sample-rate": document.querySelector("[data-quiet-lab-sample-rate]"),
             "frame-length": document.querySelector("[data-quiet-lab-frame-length]"),
             "sample-block-samples": document.querySelector("[data-quiet-lab-sample-block-samples]"),
-            "sample-block-ms": document.querySelector("[data-quiet-lab-sample-block-ms]")
+            "sample-block-ms": document.querySelector("[data-quiet-lab-sample-block-ms]"),
+            "total-received": document.querySelector("[data-quiet-lab-total-received]"),
+            "total-loss": document.querySelector("[data-quiet-lab-total-loss]")
         };
 
         initInstrumentData();
