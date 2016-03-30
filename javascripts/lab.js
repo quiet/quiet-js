@@ -939,8 +939,8 @@ var QuietLab = (function() {
         fftCanvas.rescale();
         if (stopped === false) {
             drawVisual = requestAnimationFrame(drawFFT);
+            analyser.getFloatFrequencyData(fftBuffer);
         }
-        analyser.getFloatFrequencyData(fftBuffer);
         fftCanvas.ctx.clearRect(0, 0, fftCanvas.width, fftCanvas.height);
         var scale = fftCanvas.height/(analyser.maxDecibels - analyser.minDecibels);
         for (var i = 0; i < analyser.frequencyBinCount; i++) {
@@ -949,7 +949,9 @@ var QuietLab = (function() {
         }
 
         waveformCanvas.rescale();
-        analyser.getFloatTimeDomainData(fftBuffer);
+        if (stopped === false) {
+            analyser.getFloatTimeDomainData(fftBuffer);
+        }
         waveformCanvas.ctx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
         var min = -0.2;
         var max = 0.2;
