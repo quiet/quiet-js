@@ -582,7 +582,7 @@ var QuietLab = (function() {
         }
 
         lastReceived.unshift(info);
-        if (lastReceived.length > 5) {
+        if (lastReceived.length > 10) {
             lastReceived.pop();
         }
         var oldest = info;
