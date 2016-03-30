@@ -906,7 +906,7 @@ var QuietLab = (function() {
         for (var i = min + step; i < max - step; i += step) {
             waveformAxes.ctx.moveTo(xmargin, (max - i) * yscale);
             waveformAxes.ctx.lineTo(xmargin + 4, (max - i) * yscale);
-            waveformAxes.ctx.fillText(amp2dB(i), 0, (max - i) + 9);
+            waveformAxes.ctx.fillText(amp2dB(i), 0, (max - i) * yscale + 9);
         }
         waveformAxes.ctx.fillText("dB", xmargin + 5, 10);
         var maxTime = analyser.frequencyBinCount/audioCtx.sampleRate * 1000;
