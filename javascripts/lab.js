@@ -538,7 +538,7 @@ var QuietLab = (function() {
         var ttl = 5000;
         var now = new Date();
         var cutoff = now - ttl;
-        for (var i = lastTransmitted.length; i > 0; i--) {
+        for (var i = lastTransmitted.length - 1; i > 0; i--) {
             if (lastTransmitted[i].sent < cutoff) {
                 lastTransmitted.pop()
                 instrumentData["frames-lost"]++;
