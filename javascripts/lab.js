@@ -10,6 +10,8 @@ var QuietLab = (function() {
     var constellationAxes;
     var constellationCanvas;
     var constellationContainer;
+    var stopGraphsBtn;
+    var runGraphsBtn;
     var audioCtx;
     var analyser;
     var source;
@@ -654,6 +656,18 @@ var QuietLab = (function() {
         drawAxes();
     };
 
+    function onStopGraphs() {
+        stopped = true;
+        stopGraphsBtn.classList.add("hidden");
+        runGraphsBtn.classList.remove("hidden");
+    };
+
+    function onRunGraphs() {
+        stopped = false;
+        runGraphsBtn.classList.add("hidden");
+        stopGraphsBtn.classList.remove("hidden");
+    };
+
     function onLabStart() {
         stopped = false;
         pausedBlock.classList.add("hidden");
@@ -1187,6 +1201,12 @@ var QuietLab = (function() {
 
         spectrumBtn = document.querySelector("[data-quiet-lab-show-spectrum]");
         spectrumBtn.addEventListener('click', onShowSpectrum, false);
+
+        stopGraphsBtn = document.querySelector("[data-quiet-lab-stop-graphs]");
+        stopGraphsBtn.addEventListener('click', onStopGraphs, false);
+
+        runGraphsBtn = document.querySelector("[data-quiet-lab-run-graphs]");
+        runGraphsBtn.addEventListener('click', onRunGraphs, false);
 
         jsonBlock = document.querySelector("#quiet-profiles-json");
         jsonBlock.addEventListener('input', onJSONProfileChange, false);
