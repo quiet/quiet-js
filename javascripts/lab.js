@@ -534,22 +534,6 @@ var QuietLab = (function() {
             instrumentData["total-loss"] = (100 * instrumentData["bit-fail"]/(instrumentData["bit-success"] + instrumentData["bit-fail"])).toFixed(4)
         }
 
-        // expire frames after timeout
-        var ttl = 5000;
-        var now = new Date();
-        var cutoff = now - ttl;
-        for (var i = lastTransmitted.length - 1; i > 0; i--) {
-            if (lastTransmitted[i].sent < cutoff) {
-                lastTransmitted.pop()
-                instrumentData["frames-lost"]++;
-                instrumentData["bit-fail"] += 8 * transmitter.frameLength;
-                instrumentData["total-received"] = (instrumentData["bit-success"]/8).toFixed(0)
-                instrumentData["total-loss"] = (100 * instrumentData["bit-fail"]/(instrumentData["bit-success"] + instrumentData["bit-fail"])).toFixed(4)
-            } else {
-                break;
-            }
-        }
-
         return frame;
     };
 
