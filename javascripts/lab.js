@@ -980,10 +980,10 @@ var QuietLab = (function() {
         var max = 0.2;
         var scale = waveformCanvas.height/(max - min);
         waveformCanvas.ctx.beginPath();
-        waveformCanvas.ctx.moveTo(0, waveformCanvas.height/2);
         for (var i = 0; i < analyser.frequencyBinCount; i += 2) {
             var avg = (timeBuffer[i] + timeBuffer[i + 1])/2;
             var magnitude = (max - avg) * scale;
+            waveformCanvas.ctx.moveTo(i/2, waveformCanvas.height/2);
             waveformCanvas.ctx.lineTo(i/2, magnitude);
         }
         waveformCanvas.ctx.stroke();
