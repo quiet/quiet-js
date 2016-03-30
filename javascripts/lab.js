@@ -857,6 +857,10 @@ var QuietLab = (function() {
         }
     };
 
+    function amp2dB(a) {
+        return 10 * Math.log10(Math.abs(a));
+    };
+
     function drawAxes() {
         fftAxes.rescale();
         fftAxes.ctx.beginPath();
@@ -895,6 +899,16 @@ var QuietLab = (function() {
         waveformAxes.ctx.lineTo(xmargin, waveformAxes.height - ymargin);
         waveformAxes.ctx.lineTo(waveformAxes.width, waveformAxes.height - ymargin);
         waveformAxes.ctx.font = "12px monospace";
+        var max = 0.2;
+        var min = -0.2;
+        var step = 0.05;
+        var yscale = waveformCanvas.height/(max - min);
+        for (var i = min + step; i < max - step; i += step) {
+            waveformAxes.ctx.moveTo(xmargin, (max - i) * yscale));
+            waveformAxes.ctx.lineTo(xmargin + 4, (max - i) * yscale));
+            waveformAxes.ctx.fillText(amp2dB(i), 0, (max - i) + 9);
+        }
+        waveformAxes.ctx.fillText("dB", xmargin + 5, 10);
         var maxTime = analyser.frequencyBinCount/audioCtx.sampleRate * 1000;
         var xscale = waveformCanvas.width/maxTime;
         for (var i = 0; i < maxTime; i += 1) {
