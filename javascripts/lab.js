@@ -520,7 +520,7 @@ var QuietLab = (function() {
             byteView[i] = Math.floor(Math.random() * 256);
         }
 
-        lastTransmitted.unshift(frame);
+        lastTransmitted.unshift({frame: frame, sent: new Date()});
 
         var keepFrames = calcTxQueueFrames() + 30;
         if (lastTransmitted.length > keepFrames) {
@@ -532,6 +532,22 @@ var QuietLab = (function() {
             instrumentData["bit-fail"] += 8 * transmitter.frameLength;
             instrumentData["total-received"] = (instrumentData["bit-success"]/8).toFixed(0)
             instrumentData["total-loss"] = (100 * instrumentData["bit-fail"]/(instrumentData["bit-success"] + instrumentData["bit-fail"])).toFixed(4)
+        }
+
+        // expire frames after timeout
+        var ttl = 5000;
+        var now = new Date();
+        var cutoff = now - ttl;
+        for (var i = lastTransmitted.length; i > 0; i--) {
+            if (lastTransmitted[i].sent < cutoff) {
+                lastTransmitted.pop()
+                instrumentData["frames-lost"]++;
+                instrumentData["bit-fail"] += 8 * transmitter.frameLength;
+                instrumentData["total-received"] = (instrumentData["bit-success"]/8).toFixed(0)
+                instrumentData["total-loss"] = (100 * instrumentData["bit-fail"]/(instrumentData["bit-success"] + instrumentData["bit-fail"])).toFixed(4)
+            } else {
+                break;
+            }
         }
 
         return frame;
@@ -583,7 +599,7 @@ var QuietLab = (function() {
         } else {
             var totalDist = 0;
             var rxView = new Uint8Array(recvPayload);
-            var txView = new Uint8Array(lastTransmitted[closest]);
+            var txView = new Uint8Array(lastTransmitted[closest].frame);
             for (var i = 0; i < rxView.length; i++) {
                 totalDist += bitDistance(rxView[i], txView[i]);
             }
