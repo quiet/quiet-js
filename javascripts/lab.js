@@ -17,6 +17,7 @@ var QuietLab = (function() {
     var source;
     var drawVisual;
     var fftBuffer;
+    var timeBuffer;
     var mode = {};
     var inputs;
     var inputsIndex = {};
@@ -950,7 +951,7 @@ var QuietLab = (function() {
 
         waveformCanvas.rescale();
         if (stopped === false) {
-            analyser.getFloatTimeDomainData(fftBuffer);
+            analyser.getFloatTimeDomainData(timeBuffer);
         }
         waveformCanvas.ctx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
         var min = -0.2;
@@ -959,7 +960,7 @@ var QuietLab = (function() {
         waveformCanvas.ctx.beginPath();
         waveformCanvas.ctx.moveTo(0, waveformCanvas.height/2);
         for (var i = 0; i < analyser.frequencyBinCount; i++) {
-            var magnitude = (max - fftBuffer[i]) * scale;
+            var magnitude = (max - timeBuffer[i]) * scale;
             waveformCanvas.ctx.lineTo(i, magnitude);
         }
         waveformCanvas.ctx.stroke();
@@ -1072,6 +1073,7 @@ var QuietLab = (function() {
         analyser.minDecibels = -90;
         analyser.maxDecibels = -10;
         fftBuffer = new Float32Array(analyser.frequencyBinCount);
+        timeBuffer = new Float32Array(analyser.frequencyBinCount);
 
         constellationAxes = canvasWrapper(document.querySelector("[data-quiet-lab-constellation-axes]"));
         constellationCanvas = canvasWrapper(document.querySelector("[data-quiet-lab-constellation]"));
