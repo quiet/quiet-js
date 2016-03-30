@@ -951,7 +951,7 @@ var QuietLab = (function() {
         for (var i = 0; i < analyser.frequencyBinCount; i += 2) {
             var avg = (fftBuffer[i] + fftBuffer[i + 1])/2;
             var magnitude = (avg - analyser.minDecibels) * scale;
-            fftCanvas.ctx.fillRect(i, fftCanvas.height, 1, -magnitude);
+            fftCanvas.ctx.fillRect(i/2, fftCanvas.height, 1, -magnitude);
         }
 
         waveformCanvas.rescale();
@@ -967,7 +967,7 @@ var QuietLab = (function() {
         for (var i = 0; i < analyser.frequencyBinCount; i += 2) {
             var avg = (timeBuffer[i] + timeBuffer[i + 1])/2;
             var magnitude = (max - avg) * scale;
-            waveformCanvas.ctx.lineTo(i, magnitude);
+            waveformCanvas.ctx.lineTo(i/2, magnitude);
         }
         waveformCanvas.ctx.stroke();
     };
