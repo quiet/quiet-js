@@ -948,8 +948,9 @@ var QuietLab = (function() {
         }
         fftCanvas.ctx.clearRect(0, 0, fftCanvas.width, fftCanvas.height);
         var scale = fftCanvas.height/(analyser.maxDecibels - analyser.minDecibels);
-        for (var i = 0; i < analyser.frequencyBinCount; i++) {
-            var magnitude = (fftBuffer[i] - analyser.minDecibels) * scale;
+        for (var i = 0; i < analyser.frequencyBinCount; i += 2) {
+            var avg = (fftBuffer[i] + fftBuffer[i + 1])/2;
+            var magnitude = (avg - analyser.minDecibels) * scale;
             fftCanvas.ctx.fillRect(i, fftCanvas.height, 1, -magnitude);
         }
 
@@ -963,8 +964,9 @@ var QuietLab = (function() {
         var scale = waveformCanvas.height/(max - min);
         waveformCanvas.ctx.beginPath();
         waveformCanvas.ctx.moveTo(0, waveformCanvas.height/2);
-        for (var i = 0; i < analyser.frequencyBinCount; i++) {
-            var magnitude = (max - timeBuffer[i]) * scale;
+        for (var i = 0; i < analyser.frequencyBinCount; i += 2) {
+            var avg = (timeBuffer[i] + timeBuffer[i + 1])/2;
+            var magnitude = (max - avg) * scale;
             waveformCanvas.ctx.lineTo(i, magnitude);
         }
         waveformCanvas.ctx.stroke();
