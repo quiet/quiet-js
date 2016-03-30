@@ -1016,8 +1016,8 @@ var QuietLab = (function() {
 
     function initInstrumentData() {
         instrumentData = {
-            "frames-received": "---",
-            "frames-lost": "---",
+            "frames-received": 0,
+            "frames-lost": 0,
             "rssi": "---",
             "evm": "---",
             "avgEncodeTime": "---",
