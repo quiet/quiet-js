@@ -666,6 +666,7 @@ var QuietLab = (function() {
         stopped = false;
         runGraphsBtn.classList.add("hidden");
         stopGraphsBtn.classList.remove("hidden");
+        drawFFT();
     };
 
     function onLabStart() {
@@ -965,6 +966,9 @@ var QuietLab = (function() {
     };
 
     function drawConstellation(symbols) {
+        if (stopped === true) {
+            return;
+        }
         constellationCanvas.rescale();
         constellationCanvas.ctx.clearRect(0, 0, constellationCanvas.width, constellationCanvas.height);
         var min = -2;
