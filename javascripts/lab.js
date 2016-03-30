@@ -904,8 +904,8 @@ var QuietLab = (function() {
         var step = 0.05;
         var yscale = waveformCanvas.height/(max - min);
         for (var i = min + step; i < max - step; i += step) {
-            waveformAxes.ctx.moveTo(xmargin, (max - i) * yscale));
-            waveformAxes.ctx.lineTo(xmargin + 4, (max - i) * yscale));
+            waveformAxes.ctx.moveTo(xmargin, (max - i) * yscale);
+            waveformAxes.ctx.lineTo(xmargin + 4, (max - i) * yscale);
             waveformAxes.ctx.fillText(amp2dB(i), 0, (max - i) + 9);
         }
         waveformAxes.ctx.fillText("dB", xmargin + 5, 10);
