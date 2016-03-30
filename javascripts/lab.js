@@ -523,6 +523,8 @@ var QuietLab = (function() {
             lastTransmitted.pop();
             instrumentData["frames-lost"]++;
             instrumentData["bit-fail"] += 8 * transmitter.frameLength;
+            instrumentData["total-received"] = (instrumentData["bit-success"]/8).toFixed(0)
+            instrumentData["total-loss"] = (100 * instrumentData["bit-fail"]/(instrumentData["bit-success"] + instrumentData["bit-fail"])).toFixed(4)
         }
 
         return frame;
