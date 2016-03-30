@@ -645,7 +645,7 @@ var QuietLab = (function() {
         waveformContainer.classList.remove("hidden");
         waveformBtn.classList.add("hidden");
         spectrumBtn.classList.remove("hidden");
-        drawAxes();
+        drawFFT();
     };
 
     function onShowSpectrum() {
@@ -653,7 +653,7 @@ var QuietLab = (function() {
         fftContainer.classList.remove("hidden");
         spectrumBtn.classList.add("hidden");
         waveformBtn.classList.remove("hidden");
-        drawAxes();
+        drawFFT();
     };
 
     function onStopGraphs() {
@@ -935,13 +935,11 @@ var QuietLab = (function() {
     };
 
     function drawFFT() {
-        if (stopped === true) {
-            return;
-        }
-
         drawAxes();
         fftCanvas.rescale();
-        drawVisual = requestAnimationFrame(drawFFT);
+        if (stopped === false) {
+            drawVisual = requestAnimationFrame(drawFFT);
+        }
         analyser.getFloatFrequencyData(fftBuffer);
         fftCanvas.ctx.clearRect(0, 0, fftCanvas.width, fftCanvas.height);
         var scale = fftCanvas.height/(analyser.maxDecibels - analyser.minDecibels);
