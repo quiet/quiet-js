@@ -250,8 +250,8 @@ var QuietLab = (function() {
             // a and b and c can apply separately or together
             var rect = canvas.getBoundingClientRect();
             var dpr = window.devicePixelRatio;
-            var visWidth = dpr*(rect.right - rect.left);
-            var visHeight = dpr*(rect.bottom - rect.top);
+            var visWidth = Math.ceil(dpr*(rect.right - rect.left));
+            var visHeight = Math.ceil(dpr*(rect.bottom - rect.top));
             if (visWidth === 0 || visHeight === 0) {
                 return;
             }
