@@ -252,6 +252,9 @@ var QuietLab = (function() {
             var dpr = window.devicePixelRatio;
             var visWidth = dpr*(rect.right - rect.left);
             var visHeight = dpr*(rect.bottom - rect.top);
+            if (visWidth === 0 || visHeight === 0) {
+                return;
+            }
             var aspect = visWidth/visHeight;
 
             // figure out which size we'll report
