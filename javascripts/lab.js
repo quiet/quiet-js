@@ -220,9 +220,11 @@ var QuietLab = (function() {
         };
     }();
 
-    function canvasWrapper(canvas) {
+    function canvasWrapper(canvas, sizes) {
         var initHeight = canvas.getAttribute('height');
         var initWidth = canvas.getAttribute('width');
+        var height = initHeight;
+        var width = initWidth;
         var initHeightBox = parseInt(canvas.style.getPropertyValue('height'), 10);
         var initWidthBox = parseInt(canvas.style.getPropertyValue('width'), 10);
         var ctx = canvas.getContext('2d');
@@ -230,6 +232,9 @@ var QuietLab = (function() {
         ctx.webkitImageSmoothingEnabled = false;
         ctx.msImageSmoothingEnabled = false;
         ctx.imageSmoothingEnabled = false;
+        if (sizes === undefined) {
+            sizes = [[initWidth, initHeight]];
+        }
 
         function rescale() {
             // our canvas has a CSS width and height and a canvas property width and height
@@ -240,16 +245,51 @@ var QuietLab = (function() {
             //    in this case we upscale to ceil() of zoom ratio
             // b) are on a high dpi screen? this will change devicePixelRatio
             //    if we are in this case, we will upscale the canvas by the ratio
-            // a and b can apply separately or together
+            // c) have media queries changed CSS box size? in some cases we may make the
+            //    canvas shaped differently, if e.g. there's enough width
+            // a and b and c can apply separately or together
             var rect = canvas.getBoundingClientRect();
-            var horizZoom = (rect.right - rect.left)/initWidthBox;
-            var vertZoom = (rect.bottom - rect.top)/initHeightBox;
             var dpr = window.devicePixelRatio;
-            var horizScale = Math.ceil(dpr * horizZoom);
-            var vertScale = Math.ceil(dpr * vertZoom);
+            var visWidth = dpr*(rect.right - rect.left);
+            var visHeight = dpr*(rect.bottom - rect.top);
+            var aspect = visWidth/visHeight;
 
-            var newWidth = horizScale * initWidth;
-            var newHeight = vertScale * initHeight;
+            // figure out which size we'll report
+            // we want one that's very near (~0) our aspect
+            // choose the largest with the right aspect but is less than size
+            var chosenW = 0;
+            var chosenH = 0;
+
+            for (var i = 0; i < sizes.length; i++) {
+                var w = sizes[i][0];
+                var h = sizes[i][1];
+                var a = w/h;
+                if (Math.abs(aspect - a) > 0.01) {
+                    // not the same aspect
+                    continue;
+                }
+                // now that we have the same aspect, just measure on width
+                if (w > visWidth) {
+                    // too big
+                    continue;
+                }
+                if (w > chosenW) {
+                    // winner
+                    chosenW = w;
+                    chosenH = h;
+                }
+            }
+
+            width = chosenW;
+            height = chosenH;
+            var horizZoom = visWidth/chosenW;
+            var vertZoom = visHeight/chosenH;
+            var horizScale = Math.ceil(horizZoom);
+            var vertScale = Math.ceil(vertZoom);
+            var newWidth = horizScale * chosenW;
+            var newHeight = vertScale * chosenH;
+
+
             if (canvas.width != newWidth || canvas.height != newHeight) {
                 canvas.width = newWidth;
                 canvas.height = newHeight;
@@ -260,8 +300,8 @@ var QuietLab = (function() {
 
         return {
             ctx: ctx,
-            height: initHeight,
-            width: initWidth,
+            height: height,
+            width: width,
             rescale: rescale
         };
     };
