@@ -1,5 +1,6 @@
 Quiet.js
 ===========
+[![Analytics](https://quiet-ga.appspot.com/UA-89475295-2/welcome-page)](https://github.com/igrigorik/ga-beacon)
 
 **[Documentation](https://quiet.github.io/quiet-js/docs/Quiet.html)**
 
