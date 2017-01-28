@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Quiet.js by quiet</title>
+
+    <link rel="stylesheet" href="stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <script type="text/javascript" src="javascripts/quiet.js"></script>
+    <script type="text/javascript" src="javascripts/quiet-init.js"></script>
+    <script type="text/javascript" src="javascripts/sendtext.js"></script>
+    <script type="text/javascript" src="javascripts/receivetext.js"></script>
+    <script type="text/javascript" src="javascripts/sendimage.js"></script>
+    <script type="text/javascript" src="javascripts/receiveimage.js"></script>
+    <script async type="text/javascript" src="javascripts/quiet-emscripten.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1><a href="https://github.com/quiet/quiet-js/">Quiet.js</a></h1>
+        <p>Transmit and receive data in the browser at 44.1kHz</p>
+        <p class="view"><a href="https://github.com/quiet/quiet-js">View the Project on GitHub <small>quiet/quiet-js</small></a></p>
+        <ul>
+          <li><a href="https://github.com/quiet/quiet-js/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/quiet/quiet-js/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/quiet/quiet-js">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+          <a id="quiet" class="anchor" href="#quiet" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Quiet.js</h1>
+
+        <p>This is a javascript binding for <a href="https://github.com/quiet/quiet">libquiet</a>, a library for sending and receiving data via sound card. It can function either via speaker or cable (e.g., 3.5mm). Quiet comes included with a few transmissions profiles which can be selected for the intended use. For speaker transmission, there is a profile which transmits around the 19kHz range, which is essentially imperceptible to the human ear.</p>
+
+        <p>Quiet uses the Web Audio functionality in order to send and receive sound. Sending data is supported by Chrome, Firefox, Safari, and Edge. Reception is supported by Chrome, Edge, and to some extent Firefox.</p>
+
+        <p>Try it out in these examples or browse the <a href="docs/">documentation</a>.</p>
+
+        <pre style="border: unset; border-radius: unset;">Transfer Text</pre>
+        <p>This example will allow you to transmit text between two quiet-compatible browsers. There is a transmitter which will send tones through your speakers, and a receiver which will decode the tones through the microphone. These examples may run either in the same browser or in different browsers on different devices. The ultrasonic example cannot be received by Firefox, and neither receiver will work in Safari.</p>
+        <p class="warning"><b>Be sure to turn down your volume to 50% or lower on your transmitting device.</b></p>
+
+        <pre style="border: unset; border-radius: unset;">Receive Text</pre>
+        <div class="form-group" data-quiet-profile-name="audible" data-quiet-receive-text>
+          <div class="alert alert-danger hidden" data-quiet-receive-text-warning></div>
+          <p data-quiet-receive-text-target class="hidden">Your received text will show up here. Waiting...</p>
+          <button type="button" class="btn btn-default" style="width:100%" data-quiet-receive-text-button data-quiet-receiving-text="Listening...">Start Audible Receiver</button>
+        </div>
+        <div class="form-group" data-quiet-profile-name="ultrasonic-experimental" data-quiet-receive-text>
+          <div class="alert alert-danger hidden" data-quiet-receive-text-warning></div>
+          <p data-quiet-receive-text-target class="hidden">Your received text will show up here. Waiting...</p>
+          <button type="button" class="btn btn-default" style="width:100%" data-quiet-receive-text-button data-quiet-receiving-text="Listening...">Start Ultrasonic Receiver</button>
+        </div>
+
+        <pre style="border: unset; border-radius: unset;">Send Text</pre>
+        <div class="alert alert-danger hidden" data-quiet-send-text-warning></div>
+        <div class="form-group">
+          <textarea autofocus="true" autocapitalize="none" autocomplete="off" spellcheck="off" class="form-control" style="resize:none" rows="5" data-quiet-text-input></textarea>
+        </div>
+        <div class="form-group">
+          <button type="button" class="btn btn-default" style="width:100%" data-quiet-send-text-button data-quiet-sending-text="Sending..." data-quiet-profile-name="audible">Send (Audible)</button>
+        </div>
+        <div class="form-group">
+          <button type="button" class="btn btn-default" style="width:100%" data-quiet-send-text-button data-quiet-sending-text="Sending..." data-quiet-profile-name="ultrasonic-experimental">Send (Ultrasonic)</button>
+        </div>
+
+        <pre style="border: unset; border-radius: unset;">Transfer Image</pre>
+        <p>This example will allow you to transmit an image between two quiet-compatible browsers. Because this example requires a little more power than the last one, the receiver will need to be on a laptop or desktop computer. Additionally, you will need to connect the transmitter and receiver by cable, such as a <a href="https://en.wikipedia.org/wiki/Phone_connector_%28audio%29#General_use">3.5mm phone connector</a>.</p>
+
+        <p>Neither Safari nor Firefox can be used as receivers for this example.</p>
+
+        <pre style="border: unset; border-radius: unset;">Receive Image</pre>
+        <div class="alert alert-danger hidden" data-quiet-receive-image-warning></div>
+        <p data-quiet-receive-image-target class="hidden">Your received image will show up here. Waiting...</p>
+        <div class="form-group">
+          <button type="button" class="btn btn-default" style="width:100%" data-quiet-receive-image-button data-quiet-receiving-text="Listening..." data-quiet-profile-name="cable-highspeed">Start Receiver</button>
+        </div>
+
+        <pre style="border: unset; border-radius: unset;">Send Image</pre>
+        <span class="btn btn-default" style="width:100%; position: relative; margin-bottom: 20px">
+            Choose an image<input type="file" id="file_input" name="file_input" data-quiet-file-input="" style="min-width: 100%; min-height: 100%; opacity: 0; position: absolute; top: 0; left: 0">
+        </span>
+        <div class="form-group">
+          <button type="button" class="btn btn-default" style="width:100%" data-quiet-send-image-button data-quiet-sending-text="Sending..." data-quiet-profile-name="cable-64k">Send</button>
+        </div>
+
+        <pre style="border: unset; border-radius: unset;">Profiles</pre>
+        <p>Let's take a look at the configuration for the audible text transmitter we saw earlier.</p>
+        <script src="https://gist.github.com/brian-armstrong/159acfdf6dbb686458c2.js"></script>
+        <p>This is a profile that tells Quiet.js how to operate. It specifies a modulation scheme <code>gmsk</code> and a center frequency <code>4200</code>.</p>
+        <p>Changing the behavior of Quiet.js is as simple as creating a new profile, making a few tweaks and then trying it out. To some extent, Quiet.js is a soundcard-based modem-building framework, thanks to the flexibility of liquid DSP.</p>
+
+        <pre style="border: unset; border-radius: unset;">License</pre>
+        <p>Quiet.js is licensed under 3-clause BSD. It is compiled with liquid dsp and libjansson, which are licensed under MIT license. For full details, see <a href="https://raw.githubusercontent.com/quiet/quiet-js/master/LICENSE-3RD-PARTY">3rd party licenses</a>.</p>
+
+
+      </section>
+    </div>
+    <footer>
+      <p><a href="https://github.com/quiet/quiet-js">Quiet.js</a> transmits data from your browser with Web Audio. It is a binding to <a href="https://github.com/quiet/quiet">libquiet</a>, compiled with <a href="https://github.com/kripken/emscripten">emscripten</a>. Quiet is powered by <a href="https://github.com/jgaeddert/liquid-dsp">liquid dsp</a>, by Joseph Gaeddert, and by <a href="http://www.ka9q.net/code/fec/">libfec</a>, by Phil Karn. Profile system built with <a href="http://www.digip.org/jansson/">libjansson</a>.</p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+  </body>
+</html>
