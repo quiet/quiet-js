@@ -444,7 +444,7 @@ var Quiet = (function() {
 
             // libquiet notifies us that the payload is finished by
             // returning written < number of samples we asked for
-            if (frame_available === false && written === 0) {
+            if (frame_available === false && written === -1) {
                 if (empties_written < 3) {
                     // flush out browser's sound sample buffer before quitting
                     for (var i = 0; i < sampleBufferSize; i++) {
