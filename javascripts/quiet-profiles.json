@@ -243,7 +243,7 @@
     "frame_length": 100,
     "modulation": {
       "center_frequency": 19000,
-      "gain": 0.1
+      "gain": 0.2
     },
     "interpolation": {
       "shape": "kaiser",
