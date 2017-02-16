@@ -247,7 +247,7 @@
     },
     "interpolation": {
       "shape": "kaiser",
-      "samples_per_symbol": 30,
+      "samples_per_symbol": 10,
       "symbol_delay": 4,
       "excess_bandwidth": 0.31
     },
