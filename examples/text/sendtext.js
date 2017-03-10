@@ -1,7 +1,9 @@
 var TextTransmitter = (function() {
-    Quiet.setProfilesPrefix("/");
-    Quiet.setMemoryInitializerPrefix("/");
-    Quiet.setLibfecPrefix("/");
+    Quiet.init({
+        profilesPrefix: "/",
+        memoryInitializerPrefix: "/",
+        libfecPrefix: "/"
+    });
     var btn;
     var textbox;
     var warningbox;
@@ -27,12 +29,12 @@ var TextTransmitter = (function() {
             onTransmitFinish();
             return;
         }
-        transmit(Quiet.str2ab(payload), onTransmitFinish);
+        transmit.transmit(Quiet.str2ab(payload));
     };
 
     function onQuietReady() {
         var profilename = document.querySelector('[data-quiet-profile-name]').getAttribute('data-quiet-profile-name');
-        transmit = Quiet.transmitter(profilename);
+        transmit = Quiet.transmitter({profile: profilename, onFinish: onTransmitFinish});
         btn.addEventListener('click', onClick, false);
     };
 

@@ -1,7 +1,9 @@
 var TextReceiver = (function() {
-    Quiet.setProfilesPrefix("/");
-    Quiet.setMemoryInitializerPrefix("/");
-    Quiet.setLibfecPrefix("/");
+    Quiet.init({
+        profilesPrefix: "/",
+        memoryInitializerPrefix: "/",
+        libfecPrefix: "/"
+    });
     var target;
     var content = new ArrayBuffer(0);
     var warningbox;
@@ -25,7 +27,11 @@ var TextReceiver = (function() {
 
     function onQuietReady() {
         var profilename = document.querySelector('[data-quiet-profile-name]').getAttribute('data-quiet-profile-name');
-        Quiet.receiver(profilename, onReceive, onReceiverCreateFail, onReceiveFail);
+        Quiet.receiver({profile: profilename,
+             onReceive: onReceive,
+             onCreateFail: onReceiverCreateFail,
+             onReceiveFail: onReceiveFail
+        });
     };
 
     function onQuietFail(reason) {
