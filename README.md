@@ -1,6 +1,8 @@
 Quiet.js
 ===========
 
+[![Quiet Modem Chat](https://discordapp.com/api/guilds/290985648054206464/embed.png?style=shield)](https://discordapp.com/invite/TMKfR)
+
 **[Documentation](https://quiet.github.io/quiet-js/docs/Quiet.html)**
 
 This is a javascript binding for [libquiet](https://github.com/quiet/quiet), a library for sending and receiving data via sound card. It can function either via speaker or cable (e.g., 3.5mm). Quiet comes included with a few transmissions profiles which configure quiet's transmitter and receiver. For speaker transmission, there is a profile which transmits around the 19kHz range, which is essentially imperceptible to people (nearly ultrasonic). For transmission via cable, quiet.js has profiles which offer speeds of at least 40 kbps.
