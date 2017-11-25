@@ -557,6 +557,16 @@ var Quiet = (function() {
     }
 
     function gUMConstraints() {
+        if (navigator.mediaDevices.getUserMedia !== undefined) {
+            return {
+                audio: {
+                    echoCancellation: false,
+                    autoGainControl: false,
+                    noiseSuppression: false
+                }
+            };
+        }
+
         if (navigator.webkitGetUserMedia !== undefined) {
             return {
                 audio: {
@@ -576,16 +586,7 @@ var Quiet = (function() {
                 }
             };
         }
-        if (navigator.mediaDevices.getUserMedia !== undefined) {
-            return {
-                audio: {
-                    echoCancellation: false,
-                    autoGainControl: false,
-                    noiseSuppression: false
-                }
-            };
 
-        }
         return {
             audio: {
                 echoCancellation: false
