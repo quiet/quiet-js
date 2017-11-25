@@ -557,16 +557,6 @@ var Quiet = (function() {
     }
 
     function gUMConstraints() {
-        if (navigator.mediaDevices.getUserMedia !== undefined) {
-            return {
-                audio: {
-                    echoCancellation: false,
-                    autoGainControl: false,
-                    noiseSuppression: false
-                }
-            };
-        }
-
         if (navigator.webkitGetUserMedia !== undefined) {
             return {
                 audio: {
@@ -586,7 +576,16 @@ var Quiet = (function() {
                 }
             };
         }
+        if (navigator.mozGetUserMedia !== undefined) {
+            return {
+                audio: {
+                    echoCancellation: false,
+                    mozAutoGainControl: false,
+                    mozNoiseSuppression: false
+                }
+            };
 
+        }
         return {
             audio: {
                 echoCancellation: false
@@ -598,7 +597,7 @@ var Quiet = (function() {
     function createAudioInput() {
         audioInput = 0; // prevent others from trying to create
         window.setTimeout(function() {
-            gUM.call(navigator.mediaDevices, gUMConstraints(),
+            gUM.call(navigator, gUMConstraints(),
                 function(e) {
                     audioInput = audioCtx.createMediaStreamSource(e);
 
@@ -703,7 +702,7 @@ var Quiet = (function() {
         // quiet creates audioCtx when it starts but it does not create an audio input
         // getting microphone access requires a permission dialog so only ask for it if we need it
         if (gUM === undefined) {
-            gUM = (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia);
+            gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
         }
 
         if (gUM === undefined) {
