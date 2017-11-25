@@ -597,7 +597,7 @@ var Quiet = (function() {
     function createAudioInput() {
         audioInput = 0; // prevent others from trying to create
         window.setTimeout(function() {
-            gUM.call(navigator, gUMConstraints(),
+            gUM.call(navigator.mediaDevices, gUMConstraints(),
                 function(e) {
                     audioInput = audioCtx.createMediaStreamSource(e);
 
