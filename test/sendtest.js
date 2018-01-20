@@ -1,6 +1,6 @@
 var TextTransmitter = (function() {
     Quiet.init({
-        profilesPrefix: "/test/",
+        profilesPrefix: "/quiet-js/test/",
         memoryInitializerPrefix: "/quiet-js/javascripts/",
         libfecPrefix: "/quiet-js/javascripts/"
     });
