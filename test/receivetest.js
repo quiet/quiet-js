@@ -40,7 +40,7 @@ var TextReceiver = (function() {
     };
 
     function onDOMLoad() {
-        target = document.querySelector('[data-quiet-receive-text-target]');
+        target = document.querySelector('[data-quiet-receive-test-target]');
         warningbox = document.querySelector('[data-quiet-warning]');
         Quiet.addReadyCallback(onQuietReady, onQuietFail);
     };
