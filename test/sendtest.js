@@ -6,7 +6,7 @@ var TextTransmitter = (function() {
     });
     var btn;
     var warningbox;
-    var transmit;
+    var transmitter;
 
     function calcTxQueueFrames() {
         var totalQueueSize = 1 << 16;
@@ -51,7 +51,7 @@ var TextTransmitter = (function() {
 
     function onQuietReady() {
         var profilename = document.querySelector('[data-quiet-profile-name]').getAttribute('data-quiet-profile-name');
-        transmit = Quiet.transmitter({
+        transmitter = Quiet.transmitter({
             profile: profilename,
             clampFrame: false,
             onEnqueue: onTransmitEnqueue,
