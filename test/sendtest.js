@@ -1,8 +1,8 @@
 var TextTransmitter = (function() {
     Quiet.init({
         profilesPrefix: "/test/",
-        memoryInitializerPrefix: "/javascripts/",
-        libfecPrefix: "/javascripts/"
+        memoryInitializerPrefix: "/quiet-js/javascripts/",
+        libfecPrefix: "/quiet-js/javascripts/"
     });
     var btn;
     var warningbox;
