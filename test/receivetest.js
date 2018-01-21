@@ -6,7 +6,7 @@ var TextReceiver = (function() {
     });
     var target;
     var content = new ArrayBuffer(0);
-    var warningbox;
+    var statusbox;
     var stats = {
         firstFrameReceived: null,
         lastFrameReceived: null,
@@ -88,10 +88,23 @@ var TextReceiver = (function() {
         updateStats();
     };
 
+    function onReceiverCreate() {
+        var statusHeader = document.createElement('h3');
+        statusHeader.innerText = 'Receiver Started';
+        statusbox.appendChild(statusHeader);
+        var statusDesc = document.createElement('div');
+        statusDesc.innerText = 'The receiver is operational and will update statistics as frames are received.';
+        statusbox.appendChild(statusDesc);
+    };
+
     function onReceiverCreateFail(reason) {
         console.log("failed to create quiet receiver: " + reason);
-        warningbox.classList.remove("hidden");
-        warningbox.textContent = "Sorry, it looks like this example is not supported by your browser. Please give permission to use the microphone or try again in Google Chrome or Microsoft Edge."
+        var statusHeader = document.createElement('h3');
+        statusHeader.innerText = 'Receiver Failed to Start';
+        statusbox.appendChild(statusHeader);
+        var statusDesc = document.createElement('div');
+        statusDesc.innerText = 'The receiver could not start in this browser. It could be that permission to use the microphone was not granted or that this browser is not compatible with Quiet Modem.';
+        statusbox.appendChild(statusDesc);
     };
 
     function onReceiverStatsUpdate(update) {
@@ -109,6 +122,7 @@ var TextReceiver = (function() {
         var profilename = document.querySelector('[data-quiet-profile-name]').getAttribute('data-quiet-profile-name');
         Quiet.receiver({profile: profilename,
              onReceive: onReceive,
+             onCreate: onReceiverCreate,
              onCreateFail: onReceiverCreateFail,
              onReceiveFail: onReceiveFail,
              onReceiverStatsUpdate: onReceiverStatsUpdate
@@ -131,7 +145,7 @@ var TextReceiver = (function() {
         target.appendChild(statsBoxes.bitrate);
         target.appendChild(statsBoxes.rssi);
         target.appendChild(statsBoxes.evm);
-        warningbox = document.querySelector('[data-quiet-warning]');
+        statusbox = document.querySelector('[data-quiet-status]');
         Quiet.addReadyCallback(onQuietReady, onQuietFail);
     };
 
