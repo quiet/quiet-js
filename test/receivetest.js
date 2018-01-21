@@ -29,24 +29,38 @@ var TextReceiver = (function() {
 
     function updateStats() {
         var recvDuration = stats.lastFrameReceived - stats.firstFrameReceived;
-        var bitrate = (stats.bytesReceived * 8) / (recvDuration / 1000);
+        var bitrate = (stats.bytesReceived * 8) / (recvDuration / 1000).toFixed(0);
 
         if (stats.firstFrameReceived == null) {
             statsBoxes.firstFrameReceived.innerText = "First Frame Received: ---";
         } else {
-            statsBoxes.firstFrameReceived.innerText = "First Frame Received: " + stats.firstFrameReceived.toDateString();
+            statsBoxes.firstFrameReceived.innerText = "First Frame Received: " + stats.firstFrameReceived.toLocaleTimeString();
         }
 
-        if (stats.rssi == null) {
-            statsBoxes.rssi = "RSSI: ---";
+        if (stats.lastFrameReceived == null) {
+            statsBoxes.lastFrameReceived.innerText = "Last Frame Received: ---";
         } else {
-            statsBoxes.rssi = "RSSI: " + stats.rssi + " dB";
+            statsBoxes.lastFrameReceived.innerText = "Last Frame Received: " + stats.lastFrameReceived.toLocaleTimeString();
+        }
+
+        statsBoxes.framesReceived.innerText = "Frames successfully received: " + stats.framesReceived;
+
+        statsBoxes.framesFailed.innerText = "Frames received but failed checksum: " + stats.framesFailed;
+
+        statsBoxes.bytesReceived.innerText = "Total bytes received: " + stats.bytesReceived;
+
+        statsBoxes.bitrate.innerText = "Transmission bitrate: " + bitrate + " bps";
+
+        if (stats.rssi == null) {
+            statsBoxes.rssi.innerText = "RSSI: ---";
+        } else {
+            statsBoxes.rssi.innerText = "RSSI: " + stats.rssi + " dB";
         }
 
         if (stats.evm == null) {
-            statsBoxes.evm = "EVM: ---";
+            statsBoxes.evm.innerText = "EVM: ---";
         } else {
-            statsBoxes.evm = "EVM: " + stats.evm + " dB";
+            statsBoxes.evm.innerText = "EVM: " + stats.evm + " dB";
         }
     };
 
