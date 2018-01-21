@@ -7,12 +7,67 @@ var TextReceiver = (function() {
     var target;
     var content = new ArrayBuffer(0);
     var warningbox;
+    var stats = {
+        firstFrameReceived: null,
+        lastFrameReceived: null,
+        framesReceived: 0,
+        framesFailed: 0,
+        bytesRecevied: 0,
+        rssi: null,
+        evm: null,
+    };
+    var statsBoxes = {
+        firstFrameReceived: doc.createElement('div');
+        lastFrameReceived: doc.createElement('div');
+        framesReceived: doc.createElement('div');
+        framesFailed: doc.createElement('div');
+        bytesReceived: doc.createElement('div');
+        bitrate: doc.createElement('div');
+        rssi: doc.createElement('div');
+        evm: doc.createElement('div');
+    };
 
-    var bytesReceived = 0;
+
+    function updateStats() {
+        var recvDuration = stats.lastFrameReceived - stats.firstFrameReceived;
+        var bitrate = (stats.bytesReceived * 8) / (recvDuration / 1000);
+
+        if (stats.firstFrameReceived == null) {
+            statsBoxes.firstFrameReceived = "First Frame Received: ---";
+        } else {
+            statsBoxes.firstFrameReceived = "First Frame Received: " + stats.firstFrameReceived.toDateString();
+        }
+
+        if (stats.rssi == null) {
+            statsBoxes.rssi = "RSSI: ---";
+        } else {
+            statsBoxes.rssi = "RSSI: " + stats.rssi + " dB";
+        }
+
+        if (stats.evm == null) {
+            statsBoxes.evm = "EVM: ---";
+        } else {
+            statsBoxes.evm = "EVM: " + stats.evm + " dB";
+        }
+    };
 
     function onReceive(recvPayload) {
-        bytesReceived += recvPayload.byteLength;
-        target.textContent = bytesReceived
+        stats.bytesReceived += recvPayload.byteLength;
+        stats.framesReceived++;
+        stats.lastFrameReceived = new Date();
+        if (stats.firstFrameReceived == null) {
+            stats.firstFrameReceived = new Date();
+        }
+        updateStats();
+    };
+
+    function onReceiveFail(num_fails) {
+        stats.framesFailed++;
+        stats.lastFrameReceived = new Date();
+        if (stats.firstFrameReceived == null) {
+            stats.firstFrameReceived = new Date();
+        }
+        updateStats();
     };
 
     function onReceiverCreateFail(reason) {
@@ -21,7 +76,18 @@ var TextReceiver = (function() {
         warningbox.textContent = "Sorry, it looks like this example is not supported by your browser. Please give permission to use the microphone or try again in Google Chrome or Microsoft Edge."
     };
 
-    function onReceiveFail(num_fails) {
+    function onReceiverStatsUpdate(update) {
+        if (receiver === undefined) {
+            return;
+        }
+        if (update.length > 0) {
+            stats.rssi = update[0].receivedSignalStrengthIndicator.toFixed(2);
+            var evm = update[0].errorVectorMagnitude;
+            if (evm != 0) {
+                stats.evm = evm.toFixed(2);
+            }
+        }
+        updateStats();
     };
 
     function onQuietReady() {
@@ -29,7 +95,8 @@ var TextReceiver = (function() {
         Quiet.receiver({profile: profilename,
              onReceive: onReceive,
              onCreateFail: onReceiverCreateFail,
-             onReceiveFail: onReceiveFail
+             onReceiveFail: onReceiveFail,
+             onReceiverStatsUpdate: onReceiverStatsUpdate
         });
     };
 
@@ -41,6 +108,14 @@ var TextReceiver = (function() {
 
     function onDOMLoad() {
         target = document.querySelector('[data-quiet-receive-test-target]');
+        target.appendChild(statsBoxes.firstFrameReceived);
+        target.appendChild(statsBoxes.lastFrameReceived);
+        target.appendChild(statsBoxes.framesReceived);
+        target.appendChild(statsBoxes.framesFailed);
+        target.appendChild(statsBoxes.bytesReceived);
+        target.appendChild(statsBoxes.bitrate);
+        target.appendChild(statsBoxes.rssi);
+        target.appendChild(statsBoxes.evm);
         warningbox = document.querySelector('[data-quiet-warning]');
         Quiet.addReadyCallback(onQuietReady, onQuietFail);
     };
