@@ -131,8 +131,7 @@ var TextReceiver = (function() {
 
     function onQuietFail(reason) {
         console.log("quiet failed to initialize: " + reason);
-        warningbox.classList.remove("hidden");
-        warningbox.textContent = "Sorry, it looks like there was a problem with this example (" + reason + ")";
+        statusbox.textContent = "Sorry, it looks like there was a problem with this example (" + reason + ")";
     };
 
     function onDOMLoad() {
