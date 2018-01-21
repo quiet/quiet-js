@@ -28,8 +28,13 @@ var TextReceiver = (function() {
     };
 
     function updateStats() {
-        var recvDuration = stats.lastFrameReceived - stats.firstFrameReceived;
-        var bitrate = (stats.bytesReceived * 8) / (recvDuration / 1000).toFixed(0);
+        var bitrate;
+        if (stats.firstFrameReceived != null && stats.lastFrameReceived != null && stats.firstFrameReceived != stats.lastFrameReceived) {
+            var recvDuration = stats.lastFrameReceived - stats.firstFrameReceived;
+            bitrate = (stats.bytesReceived * 8) / (recvDuration / 1000).toFixed(0);
+        } else {
+            bitrate = 0;
+        }
 
         if (stats.firstFrameReceived == null) {
             statsBoxes.firstFrameReceived.innerText = "First Frame Received: ---";
@@ -65,6 +70,7 @@ var TextReceiver = (function() {
     };
 
     function onReceive(recvPayload) {
+        console.log("recvPayload.byteLength " + recvPayload.byteLength);
         stats.bytesReceived += recvPayload.byteLength;
         stats.framesReceived++;
         stats.lastFrameReceived = new Date();
