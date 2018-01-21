@@ -76,9 +76,6 @@ var TextReceiver = (function() {
     };
 
     function onReceiverStatsUpdate(update) {
-        if (receiver === undefined) {
-            return;
-        }
         if (update.length > 0) {
             stats.rssi = update[0].receivedSignalStrengthIndicator.toFixed(2);
             var evm = update[0].errorVectorMagnitude;
