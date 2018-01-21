@@ -31,7 +31,7 @@ var TextReceiver = (function() {
         var bitrate;
         if (stats.firstFrameReceived != null && stats.lastFrameReceived != null && stats.firstFrameReceived != stats.lastFrameReceived) {
             var recvDuration = stats.lastFrameReceived - stats.firstFrameReceived;
-            bitrate = (stats.bytesReceived * 8) / (recvDuration / 1000).toFixed(0);
+            bitrate = (stats.bytesReceived * 8) / (recvDuration / 1000);
         } else {
             bitrate = 0;
         }
@@ -54,7 +54,7 @@ var TextReceiver = (function() {
 
         statsBoxes.bytesReceived.innerText = "Total bytes received: " + stats.bytesReceived;
 
-        statsBoxes.bitrate.innerText = "Transmission bitrate: " + bitrate + " bps";
+        statsBoxes.bitrate.innerText = "Transmission bitrate: " + bitrate.toFixed(0) + " bps";
 
         if (stats.rssi == null) {
             statsBoxes.rssi.innerText = "RSSI: ---";
@@ -74,7 +74,7 @@ var TextReceiver = (function() {
         stats.framesReceived++;
         stats.lastFrameReceived = new Date();
         if (stats.firstFrameReceived == null) {
-            stats.firstFrameReceived = new Date();
+            stats.firstFrameReceived = stats.lastFrameReceived;
         }
         updateStats();
     };
@@ -83,7 +83,7 @@ var TextReceiver = (function() {
         stats.framesFailed++;
         stats.lastFrameReceived = new Date();
         if (stats.firstFrameReceived == null) {
-            stats.firstFrameReceived = new Date();
+            stats.firstFrameReceived = stats.lastFrameReceived;
         }
         updateStats();
     };
