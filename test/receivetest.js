@@ -14,19 +14,18 @@ var TextReceiver = (function() {
         framesFailed: 0,
         bytesRecevied: 0,
         rssi: null,
-        evm: null,
+        evm: null
     };
     var statsBoxes = {
-        firstFrameReceived: doc.createElement('div');
-        lastFrameReceived: doc.createElement('div');
-        framesReceived: doc.createElement('div');
-        framesFailed: doc.createElement('div');
-        bytesReceived: doc.createElement('div');
-        bitrate: doc.createElement('div');
-        rssi: doc.createElement('div');
-        evm: doc.createElement('div');
+        firstFrameReceived: doc.createElement('div'),
+        lastFrameReceived: doc.createElement('div'),
+        framesReceived: doc.createElement('div'),
+        framesFailed: doc.createElement('div'),
+        bytesReceived: doc.createElement('div'),
+        bitrate: doc.createElement('div'),
+        rssi: doc.createElement('div'),
+        evm: doc.createElement('div')
     };
-
 
     function updateStats() {
         var recvDuration = stats.lastFrameReceived - stats.firstFrameReceived;
