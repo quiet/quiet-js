@@ -32,9 +32,9 @@ var TextReceiver = (function() {
         var bitrate = (stats.bytesReceived * 8) / (recvDuration / 1000);
 
         if (stats.firstFrameReceived == null) {
-            statsBoxes.firstFrameReceived = "First Frame Received: ---";
+            statsBoxes.firstFrameReceived.innerText = "First Frame Received: ---";
         } else {
-            statsBoxes.firstFrameReceived = "First Frame Received: " + stats.firstFrameReceived.toDateString();
+            statsBoxes.firstFrameReceived.innerText = "First Frame Received: " + stats.firstFrameReceived.toDateString();
         }
 
         if (stats.rssi == null) {
