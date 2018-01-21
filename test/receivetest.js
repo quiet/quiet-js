@@ -12,7 +12,7 @@ var TextReceiver = (function() {
         lastFrameReceived: null,
         framesReceived: 0,
         framesFailed: 0,
-        bytesRecevied: 0,
+        bytesReceived: 0,
         rssi: null,
         evm: null
     };
@@ -70,7 +70,6 @@ var TextReceiver = (function() {
     };
 
     function onReceive(recvPayload) {
-        console.log("recvPayload.byteLength " + recvPayload.byteLength);
         stats.bytesReceived += recvPayload.byteLength;
         stats.framesReceived++;
         stats.lastFrameReceived = new Date();
