@@ -47,6 +47,24 @@ var TextTransmitter = (function() {
         var modDesc = document.createElement('div');
         modDesc.innerText = 'Modulation: ' + profile.mod_scheme;
         statusbox.appendChild(modDesc);
+        var interpDesc = document.createElement('div');
+        interpDesc.innerText = 'Interpolation factor: ' + profile.interpolation.samples_per_symbol;
+        statusbox.appendChild(interpDesc);
+        var freqDesc = document.createElement('div');
+        freqDesc.innerText = 'Center frequency: ' + profile.interpolation.center_frequency + ' Hz';
+        statusbox.appendChild(freqDesc);
+        var checkDesc = document.createElement('div');
+        checkDesc.innerText = 'Checksum scheme: ' + profile.checksum_scheme;
+        statusbox.appendChild(checkDesc);
+        var lengthDesc = document.createElement('div');
+        lengthDesc.innerText = 'Frame length: ' + profile.frame_length + ' bytes';
+        statusbox.appendChild(lengthDesc);
+        var outerFecDesc = document.createElement('div');
+        outerFecDesc.innerText = 'Outer FEC scheme: ' + 'Conv. code r=1/2 k=9';  // XXX dynamic
+        statusbox.appendChild(outerFecDesc);
+        var innerFecDesc = document.createElement('div');
+        innerFecDesc.innerText = 'Inner FEC scheme: ' + 'none';  // XXX dynamic
+        statusbox.appendChild(innerFecDesc);
     };
 
     function onTransmitEnqueue() {
