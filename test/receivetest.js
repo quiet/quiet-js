@@ -114,8 +114,8 @@ var TextReceiver = (function() {
             if (evm != 0) {
                 stats.evm = evm.toFixed(2);
             }
+            updateStats();
         }
-        updateStats();
     };
 
     function onQuietReady() {
