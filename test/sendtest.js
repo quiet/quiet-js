@@ -51,7 +51,7 @@ var TextTransmitter = (function() {
         interpDesc.innerText = 'Interpolation factor: ' + profile.interpolation.samples_per_symbol;
         statusbox.appendChild(interpDesc);
         var freqDesc = document.createElement('div');
-        freqDesc.innerText = 'Center frequency: ' + profile.interpolation.center_frequency + ' Hz';
+        freqDesc.innerText = 'Center frequency: ' + profile.modulation.center_frequency + ' Hz';
         statusbox.appendChild(freqDesc);
         var checkDesc = document.createElement('div');
         checkDesc.innerText = 'Checksum scheme: ' + profile.checksum_scheme;
