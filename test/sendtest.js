@@ -33,13 +33,8 @@ var TextTransmitter = (function() {
     };
 
     function onClick(e) {
-        e.target.removeEventListener(e.type, arguments.callee);
-        e.target.disabled = true;
-        var originalText = e.target.innerText;
-        e.target.innerText = e.target.getAttribute('data-quiet-sending-text');
-        e.target.setAttribute('data-quiet-sending-text', originalText);
+        e.target.remove();
         initTxQueue();
-        delete e.target;
 
         statusbox.innerText = '';
         var statusHeader = document.createElement('h3');
