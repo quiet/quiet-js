@@ -269,7 +269,7 @@
   },
   "ultrasonic-experimental-ook": {
     "mod_scheme": "ook",
-    "checksum_scheme": "crc32",
+    "checksum_scheme": "none",
     "inner_fec_scheme": "none",
     "outer_fec_scheme": "v29",
     "frame_length": 24,
