@@ -520,7 +520,7 @@ var Quiet = (function() {
             return total/(last_emit_times.length);
         };
 
-        var getProfile = functioin() {
+        var getProfile = function() {
             return Object.assign({}, profileObj);
         };
 
