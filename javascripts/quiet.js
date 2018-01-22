@@ -231,6 +231,7 @@ var Quiet = (function() {
      * this length or shorter
      * @property {function} getAverageEncodeTime - returns average time in ms spent encoding data
      * into sound samples over the last 3 runs
+     * @property {function} getProfile - get the profile object used to create this transmitter
      */
 
     /**
@@ -268,11 +269,14 @@ var Quiet = (function() {
     function transmitter(opts) {
         var profile = opts.profile;
         var c_profiles, c_profile;
+        var profileObj;
         if (typeof profile === 'object') {
-            c_profiles = Module.intArrayFromString(JSON.stringify({"profile": profile}));
+            profileObj = profile;
+            c_profiles = Module.intArrayFromString(JSON.stringify({"profile": profileObj}));
             c_profile = Module.intArrayFromString("profile");
         } else {
             // get an encoder_options object for our quiet-profiles.json and profile key
+            profileObj = profiles[profile];
             c_profiles = Module.intArrayFromString(profiles);
             c_profile = Module.intArrayFromString(profile);
         }
@@ -516,11 +520,16 @@ var Quiet = (function() {
             return total/(last_emit_times.length);
         };
 
+        var getProfile = functioin() {
+            return Object.assign({}, profileObj);
+        };
+
         return {
             transmit: transmit,
             destroy: destroy,
             frameLength: frame_len,
-            getAverageEncodeTime: getAverageEncodeTime
+            getAverageEncodeTime: getAverageEncodeTime,
+            getProfile: getProfile
         };
     };
 

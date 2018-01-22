@@ -43,8 +43,9 @@ var TextTransmitter = (function() {
         var statusDesc = document.createElement('div');
         statusDesc.innerText = 'The transmitter is now continuously sending. To stop transmission, close this page.';
         statusbox.appendChild(statusDesc);
+        var profile = transmitter.getProfile();
         var modDesc = document.createElement('div');
-        modDesc.innerText = 'Modulation: ook';
+        modDesc.innerText = 'Modulation: ' + profile.mod_scheme;
         statusbox.appendChild(modDesc);
     };
 
