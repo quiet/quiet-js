@@ -95,6 +95,7 @@ var TextReceiver = (function() {
         var statusDesc = document.createElement('div');
         statusDesc.innerText = 'The receiver is operational and will update statistics as frames are received.';
         statusbox.appendChild(statusDesc);
+        updateStats();
     };
 
     function onReceiverCreateFail(reason) {
