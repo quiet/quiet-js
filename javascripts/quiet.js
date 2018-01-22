@@ -276,7 +276,7 @@ var Quiet = (function() {
             c_profile = Module.intArrayFromString("profile");
         } else {
             // get an encoder_options object for our quiet-profiles.json and profile key
-            profileObj = profiles[profile];
+            profileObj = JSON.parse(profiles)[profile];
             c_profiles = Module.intArrayFromString(profiles);
             c_profile = Module.intArrayFromString(profile);
         }
