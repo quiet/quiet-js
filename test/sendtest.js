@@ -5,7 +5,7 @@ var TextTransmitter = (function() {
         libfecPrefix: "/quiet-js/javascripts/"
     });
     var btn;
-    var warningbox;
+    var statusbox;
     var transmitter;
 
     function calcTxQueueFrames() {
@@ -39,6 +39,18 @@ var TextTransmitter = (function() {
         e.target.innerText = e.target.getAttribute('data-quiet-sending-text');
         e.target.setAttribute('data-quiet-sending-text', originalText);
         initTxQueue();
+        delete e.target;
+
+        statusbox.innerText = '';
+        var statusHeader = document.createElement('h3');
+        statusHeader.innerText = 'Transmitter Started';
+        statusbox.appendChild(statusHeader);
+        var statusDesc = document.createElement('div');
+        statusDesc.innerText = 'The transmitter is now continuously sending. To stop transmission, close this page.';
+        statusbox.appendChild(statusDesc);
+        var modDesc = document.createElement('div');
+        modDesc.innerText = 'Modulation: ook';
+        statusbox.appendChild(modDesc);
     };
 
     function onTransmitEnqueue() {
@@ -61,14 +73,14 @@ var TextTransmitter = (function() {
 
     function onQuietFail(reason) {
         console.log("quiet failed to initialize: " + reason);
-        warningbox.classList.remove("hidden");
-        warningbox.textContent = "Sorry, it looks like there was a problem with this example (" + reason + ")";
+        statusbox.classList.remove("hidden");
+        statusbox.textContent = "Sorry, it looks like there was a problem with this example (" + reason + ")";
     };
 
     function onDOMLoad() {
         btn = document.querySelector('[data-quiet-send-button]');
         textbox = document.querySelector('[data-quiet-text-input]');
-        warningbox = document.querySelector('[data-quiet-warning]');
+        statusbox = document.querySelector('[data-quiet-status]');
         Quiet.addReadyCallback(onQuietReady, onQuietFail);
     };
 
