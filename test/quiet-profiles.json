@@ -268,7 +268,7 @@
     }
   },
   "ultrasonic-experimental-ook": {
-    "mod_scheme": "ook",
+    "mod_scheme": "bpsk",
     "checksum_scheme": "crc32",
     "inner_fec_scheme": "none",
     "outer_fec_scheme": "v29",
@@ -296,7 +296,7 @@
       "checksum_scheme": "crc32",
       "inner_fec_scheme": "secded7264",
       "outer_fec_scheme": "v29",
-      "mod_scheme": "ook"
+      "mod_scheme": "bpsk"
     }
   }
 }
