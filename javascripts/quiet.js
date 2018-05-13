@@ -286,6 +286,7 @@ var Quiet = (function() {
             c_profile = Module.intArrayFromString(profile);
         }
 
+        initAudioContext();
         var done = opts.onFinish;
 
         var opt = Module.ccall('quiet_encoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
@@ -348,7 +349,6 @@ var Quiet = (function() {
             if (destroyed) {
                 return;
             }
-            initAudioContext();
             if (transmitter === undefined) {
                 // we have to start transmitter here because mobile safari wants it to be in response to a
                 // user action
