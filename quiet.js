@@ -52,11 +52,16 @@ var Quiet = (function() {
 
     // start gets our AudioContext and notifies consumers that quiet can be used
     function start() {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        console.log(audioCtx.sampleRate);
         var len = readyCallbacks.length;
         for (var i = 0; i < len; i++) {
             readyCallbacks[i]();
+        }
+    };
+
+    function initAudioContext() {
+        if (audioCtx === undefined) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            console.log(audioCtx.sampleRate);
         }
     };
 
@@ -277,6 +282,7 @@ var Quiet = (function() {
             c_profile = Module.intArrayFromString(profile);
         }
 
+        initAudioContext();
         var done = opts.onFinish;
 
         var opt = Module.ccall('quiet_encoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
@@ -699,7 +705,8 @@ var Quiet = (function() {
         }
         var opt = Module.ccall('quiet_decoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
 
-        // quiet creates audioCtx when it starts but it does not create an audio input
+        initAudioContext();
+        // quiet does not create an audio input when it starts
         // getting microphone access requires a permission dialog so only ask for it if we need it
         if (gUM === undefined) {
             gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
