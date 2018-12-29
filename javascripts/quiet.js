@@ -64,6 +64,12 @@ var Quiet = (function() {
             console.log(audioCtx.sampleRate);
         }
     };
+    
+    function resumeAudioContext() {
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    };
 
     function fail(reason) {
         failReason = reason;
@@ -286,6 +292,7 @@ var Quiet = (function() {
             c_profile = Module.intArrayFromString(profile);
         }
 
+        initAudioContext();
         var done = opts.onFinish;
 
         var opt = Module.ccall('quiet_encoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
@@ -345,7 +352,7 @@ var Quiet = (function() {
         };
 
         var startTransmitter = function () {
-            initAudioContext();
+            resumeAudioContext();
             if (destroyed) {
                 return;
             }
@@ -715,6 +722,7 @@ var Quiet = (function() {
         var opt = Module.ccall('quiet_decoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
 
         initAudioContext();
+        resumeAudioContext();
         // quiet does not create an audio input when it starts
         // getting microphone access requires a permission dialog so only ask for it if we need it
         if (gUM === undefined) {
