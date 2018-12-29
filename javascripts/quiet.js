@@ -286,7 +286,6 @@ var Quiet = (function() {
             c_profile = Module.intArrayFromString(profile);
         }
 
-        initAudioContext();
         var done = opts.onFinish;
 
         var opt = Module.ccall('quiet_encoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
@@ -346,6 +345,7 @@ var Quiet = (function() {
         };
 
         var startTransmitter = function () {
+            initAudioContext();
             if (destroyed) {
                 return;
             }
