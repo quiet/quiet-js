@@ -1,0 +1,14 @@
+v1.0.0
+- Break quietjs into separate modules.
+- Removed profile fetching; now it is in its own module.
+- Each transmitter and receiver creates its own audio context.
+- Receiver takes in a profile object; it no longer takes in a key to look at a
+  preloaded json
+- Receiver no longer calls getUserMedia; an audio stream must be passed in. As a
+  result, onCreate and onCreateFail callbacks are gone.
+- The global destroy function for all receivers is gone. The creator is
+  resonsible for maintaining a reference to the receivers and cleaning them up.
+- Transmitter takes in a profile object; it no longer takes in a key to look at
+  a preloaded json
+- Transmitter has clampFrame set to false by default.
+- Transmitter#frameLength has been replaced with Transmitter#getFrameLength

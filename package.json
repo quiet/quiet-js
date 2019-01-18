@@ -1,0 +1,26 @@
+{
+    "devDependencies": {
+        "babel-eslint": "10.0.1",
+        "copy-webpack-plugin": "4.6.0",
+        "eslint": "5.9.0",
+        "eslint-loader": "2.1.1",
+        "webpack": "4.28.4",
+        "webpack-cli": "3.2.1",
+        "webpack-dev-server": "3.1.14"
+    },
+    "engines": {
+        "node": "8.9.1",
+        "npm": "5.5.1"
+    },
+    "main": "src/index.js",
+    "name": "lib-quiet-js",
+    "scripts": {
+        "build": "webpack",
+        "lint": "eslint .",
+        "start": "webpack-dev-server"
+    },
+    "version": "1.0.0",
+    "sideEffects": [
+        "src/bootstrap.js"
+    ]
+}
