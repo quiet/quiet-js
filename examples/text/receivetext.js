@@ -1,8 +1,9 @@
 var TextReceiver = (function() {
     Quiet.init({
-        profilesPrefix: "/",
-        memoryInitializerPrefix: "/",
-        libfecPrefix: "/"
+        profilesPath: "/quiet-profiles.json",
+        memoryInitializerPath: "/quiet-emscripten.js.mem",
+        emscriptenPath: "/quiet-emscripten.js"
+
     });
     var target;
     var content = new ArrayBuffer(0);

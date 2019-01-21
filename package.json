@@ -1,0 +1,18 @@
+{
+  "name": "quiet.js",
+  "version": "1.1.0",
+  "description": "Send data using Web Audio",
+  "main": "output/library.js",
+  "scripts": {
+    "build": "webpack --env build"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "devDependencies": {
+    "webpack": "^3.11.0"
+  },
+  "dependencies": {
+    "@babel/core": "^7.0.0-beta.40",
+    "@babel/preset-env": "^7.0.0-beta.40",
+    "babel-loader": "^8.0.0-beta.0"
+  }
+}
