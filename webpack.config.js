@@ -10,9 +10,19 @@ module.exports = {
         rules: [
             {
                 enforce: 'pre',
-                exclude: [ /node_modules/, /docs/, /examples/ ],
                 loader: 'eslint-loader',
                 test: /\.js$/
+            },
+            {
+                exclude: /(node_modules)/,
+                test: /\.js$/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: [ '@babel/preset-env' ],
+                        plugins: [ '@babel/plugin-syntax-dynamic-import' ]
+                    }
+                }
             }
         ]
     },
