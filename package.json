@@ -8,6 +8,7 @@
         "copy-webpack-plugin": "4.6.0",
         "eslint": "5.9.0",
         "eslint-loader": "2.1.1",
+        "jsdoc": "3.5.5",
         "webpack": "4.28.4",
         "webpack-cli": "3.2.1",
         "webpack-dev-server": "3.1.14"
@@ -20,6 +21,7 @@
     "name": "lib-quiet-js",
     "scripts": {
         "build": "webpack",
+        "docs": "jsdoc -c ./jsdoc.config.js",
         "lint": "eslint .",
         "start": "webpack-dev-server"
     },
