@@ -2,6 +2,9 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
 module.exports = {
+    devServer: {
+        contentBase: './example'
+    },
     entry: {
         example: './example/index.js',
         lib: './src/index.js'
