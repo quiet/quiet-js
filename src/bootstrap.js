@@ -1,35 +1,36 @@
 import { libQuietProvider}  from './libQuiet';
 
 export function loadDependencies(options) {
+    if (libQuietProvider.get()) {
+        return Promise.resolve();
+    }
+
     const {
-        libfecUrl,
-        memoryInitializerUrl
+        emscriptenPath,
+        memoryInitializerPath
     } = options;
 
-    if (libfecUrl) {
-        setLibfecUrl(libfecUrl);
+    if (memoryInitializerPath) {
+        setMemoryInitializerPath(memoryInitializerPath);
     }
 
-    if (memoryInitializerUrl) {
-        setMemoryInitializerUrl(memoryInitializerUrl);
-    }
+    return new Promise((resolve, reject) => {
+        const scriptTag = document.createElement('script');
 
-    return import(/* webpackChunkName: "emscripten" */ '../emscripten/quiet-emscripten')
-        .then(({ default: quietLibFactory }) => {
-            const libQuiet = quietLibFactory.init();
+        scriptTag.async = true;
+        scriptTag.addEventListener('error', () => {
+            scriptTag.remove();
 
-            libQuietProvider.set(libQuiet);
-        }).catch(() => 'An error occurred while loading the component');
-}
+            reject();
+        });
+        scriptTag.addEventListener('load', resolve);
+        scriptTag.type = 'text/javascript';
 
-/**
- * Sets the path quietlib should access to find libfec.
- *
- * @param {string} url - Path prefix to libfec.js.
- * @returns {void}
- */
-export function setLibfecUrl(url) {
-    window.Module.dynamicLibraries.push(url);
+        scriptTag.src = `${emscriptenPath}quiet-emscripten.js`
+
+        document.head.appendChild(scriptTag);
+    })
+    .then(() => libQuietProvider.set(window.quiet_emscripten));
 }
 
 /**
@@ -38,10 +39,12 @@ export function setLibfecUrl(url) {
  * @param {string} url - Path to quiet-emscripten.js.mem.
  * @returns {void}
  */
-export function setMemoryInitializerUrl(url) {
-    window.Module.locateFile = function (fileName) {
+export function setMemoryInitializerPath(url) {
+    window.quiet_emscripten_config = window.quiet_emscripten_config || {};
+
+    window.quiet_emscripten_config.locateFile = function (fileName) {
         if (fileName === 'quiet-emscripten.js.mem') {
-            return url;
+            return `${url}quiet-emscripten.js.mem`;
         }
     };
 }

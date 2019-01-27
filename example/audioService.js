@@ -9,8 +9,8 @@ import {
 
 class AudioService {
     constructor() {
-        this._emscriptenUrl =  `/dist/quiet-emscripten.js`;
-        this._memUrl = `/dist/quiet-emscripten.js.mem`;
+        this._emscriptenPath =  `/`;
+        this._memoryInitializerPath = `/`;
 
         this._receiver = null;
         this._transmitter = null;
@@ -18,8 +18,8 @@ class AudioService {
 
     init() {
         return loadDependencies({
-            emscriptenUrl: this._emscriptenUrl,
-            memUrl: this._memUrl
+            emscriptenPath: this._emscriptenPath,
+            memoryInitializerPath: this._memoryInitializerPath
         });
     }
 
