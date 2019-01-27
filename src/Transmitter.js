@@ -23,8 +23,8 @@ class Transmitter {
      * greatly degrades error performance. Setting this flag to false will
      * increase throughput but can significantly increase error rate. Defaults
      * to false.
-     * @param {string|object} options.profile - An object which contains a
-     * single profile.
+     * @param {object} options.profile - An object which contains a single
+     * audio profile for encoding and decoding.
      * @param {function} [options.onFinish] - User callback which will notify
      * user when playback of all data in queue is complete. If the user calls
      * transmit multiple times before waiting for onFinish, then onFinish will
@@ -40,7 +40,7 @@ class Transmitter {
      * memory bloat while maintaining the maximum transmit throughput. If the
      * user calls transmit multiple times before waiting for onEnqueue, then
      * onEnqueue will be called only once after all of the data has been played
-     * out
+     * out.
      */
     constructor(options) {
         const {
@@ -104,7 +104,7 @@ class Transmitter {
          * Ideally there will be a 1:1 sequence between writebuf and
          * onaudioprocess. Just in case one gets ahead of the other, this flag
          * will prevent us from throwing away a buffer or playing a buffer
-         * twice. 
+         * twice.
          *
          * @member {boolean}
          * @private
@@ -184,8 +184,8 @@ class Transmitter {
             this._transmitter.onaudioprocess = this._onAudioProcess;
 
             // Put an input node on the graph. Some browsers require this to run
-            // our script processor this oscillator will not actually be used in
-            // any way.
+            // our script processor. This oscillator will not actually be used
+            // in any way.
             this._dummy_osc = this._audioCtx.createOscillator();
             this._dummy_osc.type = 'square';
             this._dummy_osc.frequency.value = 420;
@@ -260,7 +260,7 @@ class Transmitter {
     /**
      * writebuf calls _send and _emit on the encoder. First we push as much
      * payload as will fit into encoder's tx queue, then we create the next
-     * sample block (if played = true).
+     * sample block (if this._played === true).
      *
      * @private
      * @returns {void}
@@ -270,7 +270,7 @@ class Transmitter {
             return;
         }
 
-        // fill as much of quiet's transmit queue as possible
+        // Fill as much of quiet's transmit queue as possible.
         let frameAvailable = false;
         let frameWritten = false;
 

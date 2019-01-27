@@ -65,7 +65,7 @@ export default class Decoder {
             [ this._decoder, numFramesPtr ]
         );
 
-        // time for some more pointer arithmetic
+        // Time for some more pointer arithmetic.
         const numFrame = libQuiet.HEAPU32[numFramesPtr / 4];
 
         libQuiet.ccall(
@@ -75,7 +75,6 @@ export default class Decoder {
             [ numFramesPtr ]
         );
 
-        // Why these numbers?
         const framesize = 4 + 4 + 4 + 4 + 4;
         const stats = [];
 

@@ -16,7 +16,7 @@ export default function createTranslator(type, profile, sampleRate) {
 
     // libquiet internally works at 44.1kHz but the local sound card may be
     // a different rate. Inform quiet about our local sound card's sample
-    // rate so that it can resample to its internal sample rate
+    // rate so that it can resample to its internal sample rate.
     const translator = libQuiet.ccall(
         `quiet_${type}_create`,
         'pointer',

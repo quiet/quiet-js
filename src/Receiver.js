@@ -13,7 +13,7 @@ class Receiver {
      * microphone/line-in.
      *
      * @callback onReceive
-     * @param {ArrayBuffer} payload - chunk of data received
+     * @param {ArrayBuffer} payload - Chunk of data received.
      */
 
     /**
@@ -48,7 +48,7 @@ class Receiver {
      * @typedef Complex
      * @type object
      * @property {Number} real - Real valued component.
-     * @property {Number} imag - Imaginary valued component
+     * @property {Number} imag - Imaginary valued component.
      */
 
     /**
@@ -105,7 +105,7 @@ class Receiver {
 
         this._scriptProcessor.onaudioprocess = this._onAudioProcess;
 
-        // more unused nodes in the graph that some browsers insist on having
+        // More unused nodes in the graph that some browsers insist on having.
         this._fakeGain = this._audioCtx.createGain();
         this._fakeGain.value = 0;
         this._scriptProcessor.connect(this._fakeGain);
@@ -165,7 +165,7 @@ class Receiver {
 
         window.setTimeout(this._readBuffer, 0);
 
-        // Check for failures
+        // Check for failures.
         const currentChecksumFailCount = this._decoder.getChecksumFails();
 
         if (this._onReceiveFail
@@ -176,7 +176,7 @@ class Receiver {
     
         this._lastChecksumFailCount = currentChecksumFailCount;
 
-        // Process stats
+        // Process stats.
         if (this._onReceiverStatsUpdate) {
             const stats = this._decode.getReceiverStats();
 

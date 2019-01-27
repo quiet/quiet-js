@@ -4,6 +4,6 @@ export default {
     },
 
     set(libQuiet) {
-        this.libQuiet= libQuiet;
+        this.libQuiet = libQuiet;
     }
 }
