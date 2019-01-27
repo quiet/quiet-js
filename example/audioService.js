@@ -16,6 +16,10 @@ class AudioService {
         this._transmitter = null;
     }
 
+    getProfiles() {
+        return Object.keys(profiles);
+    }
+
     init() {
         return loadDependencies({
             emscriptenPath: this._emscriptenPath,
@@ -23,60 +27,51 @@ class AudioService {
         });
     }
 
-    startListening(audioStream, onReceive) {
-        if (this._receiver) {
-            this._receiver.changeAudioStream(audioStream);
+    isReceiving() {
+        return Boolean(this._receiver);
+    }
 
+    startReceiving(audioStream, receiveProfile, onReceive) {
+        if (!audioStream || !receiveProfile) {
+            console.error('Called startReceiving without a stream or profile.');
             return;
+        }
+
+        if (this._receiveProfile !== receiveProfile) {
+            this.stopReceiving();
         }
 
         this._receiver = new Receiver({
             audioStream,
             onReceive: ab => onReceive(ab2str(ab)),
-            profile: profiles['ultrasonic-experimental']
+            profile: profiles[receiveProfile]
         });
     }
 
-    startSending(text) {
-        this._text = str2ab(text);
-
-        if (!this._transmitter) {
-            this._transmitter = new Transmitter({
-                onFinish: () => this._enqueueTransmission(),
-                profile: profiles['ultrasonic-experimental']
-            });
-
-            this._transmit();
-        }
-    }
-
-    stopListening() {
-        if (this._receiver) {
-            this._receiver.destroy();
-        }
+    stopReceiving() {
+        this._receiver && this._receiver.destroy();
 
         this._receiver = null;
     }
 
-    stopSending() {
-        this._transmitter.destroy();
-        this._transmitter = null;
-
-        clearTimeout(this._nextTransmissionTimeout);
-    }
-
-    _enqueueTransmission() {
-        clearTimeout(this._nextTransmissionTimeout);
-
-        this._nextTransmissionTimeout = setTimeout(() => {
-            this._transmit();
-        }, 2000);
-    }
-
-    _transmit() {
-        if (this._transmitter) {
-            this._transmitter.transmit(this._text);
+    send(text, sendProfile) {
+        if (!text || !text.trim() || !sendProfile) {
+            return Promise.reject();
         }
+
+        return new Promise(resolve => {
+            const arrayBufferText = str2ab(text);
+            const transmitter = new Transmitter({
+                onFinish: () => {
+                    transmitter.destroy();
+
+                    resolve();
+                },
+                profile: profiles[sendProfile]
+            });
+
+            transmitter.transmit(arrayBufferText);
+        });
     }
 };
 

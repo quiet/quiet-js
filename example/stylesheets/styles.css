@@ -19,6 +19,7 @@ body {
 }
 
 .wrapper {
+  display: block;
   width: 640px;
   margin: 0 auto;
   background: #DEDEDE;

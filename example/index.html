@@ -2,6 +2,14 @@
 <html>
 <head>
     <title>Quiet Demo</title>
+    <style>
+        /**
+         * FIXME: this prevents fouc with webpack css-loader.
+         */
+         .wrapper {
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <div class = "wrapper">
@@ -36,24 +44,45 @@
             </div>
         </header>
         <section>
-            <div>
-                <label for = "mic-select">Audio input source: </label>
-                <select id = "mic-select"></select>
-            </div>
-            <div>
-                <button id = 'receiver-start'>Receiver start</button>
-                <button id = 'receiver-stop'>Receive stop</button>
+            <h1>
+                <a id="quiet" class="anchor" href="#quiet" aria-hidden="true">
+                    <span aria-hidden="true" class="octicon octicon-link"></span>
+                </a>
+                Quiet.js
+            </h1>
+            <p>This is a javascript binding for <a href="https://github.com/quiet/quiet">libquiet</a>, a library for sending and receiving data via sound card. It can function either via speaker or cable (e.g., 3.5mm). Quiet comes included with a few transmissions profiles which can be selected for the intended use. For speaker transmission, there is a profile which transmits around the 19kHz range, which is essentially imperceptible to the human ear.</p>
+            <p>Quiet uses the Web Audio functionality in order to send and receive sound. Sending data is supported by Chrome, Firefox, Safari, and Edge. Reception is supported by Chrome, Edge, and to some extent Firefox.</p>    
+
+            <pre style="border: unset; border-radius: unset;">Receive Text</pre>
+            <div class="form-group">
+                <div class="alert alert-danger hidden" data-quiet-receive-text-warning></div>
+                <pre class="hidden" id = "received-text">Your received text will show up here. Waiting...</pre>
+                <select class="form-control" id = "receive-profile-select"></select>
+                <button type="button" class="btn btn-default"id = "receive-button"  style="width:100%"></button>
             </div>
 
-            <input type="checkbox" id="autostart-receiver">
-            <div>
-                <textarea id = 'transmit-text'>hello, world!</textarea>
+            <pre style="border: unset; border-radius: unset;">Transfer Text</pre>
+            <p>This example will allow you to transmit text between two quiet-compatible browsers. There is a transmitter which will send tones through your speakers, and a receiver which will decode the tones through the microphone. These examples may run either in the same browser or in different browsers on different devices. The ultrasonic example cannot be received by Firefox, and neither receiver will work in Safari.</p>
+            <p class="warning"><b>Be sure to turn down your volume to 50% or lower on your transmitting device.</b></p>
+
+            <pre style="border: unset; border-radius: unset;">Send Text</pre>
+            <div class="alert alert-danger hidden" data-quiet-send-text-warning></div>
+            <div class="form-group">
+                <textarea autofocus="true" autocapitalize="none" autocomplete="off" id= "text-to-send" spellcheck="off" class="form-control" style="resize:none" rows="5"></textarea>
             </div>
-            <div>
-                <button id = 'transmit-start'>Transmitter start</button>
-                <button id = 'transmit-stop'>Transmitter stop</button>
+            <div class="form-group">
+                <select class="form-control" id = "send-profile-select"></select>
+                <button type="button" class="btn btn-default" id = "send-button" style="width:100%">Send</button>
             </div>
-            <input type="checkbox" id="autostart-transmitter">
+
+            <pre style="border: unset; border-radius: unset;">Profiles</pre>
+            <p>Let's take a look at the configuration for the audible text transmitter we saw earlier.</p>
+            <script src="https://gist.github.com/brian-armstrong/159acfdf6dbb686458c2.js"></script>
+            <p>This is a profile that tells Quiet.js how to operate. It specifies a modulation scheme <code>gmsk</code> and a center frequency <code>4200</code>.</p>
+            <p>Changing the behavior of Quiet.js is as simple as creating a new profile, making a few tweaks and then trying it out. To some extent, Quiet.js is a soundcard-based modem-building framework, thanks to the flexibility of liquid DSP.</p>
+    
+            <pre style="border: unset; border-radius: unset;">License</pre>
+            <p>Quiet.js is licensed under 3-clause BSD. It is compiled with liquid dsp and libjansson, which are licensed under MIT license. For full details, see <a href="https://raw.githubusercontent.com/quiet/quiet-js/master/LICENSE-3RD-PARTY">3rd party licenses</a>.</p>
         </section>
     </div>
     <footer>
