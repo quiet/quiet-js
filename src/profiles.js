@@ -1,4 +1,14 @@
-export default {
+/**
+ * @module profiles
+ */
+
+/**
+ * A dictionary of pre-defined audio profiles to use for encoding and decoding
+ * data to and from audio.
+ *
+ * @type {Object}
+ */
+const profiles = {
     'audible': {
         'checksum_scheme': 'crc32',
         'encoder_filters': {
@@ -268,3 +278,5 @@ export default {
         }
     }
 };
+
+export default profiles;

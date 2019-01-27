@@ -1,3 +1,8 @@
+/**
+ * @module constants
+ * @private
+ */
+
 export const FRAME_BUFFER_SIZE = Math.pow(2, 14);
 
 /**

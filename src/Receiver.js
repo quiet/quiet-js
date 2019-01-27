@@ -1,17 +1,13 @@
+/**
+ * @module Receiver
+ */
+
 import { SAMPLE_BUFFER_SIZE } from './constants';
 import { Decoder, Frame, Samples } from './libQuiet';
 
 const NUM_CONSUME_TIMES = 3;
 
-/**
- * @typedef Receiver
- * @type object
- * @property {function} destroy - Immediately stop sampling microphone and
- * release all resources.
- * @property {function} getAverageDecodeTime - Returns average time in ms spent
- * decoding data from sound samples over the last 3 runs.
- */
-export default class Receiver {
+class Receiver {
     /**
      * Callback used by receiver to notify user of data received via
      * microphone/line-in.
@@ -59,6 +55,7 @@ export default class Receiver {
      * Create a new receiver with the profile specified by profile (should match
      * profile of transmitter).
      *
+     * @constructor
      * @param {Object} options - Receiver params.
      * @param {Object} options.profile - An object which contains a complete
      * audio profile.
@@ -220,3 +217,5 @@ export default class Receiver {
         }
     }
 }
+
+export default Receiver;

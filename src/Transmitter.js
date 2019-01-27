@@ -1,36 +1,30 @@
+/**
+ * @module Transmitter
+ */
+
 import { SAMPLE_BUFFER_SIZE } from './constants';
 import { Encoder, Samples } from './libQuiet';
 
 const NUM_EMIT_TIMES = 3;
 
-/**
- * @typedef Transmitter
- * @property {transmit} transmit - Queue up array buffer and begin transmitting.
- * @property {function} destroy - Immediately stop playback and release all
- * resources.
- * @property {number} frameLength - Length in bytes of each underlying transmit
- * frame. Calls to transmit() will automatically slice passed ArrayBuffer into
- * frames of this length or shorter
- * @property {function} getAverageEncodeTime - Returns average time in ms spent
- * encoding data into sound samples over the last 3 runs.
- */
-
-/**
- * Method for user to provide data to a Quiet transmitter
- *
- * @callback transmit
- * @memberof Transmitter
- * @param {ArrayBuffer} payload - Bytes which will be encoded and sent to
- * speaker.
- */
-
-export default class Transmitter {
+class Transmitter {
     /**
      * Create a new transmitter configured by the given profile name.
      *
+     * @constructor
      * @param {object} options - Transmitter params.
-     * @param {string|object} opts.profile - An object which contains a single
-     * profile.
+     * @param {boolean} [options.clampFrame] - Prevent frames from overlapping
+     * sample blocks.  Web Audio collects sound samples in blocks, and the
+     * browser ensures that each block plays out smoothly and atomically.
+     * However, it is possible for playback gaps to occur between these blocks
+     * due to GC pause or similar conditions. This is especially common on
+     * mobile. Enabling this flag ensures that data frames do not overlap these
+     * sample blocks so that no playback gaps will occur within a frame, which
+     * greatly degrades error performance. Setting this flag to false will
+     * increase throughput but can significantly increase error rate. Defaults
+     * to false.
+     * @param {string|object} options.profile - An object which contains a
+     * single profile.
      * @param {function} [options.onFinish] - User callback which will notify
      * user when playback of all data in queue is complete. If the user calls
      * transmit multiple times before waiting for onFinish, then onFinish will
@@ -47,16 +41,6 @@ export default class Transmitter {
      * user calls transmit multiple times before waiting for onEnqueue, then
      * onEnqueue will be called only once after all of the data has been played
      * out
-     * @param {boolean} [options.clampFrame] - Prevent frames from overlapping
-     * sample blocks.  Web Audio collects sound samples in blocks, and the
-     * browser ensures that each block plays out smoothly and atomically.
-     * However, it is possible for playback gaps to occur between these blocks
-     * due to GC pause or similar conditions. This is especially common on
-     * mobile. Enabling this flag ensures that data frames do not overlap these
-     * sample blocks so that no playback gaps will occur within a frame, which
-     * greatly degrades error performance. Setting this flag to false will
-     * increase throughput but can significantly increase error rate. Defaults
-     * to false.
      */
     constructor(options) {
         const {
@@ -79,32 +63,65 @@ export default class Transmitter {
 
         this._dummy_osc;
 
-        // We'll start and stop transmitter as needed
-        //   if we have something to send, start it
-        //   if we are done talking, stop it
-        this._running = false;
-        this._transmitter;
-
-        // prevent races with callbacks on destroyed in-flight objects
+        /**
+         * Flag to denote if this transmitter instance has been cleaned up.
+         * Prevent races with callbacks on destroyed in-flight objects.
+         *
+         * @member {boolean}
+         * @private
+         */
         this._destroyed = false;
 
-        // We are only going to keep one chunk of samples around ideally there
-        // will be a 1:1 sequence between writebuf and onaudioprocess but just
-        // in case one gets ahead of the other, this flag will prevent us from
-        // throwing away a buffer or playing a buffer twice.
-        this._played = true;
-
-        // Payload is a list of ArrayBuffers, each one frame or smaller in
-        // length.
-        this._payload = [];
-
-        // Unfortunately, we need to flush out the browser's sound sample buffer
-        // ourselves. The way we do this is by writing empty blocks once we're
-        // done and *then* we can disconnect.
+        /**
+         * Unfortunately, we need to flush out the browser's sound sample buffer
+         * ourselves. The way we do this is by writing empty blocks once we're
+         * done and *then* we can disconnect.
+         *
+         * @member {number}
+         * @private
+         */
         this._emptiesWritten = 0;
 
-        // Measure some stats about encoding time for user.
+        /**
+         * Measure some stats about encoding time for user.
+         *
+         * @member {Array<number>}
+         * @private
+         */
+
         this._lastEmitTimes = [];
+        /**
+         * A list of ArrayBuffers, each one frame or smaller in length.
+         *
+         * @member {Array<ArrayBuffer>}
+         * @private
+         */
+        this._payload = [];
+
+        /**
+         * This flag will prevent us from throwing away a buffer or playing a
+         * buffer twice. We are only going to keep one chunk of samples around.
+         * Ideally there will be a 1:1 sequence between writebuf and
+         * onaudioprocess. Just in case one gets ahead of the other, this flag
+         * will prevent us from throwing away a buffer or playing a buffer
+         * twice. 
+         *
+         * @member {boolean}
+         * @private
+         */
+        this._played = true;
+
+        /**
+         * Flag to denote if the internal emscripten transmitter is available
+         * for sending messages. We'll start and stop transmitter as needed. If
+         * we have something to send, start it. If we are done talking, stop it.
+         *
+         * @member {boolean}
+         * @private
+         */
+        this._running = false;
+
+        this._transmitter;
     }
 
     destroy() {
@@ -137,6 +154,11 @@ export default class Transmitter {
         return this._frameLen;
     }
 
+    /**
+     * Initializes the internal transmitter so messages can be sent.
+     *
+     * @returns {void}
+     */
     startTransmitter() {
         if (this._destroyed) {
             return;
@@ -175,6 +197,12 @@ export default class Transmitter {
         this._running = true;
     }
 
+    /**
+     * Stops the internal transmitter from being any to send messages until
+     * start is called again.
+     *
+     * @returns {void}
+     */
     stopTransmitter() {
         if (this._destroyed) {
             return;
@@ -186,6 +214,13 @@ export default class Transmitter {
         this._running = false;
     }
 
+    /**
+     * Method for user to provide data to a Quiet transmitter
+     *
+     * @param {ArrayBuffer} buf - Bytes which will be encoded and sent to
+     * speaker.
+     * @returns {void}
+     */
     transmit(buf) {
         if (this._destroyed) {
             return;
@@ -222,9 +257,14 @@ export default class Transmitter {
         window.setTimeout(this._writebuf, 0);
     }
 
-    // writebuf calls _send and _emit on the encoder. First we push as much
-    // payload as will fit into encoder's tx queue, then we create the next
-    // sample block (if played = true).
+    /**
+     * writebuf calls _send and _emit on the encoder. First we push as much
+     * payload as will fit into encoder's tx queue, then we create the next
+     * sample block (if played = true).
+     *
+     * @private
+     * @returns {void}
+     */
     _writebuf() {
         if (this._destroyed) {
             return;
@@ -325,3 +365,5 @@ export default class Transmitter {
         }
     }
 }
+
+export default Transmitter;

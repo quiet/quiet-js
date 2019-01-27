@@ -1,6 +1,22 @@
+/**
+ * @module loadDependencies
+ */
+
 import { libQuietProvider}  from './libQuiet';
 
-export function loadDependencies(options) {
+/**
+ * Loads the external dependencies necessary to use Quiet and makes it available
+ * for internal use.
+ *
+ * @param {Object} options - Configuration of where external dependencies are
+ * located.
+ * @string {string} emscriptenPath - Path prefix to quiet-emscripten.js.
+ * @string {string} memoryInitializerPath - Path prefix to
+ * quiet-emscripten.js.mem.
+ * @returns {Promise} Resolves when the emscriptenPath dependency is loaded
+ * successfully.
+ */
+export default function loadDependencies(options) {
     if (libQuietProvider.get()) {
         return Promise.resolve();
     }
@@ -37,9 +53,10 @@ export function loadDependencies(options) {
  * Sets the path quietlib should access to find the memory initializer.
  *
  * @param {string} url - Path to quiet-emscripten.js.mem.
+ * @private
  * @returns {void}
  */
-export function setMemoryInitializerPath(url) {
+function setMemoryInitializerPath(url) {
     window.quiet_emscripten_config = window.quiet_emscripten_config || {};
 
     window.quiet_emscripten_config.locateFile = function (fileName) {

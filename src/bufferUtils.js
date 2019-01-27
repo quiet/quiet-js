@@ -1,4 +1,8 @@
 /**
+ * @module bufferUtils
+ */
+
+/**
  * Convert an array buffer in UTF8 to string.
  *
  * @param {ArrayBuffer} arrayBuffer - ArrayBuffer to be converted.
