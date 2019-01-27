@@ -1,6 +1,17 @@
 import { getAvailableMics, getMicStream } from './rtc';
 import audioService from './audioService';
 
+/**
+ * FIXME: how do i do this correctly?
+ */
+require('./stylesheets/bootstrap.css');
+require('./stylesheets/bootstrap-theme.css');
+require('./stylesheets/github-dark.css');
+require('./stylesheets/styles.css');
+
+// console.warn(test);
+// test.use();
+
 const audioInputSelect = document.getElementById('mic-select');
 const autostartReceiverCheckbox
     = document.getElementById('autostart-receiver');

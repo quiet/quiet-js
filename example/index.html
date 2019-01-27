@@ -4,24 +4,63 @@
     <title>Quiet Demo</title>
 </head>
 <body>
-    <div>
-        <label for = "mic-select">Audio input source: </label>
-        <select id = "mic-select"></select>
-    </div>
-    <div>
-        <button id = 'receiver-start'>Receiver start</button>
-        <button id = 'receiver-stop'>Receive stop</button>
-    </div>
+    <div class = "wrapper">
+        <header class = 'header'>
+            <div>
+                <h1><a href="https://github.com/quiet/quiet-js/">Quiet.js</a></h1>
+                <p>Transmit and receive data in the browser at 44.1kHz</p>
+                <p class="view">
+                    <a href="https://github.com/quiet/quiet-js">
+                        View the Project on GitHub <small>quiet/quiet-js</small>
+                    </a>
+                </p>
+            </div>
+            <div>
+                <ul>
+                    <li>
+                        <a href="https://github.com/quiet/quiet-js/zipball/master">
+                            Download <strong>ZIP File</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/quiet/quiet-js/tarball/master">
+                            Download <strong>TAR Ball</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/quiet/quiet-js">
+                            View On <strong>GitHub</strong>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <section>
+            <div>
+                <label for = "mic-select">Audio input source: </label>
+                <select id = "mic-select"></select>
+            </div>
+            <div>
+                <button id = 'receiver-start'>Receiver start</button>
+                <button id = 'receiver-stop'>Receive stop</button>
+            </div>
 
-    <input type="checkbox" id="autostart-receiver">
-    <div>
-        <textarea id = 'transmit-text'>hello, world!</textarea>
+            <input type="checkbox" id="autostart-receiver">
+            <div>
+                <textarea id = 'transmit-text'>hello, world!</textarea>
+            </div>
+            <div>
+                <button id = 'transmit-start'>Transmitter start</button>
+                <button id = 'transmit-stop'>Transmitter stop</button>
+            </div>
+            <input type="checkbox" id="autostart-transmitter">
+        </section>
     </div>
-    <div>
-        <button id = 'transmit-start'>Transmitter start</button>
-        <button id = 'transmit-stop'>Transmitter stop</button>
-    </div>
-    <input type="checkbox" id="autostart-transmitter">
+    <footer>
+        <p><a href="https://github.com/quiet/quiet-js">Quiet.js</a> transmits data from your browser with Web Audio. It is a binding to <a href="https://github.com/quiet/quiet">libquiet</a>, compiled with <a href="https://github.com/kripken/emscripten">emscripten</a>. Quiet is powered by <a href="https://github.com/jgaeddert/liquid-dsp">liquid dsp</a>, by Joseph Gaeddert, and by <a href="http://www.ka9q.net/code/fec/">libfec</a>, by Phil Karn. Profile system built with <a href="http://www.digip.org/jansson/">libjansson</a>.</p>
+        <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
     <script src = "example.js" ></script>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
 </body>
 </html>
