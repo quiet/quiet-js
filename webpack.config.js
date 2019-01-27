@@ -1,4 +1,7 @@
+/* eslint-env node */
+
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const WriteFilePlugin = require('write-file-webpack-plugin');
 const path = require('path');
 
 module.exports = {
@@ -6,8 +9,8 @@ module.exports = {
         contentBase: './example'
     },
     entry: {
-        example: './example/index.js',
-        lib: './src/index.js'
+        'example': './example/index.js',
+        'lib-quiet-js': './src/index.js'
     },
     module: {
         rules: [
@@ -30,11 +33,12 @@ module.exports = {
         ]
     },
     output: {
-        filename: "[name].js",
-        chunkFilename: '[name].bundle.js',
+        filename: '[name].js',
+        libraryTarget: 'umd',
         path: path.join(__dirname, 'dist')
     },
     plugins: [
+        new WriteFilePlugin(),
         new CopyWebpackPlugin([
             {
                 from: './emscripten/quiet-emscripten.js',
@@ -46,8 +50,5 @@ module.exports = {
                 to: '.'
             }
         ])
-    ],
-    node: {
-        fs: "empty"
-     }
+    ]
 };

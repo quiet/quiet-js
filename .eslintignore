@@ -1,6 +1,5 @@
 dist/
-docs/
 emscripten/
-node_modules/
 example/
 examples/
+node_modules/

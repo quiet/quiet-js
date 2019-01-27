@@ -11,13 +11,14 @@
         "jsdoc": "3.5.5",
         "webpack": "4.28.4",
         "webpack-cli": "3.2.1",
-        "webpack-dev-server": "3.1.14"
+        "webpack-dev-server": "3.1.14",
+        "write-file-webpack-plugin": "4.5.0"
     },
     "engines": {
         "node": "8.9.1",
         "npm": "5.5.1"
     },
-    "main": "src/index.js",
+    "main": "dist/lib-quiet-js.js",
     "name": "lib-quiet-js",
     "scripts": {
         "build": "webpack",
@@ -25,8 +26,8 @@
         "lint": "eslint .",
         "start": "webpack-dev-server"
     },
-    "version": "1.0.0",
     "sideEffects": [
         "src/bootstrap.js"
-    ]
+    ],
+    "version": "1.0.0"
 }

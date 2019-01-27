@@ -1,3 +1,5 @@
+/* eslint-env node */
+
 module.exports = {
     opts: {
         destination: './dist/jsdoc',
