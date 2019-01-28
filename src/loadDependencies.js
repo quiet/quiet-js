@@ -4,6 +4,8 @@
 
 import { libQuietProvider}  from './libQuiet';
 
+let loadPromise;
+
 /**
  * Loads the external dependencies necessary to use Quiet and makes it available
  * for internal use.
@@ -17,8 +19,8 @@ import { libQuietProvider}  from './libQuiet';
  * successfully.
  */
 export default function loadDependencies(options) {
-    if (libQuietProvider.get()) {
-        return Promise.resolve();
+    if (loadPromise) {
+        return loadPromise;
     }
 
     const {
@@ -26,11 +28,19 @@ export default function loadDependencies(options) {
         memoryInitializerPath
     } = options;
 
-    if (memoryInitializerPath) {
-        setMemoryInitializerPath(memoryInitializerPath);
-    }
+    window.quiet_emscripten_config = window.quiet_emscripten_config || {};
 
-    return new Promise((resolve, reject) => {
+    window.quiet_emscripten_config.locateFile = function (fileName) {
+        if (fileName === 'quiet-emscripten.js.mem') {
+            return `${memoryInitializerPath}quiet-emscripten.js.mem`;
+        }
+    };
+
+    const emscriptenInitializedPromise = new Promise(resolve  => {
+        window.quiet_emscripten_config.onRuntimeInitialized = resolve;
+    });
+
+    loadPromise = new Promise((resolve, reject) => {
         const scriptTag = document.createElement('script');
 
         scriptTag.async = true;
@@ -46,22 +56,13 @@ export default function loadDependencies(options) {
 
         document.head.appendChild(scriptTag);
     })
-    .then(() => libQuietProvider.set(window.quiet_emscripten));
-}
+    .then(() => libQuietProvider.set(window.quiet_emscripten))
+    .then(() => emscriptenInitializedPromise)
+    .catch(error => {
+        loadPromise = null;
 
-/**
- * Sets the path quietlib should access to find the memory initializer.
- *
- * @param {string} url - Path to quiet-emscripten.js.mem.
- * @private
- * @returns {void}
- */
-function setMemoryInitializerPath(url) {
-    window.quiet_emscripten_config = window.quiet_emscripten_config || {};
+        return Promise.reject(error);
+    });
 
-    window.quiet_emscripten_config.locateFile = function (fileName) {
-        if (fileName === 'quiet-emscripten.js.mem') {
-            return `${url}quiet-emscripten.js.mem`;
-        }
-    };
+    return  loadPromise;
 }
