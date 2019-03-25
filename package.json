@@ -1,0 +1,34 @@
+{
+  "name": "quiet-js",
+  "version": "1.0.0",
+  "description": "Quiet.js",
+  "main": "dist/index.js",
+  "scripts": {
+    "prebuild": "node_modules/path-exists-cli/cli.js src/libquiet/quiet.js || docker run -v ${PWD}/src/libquiet:/dist quiet-js-build",
+    "build": "rollup -c config/rollup.config.npm.js",
+    "build-web": "rollup -c config/rollup.config.web.js && node_modules/cpy-cli/cli.js dist/quiet.js example/",
+    "start": "rollup -c config/rollup.config.dev.js -w",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jitsi/quiet-js.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jitsi/quiet-js/issues"
+  },
+  "homepage": "https://github.com/jitsi/quiet-js#readme",
+  "devDependencies": {
+    "cpy-cli": "^2.0.0",
+    "path-exists-cli": "^1.0.0",
+    "rollup": "^1.6.0",
+    "rollup-plugin-legacy": "^1.0.0",
+    "rollup-plugin-livereload": "^1.0.0",
+    "rollup-plugin-babel-minify": "^8.0.0",
+    "rollup-plugin-serve": "^1.0.1",
+    "rollup-plugin-string": "^3.0.0"
+  }
+}
