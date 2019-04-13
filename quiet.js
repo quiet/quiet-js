@@ -363,7 +363,7 @@ var Quiet = (function() {
 
         var onaudioprocess = function(e) {
             var output_l = e.outputBuffer.getChannelData(0);
-
+            
             if (played === true) {
                 // we've already played what's in sample_view, and it hasn't been
                 //   rewritten for whatever reason, so just play out silence
@@ -601,46 +601,15 @@ var Quiet = (function() {
     }
 
     function gUMConstraints() {
-        if (navigator.webkitGetUserMedia !== undefined) {
-            return {
-                audio: {
-                    optional: [
-                      {googAutoGainControl: false},
-                      {googAutoGainControl2: false},
-                      {echoCancellation: false},
-                      {googEchoCancellation: false},
-                      {googEchoCancellation2: false},
-                      {googDAEchoCancellation: false},
-                      {googNoiseSuppression: false},
-                      {googNoiseSuppression2: false},
-                      {googHighpassFilter: false},
-                      {googTypingNoiseDetection: false},
-                      {googAudioMirroring: false}
-                    ]
-                }
-            };
-        }
-        if (navigator.mozGetUserMedia !== undefined) {
-            return {
-                audio: {
-                    echoCancellation: false,
-                    mozAutoGainControl: false,
-                    mozNoiseSuppression: false
-                }
-            };
-
-        }
         return {
-            audio: {
-                echoCancellation: false
-            }
-        };
+            audio: true
+        }
     };
 
     function createAudioInput() {
         audioInput = 0; // prevent others from trying to create
         window.setTimeout(function() {
-            gUM.call(navigator, gUMConstraints(),
+            navigator.mediaDevices.getUserMedia({ audio: true }).then(
                 function(e) {
                     audioInput = audioCtx.createMediaStreamSource(e);
 
@@ -746,7 +715,7 @@ var Quiet = (function() {
         // quiet creates audioCtx when it starts but it does not create an audio input
         // getting microphone access requires a permission dialog so only ask for it if we need it
         if (gUM === undefined) {
-            gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
+            gUM = navigator.mediaDevices.getUserMedia;
         }
 
         if (gUM === undefined) {
