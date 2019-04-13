@@ -6,146 +6,146 @@
  */
 
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
-        define(['quiet-emscripten'], factory);
-    } else if (typeof module === 'object' && module.exports) {
-        // Node. Does not work with strict CommonJS, but
-        // only CommonJS-like environments that support module.exports,
-        // like Node.
-        module.exports = factory(require('quiet-emscripten'));
-    } else {
-        // Browser globals (root is window)
-        root.Quiet = factory();
-        root.quiet_emscripten_config = root.Quiet.emscriptenConfig;
-    }
+  if (typeof define === 'function' && window.define.amd) {
+    // AMD. Register as an anonymous module.
+    window.define(['quiet-emscripten'], factory)
+  } else if (typeof module === 'object' && module.exports) {
+    // Node. Does not work with strict CommonJS, but
+    // only CommonJS-like environments that support module.exports,
+    // like Node.
+    module.exports = factory(require('quiet-emscripten'))
+  } else {
+    // Browser globals (root is window)
+    root.Quiet = factory()
+    root.window.quiet_emscripten_config = root.Quiet.emscriptenConfig
+  }
 }(this, function (b) {
-var Quiet = (function() {
+  var Quiet = (function () {
     // sampleBufferSize is the number of audio samples we'll write per onaudioprocess call
     // must be a power of two. we choose the absolute largest permissible value
     // we implicitly assume that the browser will play back a written buffer without any gaps
-    var sampleBufferSize = 16384;
+    var sampleBufferSize = 16384
 
     // initialization flags
-    var emscriptenInitialized = false;
-    var profilesFetched = false;
+    var emscriptenInitialized = false
+    var profilesFetched = false
 
     // path of quiet-emscripten.mem
-    var memInitializerPath = "";
+    var memInitializerPath = ''
 
     // profiles is the string content of quiet-profiles.json
-    var profiles;
+    var profiles
 
     // our local instance of window.AudioContext
-    var audioCtx;
+    var audioCtx
 
     // consumer callbacks. these fire once quiet is ready to create transmitter/receiver
-    var readyCallbacks = [];
-    var readyErrbacks = [];
-    var failReason = "";
+    var readyCallbacks = []
+    var readyErrbacks = []
+    var failReason = ''
 
     // these are used for receiver only
-    var gUM;
-    var audioInput;
-    var audioInputFailedReason = "";
-    var audioInputReadyCallbacks = [];
-    var audioInputFailedCallbacks = [];
-    var frameBufferSize = Math.pow(2, 14);
+    var gUM
+    var audioInput
+    var audioInputFailedReason = ''
+    var audioInputReadyCallbacks = []
+    var audioInputFailedCallbacks = []
+    var frameBufferSize = Math.pow(2, 14)
 
     // anti-gc
-    var receivers = {};
-    var receivers_idx = 0;
+    var receivers = {}
+    var receiversIdx = 0
 
     // isReady tells us if we can start creating transmitters and receivers
     // we need the emscripten portion to be running and we need our
     // async fetch of the profiles to be completed
-    function isReady() {
-        return emscriptenInitialized && profilesFetched;
+    function isReady () {
+      return emscriptenInitialized && profilesFetched
     };
 
-    function isFailed() {
-        return failReason !== "";
+    function isFailed () {
+      return failReason !== ''
     };
 
     // start gets our AudioContext and notifies consumers that quiet can be used
-    function start() {
-        var len = readyCallbacks.length;
-        for (var i = 0; i < len; i++) {
-            readyCallbacks[i]();
-        }
+    function start () {
+      var len = readyCallbacks.length
+      for (var i = 0; i < len; i++) {
+        readyCallbacks[i]()
+      }
     };
 
-    function initAudioContext() {
-        if (audioCtx === undefined) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            console.log(audioCtx.sampleRate);
-        }
+    function initAudioContext () {
+      if (audioCtx === undefined) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+        console.log(audioCtx.sampleRate)
+      }
     };
 
-    function fail(reason) {
-        failReason = reason;
-        var len = readyErrbacks.length;
-        for (var i = 0; i < len; i++) {
-            readyErrbacks[i](reason);
-        }
+    function fail (reason) {
+      failReason = reason
+      var len = readyErrbacks.length
+      for (var i = 0; i < len; i++) {
+        readyErrbacks[i](reason)
+      }
     };
 
-    function checkInitState() {
-        if (isReady()) {
-            start();
-        }
+    function checkInitState () {
+      if (isReady()) {
+        start()
+      }
     };
 
-    function onProfilesFetch(p) {
-        profiles = p;
-        profilesFetched = true;
-        checkInitState();
+    function onProfilesFetch (p) {
+      profiles = p
+      profilesFetched = true
+      checkInitState()
     };
 
     // this is intended to be called only by emscripten
-    function onEmscriptenInitialized() {
-        emscriptenInitialized = true;
-        checkInitState();
+    function onEmscriptenInitialized () {
+      emscriptenInitialized = true
+      checkInitState()
     };
 
-    function setProfilesPath(path) {
-        if (profilesFetched) {
-            return;
+    function setProfilesPath (path) {
+      if (profilesFetched) {
+        return
+      }
+
+      var fetch = new Promise(function (resolve, reject) {
+        var xhr = new XMLHttpRequest()
+        xhr.overrideMimeType('application/json')
+        xhr.open('GET', path, true)
+        xhr.onload = function () {
+          if (this.status >= 200 && this.status < 300) {
+            resolve(this.responseText)
+          } else {
+            reject(this.statusText)
+          }
         }
-
-        var fetch = new Promise(function(resolve, reject) {
-            var xhr = new XMLHttpRequest();
-            xhr.overrideMimeType("application/json");
-            xhr.open("GET", path, true);
-            xhr.onload = function() {
-                if (this.status >= 200 && this.status < 300) {
-                    resolve(this.responseText);
-                } else {
-                    reject(this.statusText);
-                }
-            };
-            xhr.onerror = function() {
-                reject(this.statusText);
-            };
-            xhr.send();
-        });
-
-        fetch.then(function(body) {
-            onProfilesFetch(body);
-        }, function(err) {
-            fail("fetch of quiet-profiles.json failed: " + err);
-        });
-    };
-
-    function emscriptenLocateFile(file) {
-        if (file === "quiet-emscripten.js.mem") {
-            return memInitializerPath;
+        xhr.onerror = function () {
+          reject(this.statusText)
         }
-        return file;
+        xhr.send()
+      })
+
+      fetch.then(function (body) {
+        onProfilesFetch(body)
+      }, function (err) {
+        fail('fetch of quiet-profiles.json failed: ' + err)
+      })
     };
 
-    function setMemoryInitializerPath(path) {
-        memInitializerPath = path;
+    function emscriptenLocateFile (file) {
+      if (file === 'quiet-emscripten.js.mem') {
+        return memInitializerPath
+      }
+      return file
+    };
+
+    function setMemoryInitializerPath (path) {
+      memInitializerPath = path
     };
 
     /**
@@ -165,19 +165,19 @@ var Quiet = (function() {
      * @example
      * addReadyCallback(function() { console.log("ready!"); });
      */
-    function addReadyCallback(c, errback) {
-        if (isReady()) {
-            c();
-            return;
+    function addReadyCallback (c, errback) {
+      if (isReady()) {
+        c()
+        return
+      }
+      readyCallbacks.push(c)
+      if (errback !== undefined) {
+        if (isFailed()) {
+          errback(failReason)
+          return
         }
-        readyCallbacks.push(c);
-        if (errback !== undefined) {
-            if (isFailed()) {
-                errback(failReason);
-                return;
-            }
-            readyErrbacks.push(errback);
-        }
+        readyErrbacks.push(errback)
+      }
     };
 
     /**
@@ -214,46 +214,39 @@ var Quiet = (function() {
      *   onError: function(reason) { console.log("quiet failed to start: " + reason); }
      * });
      */
-    function init(opts) {
-        var profilesPath = "quiet-profiles.json";
-        if (opts.profilesPath !== undefined) {
-            profilesPath = opts.profilesPath;
-        } else if (opts.profilesPrefix !== undefined) {
-            profilesPath = opts.profilesPrefix + "quiet-profiles.json";
+    function init (opts) {
+      var profilesPath = 'quiet-profiles.json'
+      if (opts.profilesPath !== undefined) {
+        profilesPath = opts.profilesPath
+      } else if (opts.profilesPrefix !== undefined) {
+        profilesPath = opts.profilesPrefix + 'quiet-profiles.json'
+      }
+      setProfilesPath(profilesPath)
+
+      var memoryInitializerPath = 'quiet-emscripten.js.mem'
+      if (opts.memoryInitializerPath !== undefined) {
+        memoryInitializerPath = opts.memoryInitializerPath
+      } else if (opts.memoryInitializerPrefix !== undefined) {
+        memoryInitializerPath = opts.memoryInitializerPrefix + 'quiet-emscripten.js.mem'
+      }
+      setMemoryInitializerPath(memoryInitializerPath)
+
+      if (opts.onReady !== undefined) {
+        if (opts.onError !== undefined) {
+          addReadyCallback(opts.onReady, opts.onError)
+        } else {
+          addReadyCallback(opts.onReady)
         }
-        setProfilesPath(profilesPath);
+      }
 
-        var memoryInitializerPath = "quiet-emscripten.js.mem";
-        if (opts.memoryInitializerPath !== undefined) {
-            memoryInitializerPath = opts.memoryInitializerPath;
-        } else if (opts.memoryInitializerPrefix !== undefined) {
-            memoryInitializerPath = opts.memoryInitializerPrefix + "quiet-emscripten.js.mem";
-        }
-        setMemoryInitializerPath(memoryInitializerPath);
+      var head = document.getElementsByTagName('head')[0]
+      var script = document.createElement('script')
+      script.type = 'text/javascript'
+      script.src = opts.emscriptenPath
+      // XXX script.async
 
-        var emscriptenPath = "quiet-emscripten.js";
-        if (opts.emscriptenPath !== undefined) {
-            emscriptenPath = opts.emscriptenPath;
-        }
-
-        if (opts.onReady !== undefined) {
-            if (opts.onError !== undefined) {
-                addReadyCallback(opts.onReady, opts.onError);
-            } else {
-                addReadyCallback(opts.onReady);
-            }
-        }
-
-        var head = document.getElementsByTagName('head')[0];
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = opts.emscriptenPath;
-        // XXX script.async
-
-        head.appendChild(script);
+      head.appendChild(script)
     };
-
-
 
     /**
      * Callback for user to provide data to a Quiet transmitter
@@ -308,319 +301,310 @@ var Quiet = (function() {
      * var tx = transmitter({profile: "robust", onFinish: function () { console.log("transmission complete"); }});
      * tx.transmit(Quiet.str2ab("Hello, World!"));
      */
-    function transmitter(opts) {
-        var profile = opts.profile;
-        var c_profiles, c_profile;
-        if (typeof profile === 'object') {
-            c_profiles = quiet_emscripten.intArrayFromString(JSON.stringify({"profile": profile}));
-            c_profile = quiet_emscripten.intArrayFromString("profile");
-        } else {
-            // get an encoder_options object for our quiet-profiles.json and profile key
-            c_profiles = quiet_emscripten.intArrayFromString(profiles);
-            c_profile = quiet_emscripten.intArrayFromString(profile);
+    function transmitter (opts) {
+      var profile = opts.profile
+      var cProfiles, cProfile
+      if (typeof profile === 'object') {
+        cProfiles = window.quiet_emscripten.intArrayFromString(JSON.stringify({ 'profile': profile }))
+        cProfile = window.quiet_emscripten.intArrayFromString('profile')
+      } else {
+        // get an encoder_options object for our quiet-profiles.json and profile key
+        cProfiles = window.quiet_emscripten.intArrayFromString(profiles)
+        cProfile = window.quiet_emscripten.intArrayFromString(profile)
+      }
+
+      initAudioContext()
+      var done = opts.onFinish
+
+      var opt = window.quiet_emscripten.ccall('quiet_encoder_profile_str', 'pointer', ['array', 'array'], [cProfiles, cProfile])
+
+      // libquiet internally works at 44.1kHz but the local sound card
+      // may be a different rate. we inform quiet about that here
+      var encoder = window.quiet_emscripten.ccall('quiet_encoder_create', 'pointer', ['pointer', 'number'], [opt, audioCtx.sampleRate])
+
+      window.quiet_emscripten.ccall('free', null, ['pointer'], [opt])
+
+      if (opts.clampFrame === undefined) {
+        opts.clampFrame = true
+      }
+
+      var frameLen
+      if (opts.clampFrame) {
+        // enable close_frame which prevents data frames from overlapping multiple
+        // sample buffers. this is very convenient if our system is not fast enough
+        // to feed the sound card without any gaps between subsequent buffers due
+        // to e.g. gc pause. inform quiet about our sample buffer size here
+        frameLen = window.quiet_emscripten.ccall('quiet_encoder_clamp_frame_len', 'number', ['pointer', 'number'], [encoder, sampleBufferSize])
+      } else {
+        frameLen = window.quiet_emscripten.ccall('quiet_encoder_get_frame_len', 'number', ['pointer'], [encoder])
+      }
+      var samples = window.quiet_emscripten.ccall('malloc', 'pointer', ['number'], [4 * sampleBufferSize])
+
+      // yes, this is pointer arithmetic, in javascript :)
+      var sampleView = window.quiet_emscripten.HEAPF32.subarray((samples / 4), (samples / 4) + sampleBufferSize)
+
+      var dummyOsc
+
+      // we'll start and stop transmitter as needed
+      //   if we have something to send, start it
+      //   if we are done talking, stop it
+      var running = false
+      var transmitter
+
+      // prevent races with callbacks on destroyed in-flight objects
+      var destroyed = false
+
+      var onaudioprocess = function (e) {
+        var outputL = e.outputBuffer.getChannelData(0)
+
+        if (played === true) {
+          // we've already played what's in sampleView, and it hasn't been
+          //   rewritten for whatever reason, so just play out silence
+          for (var i = 0; i < sampleBufferSize; i++) {
+            outputL[i] = 0
+          }
+          return
         }
 
-        initAudioContext();
-        var done = opts.onFinish;
+        played = true
 
-        var opt = quiet_emscripten.ccall('quiet_encoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
+        outputL.set(sampleView)
+        window.setTimeout(writebuf, 0)
+      }
 
-        // libquiet internally works at 44.1kHz but the local sound card
-        // may be a different rate. we inform quiet about that here
-        var encoder = quiet_emscripten.ccall('quiet_encoder_create', 'pointer', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
+      var startTransmitter = function () {
+        if (destroyed) {
+          return
+        }
+        if (transmitter === undefined) {
+          // we have to start transmitter here because mobile safari wants it to be in response to a
+          // user action
+          var scriptProcessor = (audioCtx.createScriptProcessor || audioCtx.createJavaScriptNode)
+          // we want a single input because some implementations will not run a node without some kind of source
+          // we want two outputs so that we can explicitly silence the right channel and no mixing will occur
+          transmitter = scriptProcessor.call(audioCtx, sampleBufferSize, 1, 2)
+          transmitter.onaudioprocess = onaudioprocess
+          // put an input node on the graph. some browsers require this to run our script processor
+          // this oscillator will not actually be used in any way
+          dummyOsc = audioCtx.createOscillator()
+          dummyOsc.type = 'square'
+          dummyOsc.frequency.value = 420
+        }
+        dummyOsc.connect(transmitter)
+        transmitter.connect(audioCtx.destination)
+        running = true
+      }
 
-        quiet_emscripten.ccall('free', null, ['pointer'], [opt]);
+      var stopTransmitter = function () {
+        if (destroyed) {
+          return
+        }
+        dummyOsc.disconnect()
+        transmitter.disconnect()
+        running = false
+      }
 
-        if (opts.clampFrame === undefined) {
-            opts.clampFrame = true;
+      // we are only going to keep one chunk of samples around
+      // ideally there will be a 1:1 sequence between writebuf and onaudioprocess
+      // but just in case one gets ahead of the other, this flag will prevent us
+      // from throwing away a buffer or playing a buffer twice
+      var played = true
+
+      // payload is a list of ArrayBuffers, each one frame or smaller in length
+      var payload = []
+
+      // unfortunately, we need to flush out the browser's sound sample buffer ourselves
+      // the way we do this is by writing empty blocks once we're done and *then* we can disconnect
+      var emptiesWritten = 0
+
+      // measure some stats about encoding time for user
+      var lastEmitTimes = []
+      var numEmitTimes = 3
+
+      // writebuf calls _send and _emit on the encoder
+      // first we push as much payload as will fit into encoder's tx queue
+      // then we create the next sample block (if played = true)
+      var writebuf = function () {
+        if (destroyed) {
+          return
+        }
+        // fill as much of quiet's transmit queue as possible
+        var frameAvailable = false
+        var frameWritten = false
+        while (true) {
+          var frame = payload.shift()
+          if (frame === undefined) {
+            break
+          }
+          frameAvailable = true
+          var written = window.quiet_emscripten.ccall('quiet_encoder_send', 'number', ['pointer', 'array', 'number'], [encoder, new Uint8Array(frame), frame.byteLength])
+          if (written === -1) {
+            payload.unshift(frame)
+            break
+          }
+          frameWritten = true
         }
 
-        var frame_len;
-        if (opts.clampFrame) {
-            // enable close_frame which prevents data frames from overlapping multiple
-            // sample buffers. this is very convenient if our system is not fast enough
-            // to feed the sound card without any gaps between subsequent buffers due
-            // to e.g. gc pause. inform quiet about our sample buffer size here
-            frame_len = quiet_emscripten.ccall('quiet_encoder_clamp_frame_len', 'number', ['pointer', 'number'], [encoder, sampleBufferSize]);
-        } else {
-            frame_len = quiet_emscripten.ccall('quiet_encoder_get_frame_len', 'number', ['pointer'], [encoder]);
+        if (payload.length === 0 && frameWritten === true) {
+          // we wrote at least one frame and emptied out payload, our local (js) tx queue
+          // this means we have transitioned to having all data in libquiet
+          // notify user about this if they like
+          // this is an important transition point because it allows user to control
+          // memory util without sacrificing throughput as would be the case for waiting
+          // for onFinish, which is only called after everything has flushed
+          if (opts.onEnqueue !== undefined) {
+            window.setTimeout(opts.onEnqueue, 0)
+          }
         }
-        var samples = quiet_emscripten.ccall('malloc', 'pointer', ['number'], [4 * sampleBufferSize]);
 
-        // yes, this is pointer arithmetic, in javascript :)
-        var sample_view = quiet_emscripten.HEAPF32.subarray((samples/4), (samples/4) + sampleBufferSize);
+        if (frameAvailable === true && running === false) {
+          startTransmitter()
+        }
 
-        var dummy_osc;
+        // now set the sample block
+        if (played === false) {
+          // the existing sample block has yet to be played
+          // we are done
+          return
+        }
 
-        // we'll start and stop transmitter as needed
-        //   if we have something to send, start it
-        //   if we are done talking, stop it
-        var running = false;
-        var transmitter;
+        var before = new Date()
+        written = window.quiet_emscripten.ccall('quiet_encoder_emit', 'number', ['pointer', 'pointer', 'number'], [encoder, samples, sampleBufferSize])
+        var after = new Date()
 
-        // prevent races with callbacks on destroyed in-flight objects
-        var destroyed = false;
+        lastEmitTimes.unshift(after - before)
+        if (lastEmitTimes.length > numEmitTimes) {
+          lastEmitTimes.pop()
+        }
 
-        var onaudioprocess = function(e) {
-            var output_l = e.outputBuffer.getChannelData(0);
-            
-            if (played === true) {
-                // we've already played what's in sample_view, and it hasn't been
-                //   rewritten for whatever reason, so just play out silence
-                for (var i = 0; i < sampleBufferSize; i++) {
-                    output_l[i] = 0;
-                }
-                return;
+        // libquiet notifies us that the payload is finished by
+        // returning written < number of samples we asked for
+        if (frameAvailable === false && written === -1) {
+          if (emptiesWritten < 3) {
+            // flush out browser's sound sample buffer before quitting
+            for (var i = 0; i < sampleBufferSize; i++) {
+              sampleView[i] = 0
             }
+            emptiesWritten++
+            played = false
+            return
+          }
+          // looks like we are done
+          // user callback
+          if (done !== undefined) {
+            done()
+          }
+          if (running === true) {
+            stopTransmitter()
+          }
+          return
+        }
 
-            played = true;
+        played = false
+        emptiesWritten = 0
 
-            output_l.set(sample_view);
-            window.setTimeout(writebuf, 0);
-        };
+        // in this case, we are sending data, but the whole block isn't full (we're near the end)
+        if (written < sampleBufferSize) {
+          // be extra cautious and 0-fill what's left
+          //   (we want the end of transmission to be silence, not potentially loud noise)
+          for (let i = written; i < sampleBufferSize; i++) {
+            sampleView[i] = 0
+          }
+        }
+      }
 
-        var startTransmitter = function () {
-            if (destroyed) {
-                return;
-            }
-            if (transmitter === undefined) {
-                // we have to start transmitter here because mobile safari wants it to be in response to a
-                // user action
-                var script_processor = (audioCtx.createScriptProcessor || audioCtx.createJavaScriptNode);
-                // we want a single input because some implementations will not run a node without some kind of source
-                // we want two outputs so that we can explicitly silence the right channel and no mixing will occur
-                transmitter = script_processor.call(audioCtx, sampleBufferSize, 1, 2);
-                transmitter.onaudioprocess = onaudioprocess;
-                // put an input node on the graph. some browsers require this to run our script processor
-                // this oscillator will not actually be used in any way
-                dummy_osc = audioCtx.createOscillator();
-                dummy_osc.type = 'square';
-                dummy_osc.frequency.value = 420;
+      var transmit = function (buf) {
+        if (destroyed) {
+          return
+        }
+        // slice up into frames and push the frames to a list
+        for (var i = 0; i < buf.byteLength;) {
+          var frame = buf.slice(i, i + frameLen)
+          i += frame.byteLength
+          payload.push(frame)
+        }
+        // now do an update. this may or may not write samples
+        writebuf()
+      }
 
-            }
-            dummy_osc.connect(transmitter);
-            transmitter.connect(audioCtx.destination);
-            running = true;
-        };
+      var destroy = function () {
+        if (destroyed) {
+          return
+        }
+        window.quiet_emscripten.ccall('free', null, ['pointer'], [samples])
+        window.quiet_emscripten.ccall('quiet_encoder_destroy', null, ['pointer'], [encoder])
+        if (running === true) {
+          stopTransmitter()
+        }
+        destroyed = true
+      }
 
-        var stopTransmitter = function () {
-            if (destroyed) {
-                return;
-            }
-            dummy_osc.disconnect();
-            transmitter.disconnect();
-            running = false;
-        };
+      var getAverageEncodeTime = function () {
+        if (lastEmitTimes.length === 0) {
+          return 0
+        }
+        var total = 0
+        for (var i = 0; i < lastEmitTimes.length; i++) {
+          total += lastEmitTimes[i]
+        }
+        return total / (lastEmitTimes.length)
+      }
 
-        // we are only going to keep one chunk of samples around
-        // ideally there will be a 1:1 sequence between writebuf and onaudioprocess
-        // but just in case one gets ahead of the other, this flag will prevent us
-        // from throwing away a buffer or playing a buffer twice
-        var played = true;
-
-        // payload is a list of ArrayBuffers, each one frame or smaller in length
-        var payload = [];
-        var payloadView = new Uint8Array(payload);
-
-        // unfortunately, we need to flush out the browser's sound sample buffer ourselves
-        // the way we do this is by writing empty blocks once we're done and *then* we can disconnect
-        var empties_written = 0;
-
-        // measure some stats about encoding time for user
-        var last_emit_times = [];
-        var num_emit_times = 3;
-
-        // writebuf calls _send and _emit on the encoder
-        // first we push as much payload as will fit into encoder's tx queue
-        // then we create the next sample block (if played = true)
-        var writebuf = function() {
-            if (destroyed) {
-                return;
-            }
-            // fill as much of quiet's transmit queue as possible
-            var frame_available = false;
-            var frame_written = false;
-            while(true) {
-                var frame = payload.shift();
-                if (frame === undefined) {
-                    break;
-                }
-                frame_available = true;
-                var written = quiet_emscripten.ccall('quiet_encoder_send', 'number', ['pointer', 'array', 'number'], [encoder, new Uint8Array(frame), frame.byteLength]);
-                if (written === -1) {
-                    payload.unshift(frame);
-                    break;
-                }
-                frame_written = true;
-            }
-
-            if (payload.length === 0 && frame_written === true) {
-                // we wrote at least one frame and emptied out payload, our local (js) tx queue
-                // this means we have transitioned to having all data in libquiet
-                // notify user about this if they like
-                // this is an important transition point because it allows user to control
-                // memory util without sacrificing throughput as would be the case for waiting
-                // for onFinish, which is only called after everything has flushed
-                if (opts.onEnqueue !== undefined) {
-                    window.setTimeout(opts.onEnqueue, 0);
-                }
-            }
-
-            if (frame_available === true && running === false) {
-                startTransmitter();
-            }
-
-            // now set the sample block
-            if (played === false) {
-                // the existing sample block has yet to be played
-                // we are done
-                return;
-            }
-
-            var before = new Date();
-            var written = quiet_emscripten.ccall('quiet_encoder_emit', 'number', ['pointer', 'pointer', 'number'], [encoder, samples, sampleBufferSize]);
-            var after = new Date();
-
-            last_emit_times.unshift(after - before);
-            if (last_emit_times.length > num_emit_times) {
-                last_emit_times.pop();
-            }
-
-            // libquiet notifies us that the payload is finished by
-            // returning written < number of samples we asked for
-            if (frame_available === false && written === -1) {
-                if (empties_written < 3) {
-                    // flush out browser's sound sample buffer before quitting
-                    for (var i = 0; i < sampleBufferSize; i++) {
-                        sample_view[i] = 0;
-                    }
-                    empties_written++;
-                    played = false;
-                    return;
-                }
-                // looks like we are done
-                // user callback
-                if (done !== undefined) {
-                        done();
-                }
-                if (running === true) {
-                    stopTransmitter();
-                }
-                return;
-            }
-
-            played = false;
-            empties_written = 0;
-
-            // in this case, we are sending data, but the whole block isn't full (we're near the end)
-            if (written < sampleBufferSize) {
-                // be extra cautious and 0-fill what's left
-                //   (we want the end of transmission to be silence, not potentially loud noise)
-                for (var i = written; i < sampleBufferSize; i++) {
-                    sample_view[i] = 0;
-                }
-            }
-
-        };
-
-        var transmit = function(buf) {
-            if (destroyed) {
-                return;
-            }
-            // slice up into frames and push the frames to a list
-            for (var i = 0; i < buf.byteLength; ) {
-                var frame = buf.slice(i, i + frame_len);
-                i += frame.byteLength;
-                payload.push(frame);
-            }
-            // now do an update. this may or may not write samples
-            writebuf();
-        };
-
-        var destroy = function() {
-            if (destroyed) {
-                return;
-            }
-            quiet_emscripten.ccall('free', null, ['pointer'], [samples]);
-            quiet_emscripten.ccall('quiet_encoder_destroy', null, ['pointer'], [encoder]);
-            if (running === true) {
-                stopTransmitter();
-            }
-            destroyed = true;
-        };
-
-        var getAverageEncodeTime = function() {
-            if (last_emit_times.length === 0) {
-                return 0;
-            }
-            var total = 0;
-            for (var i = 0; i < last_emit_times.length; i++) {
-                total += last_emit_times[i];
-            }
-            return total/(last_emit_times.length);
-        };
-
-        return {
-            transmit: transmit,
-            destroy: destroy,
-            frameLength: frame_len,
-            getAverageEncodeTime: getAverageEncodeTime
-        };
+      return {
+        transmit: transmit,
+        destroy: destroy,
+        frameLength: frameLen,
+        getAverageEncodeTime: getAverageEncodeTime
+      }
     };
 
     // receiver functions
 
-    function audioInputReady() {
-        var len = audioInputReadyCallbacks.length;
-        for (var i = 0; i < len; i++) {
-            audioInputReadyCallbacks[i]();
-        }
+    function audioInputReady () {
+      var len = audioInputReadyCallbacks.length
+      for (var i = 0; i < len; i++) {
+        audioInputReadyCallbacks[i]()
+      }
     };
 
-    function audioInputFailed(reason) {
-        audioInputFailedReason = reason;
-        var len = audioInputFailedCallbacks.length;
-        for (var i = 0; i < len; i++) {
-            audioInputFailedCallbacks[i](audioInputFailedReason);
-        }
+    function audioInputFailed (reason) {
+      audioInputFailedReason = reason
+      var len = audioInputFailedCallbacks.length
+      for (var i = 0; i < len; i++) {
+        audioInputFailedCallbacks[i](audioInputFailedReason)
+      }
     };
 
-    function addAudioInputReadyCallback(c, errback) {
-        if (errback !== undefined) {
-            if (audioInputFailedReason !== "") {
-                errback(audioInputFailedReason);
-                return
-            }
-            audioInputFailedCallbacks.push(errback);
+    function addAudioInputReadyCallback (c, errback) {
+      if (errback !== undefined) {
+        if (audioInputFailedReason !== '') {
+          errback(audioInputFailedReason)
+          return
         }
-        if (audioInput instanceof MediaStreamAudioSourceNode) {
-            c();
-            return
-        }
-        audioInputReadyCallbacks.push(c);
+        audioInputFailedCallbacks.push(errback)
+      }
+      if (audioInput instanceof MediaStreamAudioSourceNode) {
+        c()
+        return
+      }
+      audioInputReadyCallbacks.push(c)
     }
 
-    function gUMConstraints() {
-        return {
-            audio: true
-        }
-    };
+    function createAudioInput () {
+      audioInput = 0 // prevent others from trying to create
+      window.setTimeout(function () {
+        navigator.mediaDevices.getUserMedia({ audio: true }).then(
+          function (e) {
+            audioInput = audioCtx.createMediaStreamSource(e)
 
-    function createAudioInput() {
-        audioInput = 0; // prevent others from trying to create
-        window.setTimeout(function() {
-            navigator.mediaDevices.getUserMedia({ audio: true }).then(
-                function(e) {
-                    audioInput = audioCtx.createMediaStreamSource(e);
+            // stash a very permanent reference so this isn't collected
+            window.quiet_receiver_anti_gc = audioInput
 
-                    // stash a very permanent reference so this isn't collected
-                    window.quiet_receiver_anti_gc = audioInput;
-
-                    audioInputReady();
-                }, function(reason) {
-                    audioInputFailed(reason.name);
-                });
-        }, 0);
+            audioInputReady()
+          }, function (reason) {
+            audioInputFailed(reason.name)
+          })
+      }, 0)
     };
 
     /**
@@ -699,183 +683,183 @@ var Quiet = (function() {
      * @example
      * receiver({profile: "robust", onReceive: function(payload) { console.log("received chunk of data: " + Quiet.ab2str(payload)); }});
      */
-    function receiver(opts) {
-        var profile = opts.profile;
-        var c_profiles, c_profile;
-        if (typeof profile === 'object') {
-            c_profiles = quiet_emscripten.intArrayFromString(JSON.stringify({"profile": profile}));
-            c_profile = quiet_emscripten.intArrayFromString("profile");
-        } else {
-            c_profiles = quiet_emscripten.intArrayFromString(profiles);
-            c_profile = quiet_emscripten.intArrayFromString(profile);
+    function receiver (opts) {
+      var profile = opts.profile
+      var cProfiles, cProfile
+      if (typeof profile === 'object') {
+        cProfiles = window.quiet_emscripten.intArrayFromString(JSON.stringify({ 'profile': profile }))
+        cProfile = window.quiet_emscripten.intArrayFromString('profile')
+      } else {
+        cProfiles = window.quiet_emscripten.intArrayFromString(profiles)
+        cProfile = window.quiet_emscripten.intArrayFromString(profile)
+      }
+      var opt = window.quiet_emscripten.ccall('quiet_decoder_profile_str', 'pointer', ['array', 'array'], [cProfiles, cProfile])
+
+      initAudioContext()
+      // quiet creates audioCtx when it starts but it does not create an audio input
+      // getting microphone access requires a permission dialog so only ask for it if we need it
+      if (gUM === undefined) {
+        gUM = navigator.mediaDevices.getUserMedia
+      }
+
+      if (gUM === undefined) {
+        // we couldn't find a suitable getUserMedia, so fail fast
+        if (opts.onCreateFail !== undefined) {
+          opts.onCreateFail('getUserMedia undefined (mic not supported by browser)')
         }
-        var opt = quiet_emscripten.ccall('quiet_decoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
+        return
+      }
 
-        initAudioContext();
-        // quiet creates audioCtx when it starts but it does not create an audio input
-        // getting microphone access requires a permission dialog so only ask for it if we need it
-        if (gUM === undefined) {
-            gUM = navigator.mediaDevices.getUserMedia;
+      if (audioInput === undefined) {
+        createAudioInput()
+      }
+
+      // TODO investigate if this still needs to be placed on window.
+      // seems this was done to keep it from being collected
+      var scriptProcessor = audioCtx.createScriptProcessor(16384, 2, 1)
+      var idx = receiversIdx
+      receivers[idx] = scriptProcessor
+      receiversIdx++
+
+      // inform quiet about our local sound card's sample rate so that it can resample to its internal sample rate
+      var decoder = window.quiet_emscripten.ccall('quiet_decoder_create', 'pointer', ['pointer', 'number'], [opt, audioCtx.sampleRate])
+
+      window.quiet_emscripten.ccall('free', null, ['pointer'], [opt])
+
+      var samples = window.quiet_emscripten.ccall('malloc', 'pointer', ['number'], [4 * sampleBufferSize])
+
+      var frame = window.quiet_emscripten.ccall('malloc', 'pointer', ['number'], [frameBufferSize])
+
+      if (opts.onReceiverStatsUpdate !== undefined) {
+        window.quiet_emscripten.ccall('quiet_decoder_enable_stats', null, ['pointer'], [decoder])
+      }
+
+      var destroyed = false
+
+      var readbuf = function () {
+        if (destroyed) {
+          return
+        }
+        while (true) {
+          var read = window.quiet_emscripten.ccall('quiet_decoder_recv', 'number', ['pointer', 'pointer', 'number'], [decoder, frame, frameBufferSize])
+          if (read === -1) {
+            break
+          }
+          // convert from emscripten bytes to js string. more pointer arithmetic.
+          var frameArray = window.quiet_emscripten.HEAP8.slice(frame, frame + read)
+          opts.onReceive(frameArray.buffer)
+        }
+      }
+
+      var lastChecksumFailCount = 0
+      var lastConsumeTimes = []
+      var numConsumeTimes = 3
+      var consume = function () {
+        if (destroyed) {
+          return
+        }
+        var before = new Date()
+        window.quiet_emscripten.ccall('quiet_decoder_consume', 'number', ['pointer', 'pointer', 'number'], [decoder, samples, sampleBufferSize])
+        var after = new Date()
+
+        lastConsumeTimes.unshift(after - before)
+        if (lastConsumeTimes.length > numConsumeTimes) {
+          lastConsumeTimes.pop()
         }
 
-        if (gUM === undefined) {
-            // we couldn't find a suitable getUserMedia, so fail fast
-            if (opts.onCreateFail !== undefined) {
-                opts.onCreateFail("getUserMedia undefined (mic not supported by browser)");
-            }
-            return;
+        window.setTimeout(readbuf, 0)
+
+        var currentChecksumFailCount = window.quiet_emscripten.ccall('quiet_decoder_checksum_fails', 'number', ['pointer'], [decoder])
+        if ((opts.onReceiveFail !== undefined) && (currentChecksumFailCount > lastChecksumFailCount)) {
+          window.setTimeout(function () { opts.onReceiveFail(currentChecksumFailCount) }, 0)
         }
-
-        if (audioInput === undefined) {
-            createAudioInput()
-        }
-
-        // TODO investigate if this still needs to be placed on window.
-        // seems this was done to keep it from being collected
-        var scriptProcessor = audioCtx.createScriptProcessor(16384, 2, 1);
-        var idx = receivers_idx;
-        receivers[idx] = scriptProcessor;
-        receivers_idx++;
-
-        // inform quiet about our local sound card's sample rate so that it can resample to its internal sample rate
-        var decoder = quiet_emscripten.ccall('quiet_decoder_create', 'pointer', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
-
-        quiet_emscripten.ccall('free', null, ['pointer'], [opt]);
-
-        var samples = quiet_emscripten.ccall('malloc', 'pointer', ['number'], [4 * sampleBufferSize]);
-
-        var frame = quiet_emscripten.ccall('malloc', 'pointer', ['number'], [frameBufferSize]);
+        lastChecksumFailCount = currentChecksumFailCount
 
         if (opts.onReceiverStatsUpdate !== undefined) {
-            quiet_emscripten.ccall('quiet_decoder_enable_stats', null, ['pointer'], [decoder]);
+          var numFramesPtr = window.quiet_emscripten.ccall('malloc', 'pointer', ['number'], [4])
+          var frames = window.quiet_emscripten.ccall('quiet_decoder_consume_stats', 'pointer', ['pointer', 'pointer'], [decoder, numFramesPtr])
+          // time for some more pointer arithmetic
+          var numFrames = window.quiet_emscripten.HEAPU32[numFramesPtr / 4]
+          window.quiet_emscripten.ccall('free', null, ['pointer'], [numFramesPtr])
+
+          var framesize = 4 + 4 + 4 + 4 + 4
+          var stats = []
+
+          for (var i = 0; i < numFrames; i++) {
+            var frameStats = {}
+            var frame = (frames + i * framesize) / 4
+            var symbols = window.quiet_emscripten.HEAPU32[frame]
+            var numSymbols = window.quiet_emscripten.HEAPU32[frame + 1]
+            frameStats.errorVectorMagnitude = window.quiet_emscripten.HEAPF32[frame + 2]
+            frameStats.receivedSignalStrengthIndicator = window.quiet_emscripten.HEAPF32[frame + 3]
+
+            frameStats.symbols = []
+            for (var j = 0; j < numSymbols; j++) {
+              var symbol = (symbols + 8 * j) / 4
+              frameStats.symbols.push({
+                real: window.quiet_emscripten.HEAPF32[symbol],
+                imag: window.quiet_emscripten.HEAPF32[symbol + 1]
+              })
+            }
+            stats.push(frameStats)
+          }
+          opts.onReceiverStatsUpdate(stats)
         }
+      }
 
-        var destroyed = false;
-
-        var readbuf = function() {
-            if (destroyed) {
-                return;
-            }
-            while (true) {
-                var read = quiet_emscripten.ccall('quiet_decoder_recv', 'number', ['pointer', 'pointer', 'number'], [decoder, frame, frameBufferSize]);
-                if (read === -1) {
-                    break;
-                }
-                // convert from emscripten bytes to js string. more pointer arithmetic.
-                var frameArray = quiet_emscripten.HEAP8.slice(frame, frame + read);
-                opts.onReceive(frameArray.buffer);
-            }
-        };
-
-        var lastChecksumFailCount = 0;
-        var last_consume_times = [];
-        var num_consume_times = 3;
-        var consume = function() {
-            if (destroyed) {
-                return;
-            }
-            var before = new Date();
-            quiet_emscripten.ccall('quiet_decoder_consume', 'number', ['pointer', 'pointer', 'number'], [decoder, samples, sampleBufferSize]);
-            var after = new Date();
-
-            last_consume_times.unshift(after - before);
-            if (last_consume_times.length > num_consume_times) {
-                last_consume_times.pop();
-            }
-
-            window.setTimeout(readbuf, 0);
-
-            var currentChecksumFailCount = quiet_emscripten.ccall('quiet_decoder_checksum_fails', 'number', ['pointer'], [decoder]);
-            if ((opts.onReceiveFail !== undefined) && (currentChecksumFailCount > lastChecksumFailCount)) {
-                window.setTimeout(function() { opts.onReceiveFail(currentChecksumFailCount); }, 0);
-            }
-            lastChecksumFailCount = currentChecksumFailCount;
-
-            if (opts.onReceiverStatsUpdate !== undefined) {
-                var num_frames_ptr = quiet_emscripten.ccall('malloc', 'pointer', ['number'], [4]);
-                var frames = quiet_emscripten.ccall('quiet_decoder_consume_stats', 'pointer', ['pointer', 'pointer'], [decoder, num_frames_ptr]);
-                // time for some more pointer arithmetic
-                var num_frames = quiet_emscripten.HEAPU32[num_frames_ptr/4];
-                quiet_emscripten.ccall('free', null, ['pointer'], [num_frames_ptr]);
-
-                var framesize = 4 + 4 + 4 + 4 + 4;
-                var stats = [];
-
-                for (var i = 0; i < num_frames; i++) {
-                    var frameStats = {};
-                    var frame = (frames + i*framesize)/4;
-                    var symbols = quiet_emscripten.HEAPU32[frame];
-                    var num_symbols = quiet_emscripten.HEAPU32[frame + 1];
-                    frameStats.errorVectorMagnitude = quiet_emscripten.HEAPF32[frame + 2];
-                    frameStats.receivedSignalStrengthIndicator = quiet_emscripten.HEAPF32[frame + 3];
-
-                    frameStats.symbols = [];
-                    for (var j = 0; j < num_symbols; j++) {
-                        var symbol = (symbols + 8*j)/4;
-                        frameStats.symbols.push({
-                            real: quiet_emscripten.HEAPF32[symbol],
-                            imag: quiet_emscripten.HEAPF32[symbol + 1]
-                        });
-                    }
-                    stats.push(frameStats);
-                }
-                opts.onReceiverStatsUpdate(stats);
-            }
+      scriptProcessor.onaudioprocess = function (e) {
+        if (destroyed) {
+          return
         }
+        var input = e.inputBuffer.getChannelData(0)
+        var sampleView = window.quiet_emscripten.HEAPF32.subarray(samples / 4, samples / 4 + sampleBufferSize)
+        sampleView.set(input)
 
-        scriptProcessor.onaudioprocess = function(e) {
-            if (destroyed) {
-                return;
-            }
-            var input = e.inputBuffer.getChannelData(0);
-            var sample_view = quiet_emscripten.HEAPF32.subarray(samples/4, samples/4 + sampleBufferSize);
-            sample_view.set(input);
+        window.setTimeout(consume, 0)
+      }
 
-            window.setTimeout(consume, 0);
+      // if this is the first receiver object created, wait for our input node to be created
+      addAudioInputReadyCallback(function () {
+        audioInput.connect(scriptProcessor)
+        if (opts.onCreate !== undefined) {
+          window.setTimeout(opts.onCreate, 0)
         }
+      }, opts.onCreateFail)
 
-        // if this is the first receiver object created, wait for our input node to be created
-        addAudioInputReadyCallback(function() {
-            audioInput.connect(scriptProcessor);
-            if (opts.onCreate !== undefined) {
-                window.setTimeout(opts.onCreate, 0);
-            }
-        }, opts.onCreateFail);
+      // more unused nodes in the graph that some browsers insist on having
+      var fakeGain = audioCtx.createGain()
+      fakeGain.value = 0
+      scriptProcessor.connect(fakeGain)
+      fakeGain.connect(audioCtx.destination)
 
-        // more unused nodes in the graph that some browsers insist on having
-        var fakeGain = audioCtx.createGain();
-        fakeGain.value = 0;
-        scriptProcessor.connect(fakeGain);
-        fakeGain.connect(audioCtx.destination);
-
-        var destroy = function() {
-            if (destroyed) {
-                return;
-            }
-            fakeGain.disconnect();
-            scriptProcessor.disconnect();
-            quiet_emscripten.ccall('free', null, ['pointer'], [samples]);
-            quiet_emscripten.ccall('free', null, ['pointer'], [frame]);
-            quiet_emscripten.ccall('quiet_decoder_destroy', null, ['pointer'], [decoder]);
-            delete receivers[idx];
-            destroyed = true;
-        };
-
-        var getAverageDecodeTime = function() {
-            if (last_consume_times.length === 0) {
-                return 0;
-            }
-            var total = 0;
-            for (var i = 0; i < last_consume_times.length; i++) {
-                total += last_consume_times[i];
-            }
-            return total/(last_consume_times.length);
-        };
-
-        return {
-            destroy: destroy,
-            getAverageDecodeTime: getAverageDecodeTime
+      var destroy = function () {
+        if (destroyed) {
+          return
         }
+        fakeGain.disconnect()
+        scriptProcessor.disconnect()
+        window.quiet_emscripten.ccall('free', null, ['pointer'], [samples])
+        window.quiet_emscripten.ccall('free', null, ['pointer'], [frame])
+        window.quiet_emscripten.ccall('quiet_decoder_destroy', null, ['pointer'], [decoder])
+        delete receivers[idx]
+        destroyed = true
+      }
+
+      var getAverageDecodeTime = function () {
+        if (lastConsumeTimes.length === 0) {
+          return 0
+        }
+        var total = 0
+        for (var i = 0; i < lastConsumeTimes.length; i++) {
+          total += lastConsumeTimes[i]
+        }
+        return total / (lastConsumeTimes.length)
+      }
+
+      return {
+        destroy: destroy,
+        getAverageDecodeTime: getAverageDecodeTime
+      }
     };
 
     /**
@@ -885,14 +869,14 @@ var Quiet = (function() {
      * @param {string} s - string to be converted
      * @returns {ArrayBuffer} buf - converted arraybuffer
      */
-    function str2ab(s) {
-        var s_utf8 = unescape(encodeURIComponent(s));
-        var buf = new ArrayBuffer(s_utf8.length);
-        var bufView = new Uint8Array(buf);
-        for (var i = 0; i < s_utf8.length; i++) {
-            bufView[i] = s_utf8.charCodeAt(i);
-        }
-        return buf;
+    function str2ab (s) {
+      var sUtf8 = unescape(encodeURIComponent(s))
+      var buf = new ArrayBuffer(sUtf8.length)
+      var bufView = new Uint8Array(buf)
+      for (var i = 0; i < sUtf8.length; i++) {
+        bufView[i] = sUtf8.charCodeAt(i)
+      }
+      return buf
     };
 
     /**
@@ -902,8 +886,8 @@ var Quiet = (function() {
      * @param {ArrayBuffer} ab - array buffer to be converted
      * @returns {string} s - converted string
      */
-    function ab2str(ab) {
-        return decodeURIComponent(escape(String.fromCharCode.apply(null, new Uint8Array(ab))));
+    function ab2str (ab) {
+      return decodeURIComponent(escape(String.fromCharCode.apply(null, new Uint8Array(ab))))
     };
 
     /**
@@ -916,11 +900,11 @@ var Quiet = (function() {
      * @param {ArrayBuffer} ab2 - ending ArrayBuffer
      * @returns {ArrayBuffer} buf - ab1 merged with ab2
      */
-    function mergeab(ab1, ab2) {
-        var tmp = new Uint8Array(ab1.byteLength + ab2.byteLength);
-        tmp.set(new Uint8Array(ab1), 0);
-        tmp.set(new Uint8Array(ab2), ab1.byteLength);
-        return tmp.buffer;
+    function mergeab (ab1, ab2) {
+      var tmp = new Uint8Array(ab1.byteLength + ab2.byteLength)
+      tmp.set(new Uint8Array(ab1), 0)
+      tmp.set(new Uint8Array(ab2), ab1.byteLength)
+      return tmp.buffer
     };
 
     /**
@@ -932,31 +916,31 @@ var Quiet = (function() {
      * It is highly recommended to call this only after destroying any receivers.
      * @function disconnect
      */
-    function disconnect() {
-        if (audioInput !== undefined) {
-            audioInput.disconnect();
-            audioInput = undefined;
-            delete window.quiet_receiver_anti_gc;
-        }
+    function disconnect () {
+      if (audioInput !== undefined) {
+        audioInput.disconnect()
+        audioInput = undefined
+        delete window.quiet_receiver_anti_gc
+      }
     };
 
     var emscriptenConfig = {
-        onRuntimeInitialized: onEmscriptenInitialized,
-        locateFile: emscriptenLocateFile
-    };
+      onRuntimeInitialized: onEmscriptenInitialized,
+      locateFile: emscriptenLocateFile
+    }
 
     return {
-        emscriptenConfig: emscriptenConfig,
-        addReadyCallback: addReadyCallback,
-        init: init,
-        transmitter: transmitter,
-        receiver: receiver,
-        str2ab: str2ab,
-        ab2str: ab2str,
-        mergeab: mergeab,
-        disconnect: disconnect
-    };
-})();
+      emscriptenConfig: emscriptenConfig,
+      addReadyCallback: addReadyCallback,
+      init: init,
+      transmitter: transmitter,
+      receiver: receiver,
+      str2ab: str2ab,
+      ab2str: ab2str,
+      mergeab: mergeab,
+      disconnect: disconnect
+    }
+  })()
 
-return Quiet;
-}));
+  return Quiet
+}))

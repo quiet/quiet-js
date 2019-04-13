@@ -2,3 +2,4 @@ libfec.js
 src/c_src/emscripten/
 src/c_src/js/
 src/c_src/licenses
+node_modules
