@@ -1,5 +1,5 @@
-var TextTransmitter = (function () {
-  Quiet.init({
+(() => {
+  window.Quiet.init({
     profilesPath: '/quiet-profiles.json',
     memoryInitializerPath: '/quiet-emscripten.js.mem',
     emscriptenPath: '/quiet-emscripten.js'
@@ -29,12 +29,12 @@ var TextTransmitter = (function () {
       onTransmitFinish()
       return
     }
-    transmit.transmit(Quiet.str2ab(payload))
+    transmit.transmit(window.Quiet.str2ab(payload))
   };
 
   function onQuietReady () {
     var profilename = document.querySelector('[data-quiet-profile-name]').getAttribute('data-quiet-profile-name')
-    transmit = Quiet.transmitter({ profile: profilename, onFinish: onTransmitFinish, clampFrame: false })
+    transmit = window.Quiet.transmitter({ profile: profilename, onFinish: onTransmitFinish, clampFrame: false })
     btn.addEventListener('click', onClick, false)
   };
 
@@ -44,12 +44,12 @@ var TextTransmitter = (function () {
     warningbox.textContent = 'Sorry, it looks like there was a problem with this example (' + reason + ')'
   };
 
-  function onDOMLoad () {
+  function initQuiet () {
     btn = document.querySelector('[data-quiet-send-button]')
     textbox = document.querySelector('[data-quiet-text-input]')
     warningbox = document.querySelector('[data-quiet-warning]')
-    Quiet.addReadyCallback(onQuietReady, onQuietFail)
+    window.Quiet.addReadyCallback(onQuietReady, onQuietFail)
   };
 
-  document.addEventListener('DOMContentLoaded', onDOMLoad)
+  document.addEventListener('DOMContentLoaded', initQuiet)
 })()
