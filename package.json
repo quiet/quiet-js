@@ -4,7 +4,8 @@
   "description": "Send data using Web Audio",
   "main": "output/library.js",
   "scripts": {
-    "build": "webpack --env build"
+    "build": "webpack --env build",
+    "create-docs": "jsdoc -d docs -R README.md quiet.js"
   },
   "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
@@ -19,6 +20,7 @@
   "dependencies": {
     "@babel/core": "^7.0.0-beta.40",
     "@babel/preset-env": "^7.0.0-beta.40",
-    "babel-loader": "^8.0.0-beta.0"
+    "babel-loader": "^8.0.0-beta.0",
+    "jsdoc": "^3.5.5"
   }
 }
