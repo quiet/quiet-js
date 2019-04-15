@@ -1,4 +1,32 @@
-/* Copyright 2016, Brian Armstrong
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: quiet.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: quiet.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/* Copyright 2016, Brian Armstrong
  * quiet.js includes compiled portions from other sources
  *  - liquid DSP, Copyright (c) 2007-2016 Joseph Gaeddert
  *  - libjansson, Copyright (c) 2009-2016 Petri Lehtinen
@@ -6,10 +34,10 @@
  */
 
 (function (root, factory) {
-  if (typeof define === 'function' && window.define.amd) {
+  if (typeof define === 'function' &amp;&amp; window.define.amd) {
     // AMD. Register as an anonymous module.
     window.define(['quiet-emscripten'], factory)
-  } else if (typeof module === 'object' && module.exports) {
+  } else if (typeof module === 'object' &amp;&amp; module.exports) {
     // Node. Does not work with strict CommonJS, but
     // only CommonJS-like environments that support module.exports,
     // like Node.
@@ -60,7 +88,7 @@
     // we need the emscripten portion to be running and we need our
     // async fetch of the profiles to be completed
     function isReady () {
-      return emscriptenInitialized && profilesFetched
+      return emscriptenInitialized &amp;&amp; profilesFetched
     };
 
     function isFailed () {
@@ -70,7 +98,7 @@
     // start gets our AudioContext and notifies consumers that quiet can be used
     function start () {
       var len = readyCallbacks.length
-      for (var i = 0; i < len; i++) {
+      for (var i = 0; i &lt; len; i++) {
         readyCallbacks[i]()
       }
     };
@@ -85,7 +113,7 @@
     function fail (reason) {
       failReason = reason
       var len = readyErrbacks.length
-      for (var i = 0; i < len; i++) {
+      for (var i = 0; i &lt; len; i++) {
         readyErrbacks[i](reason)
       }
     };
@@ -118,7 +146,7 @@
         xhr.overrideMimeType('application/json')
         xhr.open('GET', path, true)
         xhr.onload = function () {
-          if (this.status >= 200 && this.status < 300) {
+          if (this.status >= 200 &amp;&amp; this.status &lt; 300) {
             resolve(this.responseText)
           } else {
             reject(this.statusText)
@@ -360,7 +388,7 @@
         if (played === true) {
           // we've already played what's in sampleView, and it hasn't been
           //   rewritten for whatever reason, so just play out silence
-          for (var i = 0; i < sampleBufferSize; i++) {
+          for (var i = 0; i &lt; sampleBufferSize; i++) {
             outputL[i] = 0
           }
           return
@@ -445,7 +473,7 @@
           frameWritten = true
         }
 
-        if (payload.length === 0 && frameWritten === true) {
+        if (payload.length === 0 &amp;&amp; frameWritten === true) {
           // we wrote at least one frame and emptied out payload, our local (js) tx queue
           // this means we have transitioned to having all data in libquiet
           // notify user about this if they like
@@ -457,7 +485,7 @@
           }
         }
 
-        if (frameAvailable === true && running === false) {
+        if (frameAvailable === true &amp;&amp; running === false) {
           startTransmitter()
         }
 
@@ -478,11 +506,11 @@
         }
 
         // libquiet notifies us that the payload is finished by
-        // returning written < number of samples we asked for
-        if (frameAvailable === false && written === -1) {
-          if (emptiesWritten < 3) {
+        // returning written &lt; number of samples we asked for
+        if (frameAvailable === false &amp;&amp; written === -1) {
+          if (emptiesWritten &lt; 3) {
             // flush out browser's sound sample buffer before quitting
-            for (var i = 0; i < sampleBufferSize; i++) {
+            for (var i = 0; i &lt; sampleBufferSize; i++) {
               sampleView[i] = 0
             }
             emptiesWritten++
@@ -504,10 +532,10 @@
         emptiesWritten = 0
 
         // in this case, we are sending data, but the whole block isn't full (we're near the end)
-        if (written < sampleBufferSize) {
+        if (written &lt; sampleBufferSize) {
           // be extra cautious and 0-fill what's left
           //   (we want the end of transmission to be silence, not potentially loud noise)
-          for (let i = written; i < sampleBufferSize; i++) {
+          for (let i = written; i &lt; sampleBufferSize; i++) {
             sampleView[i] = 0
           }
         }
@@ -518,7 +546,7 @@
           return
         }
         // slice up into frames and push the frames to a list
-        for (var i = 0; i < buf.byteLength;) {
+        for (var i = 0; i &lt; buf.byteLength;) {
           var frame = buf.slice(i, i + frameLen)
           i += frame.byteLength
           payload.push(frame)
@@ -544,7 +572,7 @@
           return 0
         }
         var total = 0
-        for (var i = 0; i < lastEmitTimes.length; i++) {
+        for (var i = 0; i &lt; lastEmitTimes.length; i++) {
           total += lastEmitTimes[i]
         }
         return total / (lastEmitTimes.length)
@@ -562,7 +590,7 @@
 
     function audioInputReady () {
       var len = audioInputReadyCallbacks.length
-      for (var i = 0; i < len; i++) {
+      for (var i = 0; i &lt; len; i++) {
         audioInputReadyCallbacks[i]()
       }
     };
@@ -570,7 +598,7 @@
     function audioInputFailed (reason) {
       audioInputFailedReason = reason
       var len = audioInputFailedCallbacks.length
-      for (var i = 0; i < len; i++) {
+      for (var i = 0; i &lt; len; i++) {
         audioInputFailedCallbacks[i](audioInputFailedReason)
       }
     };
@@ -770,7 +798,7 @@
         window.setTimeout(readbuf, 0)
 
         var currentChecksumFailCount = window.quiet_emscripten.ccall('quiet_decoder_checksum_fails', 'number', ['pointer'], [decoder])
-        if ((opts.onReceiveFail !== undefined) && (currentChecksumFailCount > lastChecksumFailCount)) {
+        if ((opts.onReceiveFail !== undefined) &amp;&amp; (currentChecksumFailCount > lastChecksumFailCount)) {
           window.setTimeout(function () { opts.onReceiveFail(currentChecksumFailCount) }, 0)
         }
         lastChecksumFailCount = currentChecksumFailCount
@@ -785,7 +813,7 @@
           var framesize = 4 + 4 + 4 + 4 + 4
           var stats = []
 
-          for (var i = 0; i < numFrames; i++) {
+          for (var i = 0; i &lt; numFrames; i++) {
             var frameStats = {}
             var frame = (frames + i * framesize) / 4
             var symbols = window.quiet_emscripten.HEAPU32[frame]
@@ -794,7 +822,7 @@
             frameStats.receivedSignalStrengthIndicator = window.quiet_emscripten.HEAPF32[frame + 3]
 
             frameStats.symbols = []
-            for (var j = 0; j < numSymbols; j++) {
+            for (var j = 0; j &lt; numSymbols; j++) {
               var symbol = (symbols + 8 * j) / 4
               frameStats.symbols.push({
                 real: window.quiet_emscripten.HEAPF32[symbol],
@@ -850,7 +878,7 @@
           return 0
         }
         var total = 0
-        for (var i = 0; i < lastConsumeTimes.length; i++) {
+        for (var i = 0; i &lt; lastConsumeTimes.length; i++) {
           total += lastConsumeTimes[i]
         }
         return total / (lastConsumeTimes.length)
@@ -873,7 +901,7 @@
       var sUtf8 = unescape(encodeURIComponent(s))
       var buf = new ArrayBuffer(sUtf8.length)
       var bufView = new Uint8Array(buf)
-      for (var i = 0; i < sUtf8.length; i++) {
+      for (var i = 0; i &lt; sUtf8.length; i++) {
         bufView[i] = sUtf8.charCodeAt(i)
       }
       return buf
@@ -944,3 +972,26 @@
 
   return Quiet
 }))
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#disconnect">disconnect</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Apr 14 2019 14:37:19 GMT+0700 (+07)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

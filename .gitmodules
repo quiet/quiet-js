@@ -1,0 +1,12 @@
+[submodule "src/c_src/quiet"]
+	path = src/c_src/quiet
+	url = https://github.com/quiet/quiet
+[submodule "src/c_src/jansson"]
+	path = src/c_src/jansson
+	url = https://github.com/akheron/jansson
+[submodule "src/c_src/liquid-dsp"]
+	path = src/c_src/liquid-dsp
+	url = https://github.com/quiet/liquid-dsp
+[submodule "src/c_src/libcorrect"]
+	path = src/c_src/libcorrect
+	url = https://github.com/quiet/libcorrect
