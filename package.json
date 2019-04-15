@@ -4,8 +4,8 @@
   "description": "Send data using Web Audio",
   "main": "output/library.js",
   "scripts": {
-    "build": "webpack --env build",
-    "create-docs": "jsdoc -d docs -R README.md quiet.js"
+    "create-docs": "jsdoc -d docs -R README.md quiet.js",
+    "lint": "eslint quiet.js --fix"
   },
   "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
@@ -15,12 +15,6 @@
     "eslint-plugin-node": "^8.0.1",
     "eslint-plugin-promise": "^4.1.1",
     "eslint-plugin-standard": "^4.0.0",
-    "webpack": "^3.11.0"
-  },
-  "dependencies": {
-    "@babel/core": "^7.0.0-beta.40",
-    "@babel/preset-env": "^7.0.0-beta.40",
-    "babel-loader": "^8.0.0-beta.0",
     "jsdoc": "^3.5.5"
   }
 }
