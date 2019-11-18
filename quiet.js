@@ -5,7 +5,21 @@
  *  - emscripten, Copyright (c) 2010-2016 Emscripten authors
  */
 
-/** @namespace */
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(['quiet-emscripten'], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like environments that support module.exports,
+        // like Node.
+        module.exports = factory(require('quiet-emscripten'));
+    } else {
+        // Browser globals (root is window)
+        root.Quiet = factory();
+        root.quiet_emscripten_config = root.Quiet.emscriptenConfig;
+    }
+}(this, function (b) {
 var Quiet = (function() {
     // sampleBufferSize is the number of audio samples we'll write per onaudioprocess call
     // must be a power of two. we choose the absolute largest permissible value
@@ -15,6 +29,9 @@ var Quiet = (function() {
     // initialization flags
     var emscriptenInitialized = false;
     var profilesFetched = false;
+
+    // path of quiet-emscripten.mem
+    var memInitializerPath = "";
 
     // profiles is the string content of quiet-profiles.json
     var profiles;
@@ -91,19 +108,15 @@ var Quiet = (function() {
         checkInitState();
     };
 
-    function setProfilesPrefix(prefix) {
+    function setProfilesPath(path) {
         if (profilesFetched) {
             return;
         }
-        if (!prefix.endsWith("/")) {
-            prefix += "/";
-        }
-        var profilesPath = prefix + "quiet-profiles.json";
 
         var fetch = new Promise(function(resolve, reject) {
             var xhr = new XMLHttpRequest();
             xhr.overrideMimeType("application/json");
-            xhr.open("GET", profilesPath, true);
+            xhr.open("GET", path, true);
             xhr.onload = function() {
                 if (this.status >= 200 && this.status < 300) {
                     resolve(this.responseText);
@@ -124,13 +137,15 @@ var Quiet = (function() {
         });
     };
 
-    function setMemoryInitializerPrefix(prefix) {
-        Module.memoryInitializerPrefixURL = prefix;
+    function emscriptenLocateFile(file) {
+        if (file === "quiet-emscripten.js.mem") {
+            return memInitializerPath;
+        }
+        return file;
     };
 
-    function setLibfecPrefix(prefix) {
-        Module.dynamicLibraries = Module.dynamicLibraries || [];
-        Module.dynamicLibraries.push(prefix + "libfec.js");
+    function setMemoryInitializerPath(path) {
+        memInitializerPath = path;
     };
 
     /**
@@ -178,32 +193,47 @@ var Quiet = (function() {
      * @function init
      * @memberof Quiet
      * @param {object} opts - configuration options
-     * @param {string} opts.profilesPrefix - path prefix to quiet-profiles.json
+     * @param {string} [opts.profilesPath] - path to quiet-profiles.json
      *   this file configures transmitter and receiver parameters
-     * @param {string} opts.memoryInitializerPrefix - path prefix to quiet-emscripten.js.mem
-     * @param {string} [opts.libfecPrefix] - path prefix to libfec.js
+     *   defaults to "quiet-profiles.json"
+     * @param {string} [opts.profilesPrefix] [deprecated] - prefix of path to
+     *   quiet-profiles.json. Use opts.profilesPath instead.
+     * @param {string} [opts.emscriptenPath] - path to quiet-emscripten.js
+     *   defaults to "quiet-emscripten.js"
+     * @param {string} opts.memoryInitializerPath - path to quiet-emscripten.js.mem
+     *   defaults to "quiet-emscripten.js.mem"
+     * @param {string} opts.memoryInitializerPrefix - prefix of path to quiet-emscripten.js.mem
+     *   Use opts.memoryInitializerPath instead
      * @param {function} [opts.onReady] - Quiet ready callback
      * @param {onError} [opts.onError] - User errback function
      * @example
      * Quiet.init({
-     *   profilesPrefix: "/",  // fetches /quiet-profiles.json
-     *   memoryInitializerPrefix: "/",  // fetches /quiet-emscripten.js.mem
-     *   libfecPrefix: "/",  // fetches /libfec.js
+     *   profilesPath: "/quiet-profiles.json",  // fetches /quiet-profiles.json
+     *   memoryInitializerPath: "/quiet-emscripten.js.mem",  // fetches /quiet-emscripten.js.mem
      *   onReady: function() { console.log("quiet is ready"); },
      *   onError: function(reason) { console.log("quiet failed to start: " + reason); }
      * });
      */
     function init(opts) {
-        if (opts.profilesPrefix !== undefined) {
-            setProfilesPrefix(opts.profilesPrefix);
+        var profilesPath = "quiet-profiles.json";
+        if (opts.profilesPath !== undefined) {
+            profilesPath = opts.profilesPath;
+        } else if (opts.profilesPrefix !== undefined) {
+            profilesPath = opts.profilesPrefix + "quiet-profiles.json";
         }
+        setProfilesPath(profilesPath);
 
-        if (opts.memoryInitializerPrefix !== undefined) {
-            setMemoryInitializerPrefix(opts.memoryInitializerPrefix);
+        var memoryInitializerPath = "quiet-emscripten.js.mem";
+        if (opts.memoryInitializerPath !== undefined) {
+            memoryInitializerPath = opts.memoryInitializerPath;
+        } else if (opts.memoryInitializerPrefix !== undefined) {
+            memoryInitializerPath = opts.memoryInitializerPrefix + "quiet-emscripten.js.mem";
         }
+        setMemoryInitializerPath(memoryInitializerPath);
 
-        if (opts.libfecPrefix !== undefined) {
-            setLibfecPrefix(opts.libfecPrefix);
+        var emscriptenPath = "quiet-emscripten.js";
+        if (opts.emscriptenPath !== undefined) {
+            emscriptenPath = opts.emscriptenPath;
         }
 
         if (opts.onReady !== undefined) {
@@ -213,6 +243,14 @@ var Quiet = (function() {
                 addReadyCallback(opts.onReady);
             }
         }
+
+        var head = document.getElementsByTagName('head')[0];
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = opts.emscriptenPath;
+        // XXX script.async
+
+        head.appendChild(script);
     };
 
 
@@ -274,24 +312,24 @@ var Quiet = (function() {
         var profile = opts.profile;
         var c_profiles, c_profile;
         if (typeof profile === 'object') {
-            c_profiles = Module.intArrayFromString(JSON.stringify({"profile": profile}));
-            c_profile = Module.intArrayFromString("profile");
+            c_profiles = quiet_emscripten.intArrayFromString(JSON.stringify({"profile": profile}));
+            c_profile = quiet_emscripten.intArrayFromString("profile");
         } else {
             // get an encoder_options object for our quiet-profiles.json and profile key
-            c_profiles = Module.intArrayFromString(profiles);
-            c_profile = Module.intArrayFromString(profile);
+            c_profiles = quiet_emscripten.intArrayFromString(profiles);
+            c_profile = quiet_emscripten.intArrayFromString(profile);
         }
 
         initAudioContext();
         var done = opts.onFinish;
 
-        var opt = Module.ccall('quiet_encoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
+        var opt = quiet_emscripten.ccall('quiet_encoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
 
         // libquiet internally works at 44.1kHz but the local sound card
         // may be a different rate. we inform quiet about that here
-        var encoder = Module.ccall('quiet_encoder_create', 'pointer', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
+        var encoder = quiet_emscripten.ccall('quiet_encoder_create', 'pointer', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
 
-        Module.ccall('free', null, ['pointer'], [opt]);
+        quiet_emscripten.ccall('free', null, ['pointer'], [opt]);
 
         if (opts.clampFrame === undefined) {
             opts.clampFrame = true;
@@ -303,14 +341,14 @@ var Quiet = (function() {
             // sample buffers. this is very convenient if our system is not fast enough
             // to feed the sound card without any gaps between subsequent buffers due
             // to e.g. gc pause. inform quiet about our sample buffer size here
-            frame_len = Module.ccall('quiet_encoder_clamp_frame_len', 'number', ['pointer', 'number'], [encoder, sampleBufferSize]);
+            frame_len = quiet_emscripten.ccall('quiet_encoder_clamp_frame_len', 'number', ['pointer', 'number'], [encoder, sampleBufferSize]);
         } else {
-            frame_len = Module.ccall('quiet_encoder_get_frame_len', 'number', ['pointer'], [encoder]);
+            frame_len = quiet_emscripten.ccall('quiet_encoder_get_frame_len', 'number', ['pointer'], [encoder]);
         }
-        var samples = Module.ccall('malloc', 'pointer', ['number'], [4 * sampleBufferSize]);
+        var samples = quiet_emscripten.ccall('malloc', 'pointer', ['number'], [4 * sampleBufferSize]);
 
         // yes, this is pointer arithmetic, in javascript :)
-        var sample_view = Module.HEAPF32.subarray((samples/4), (samples/4) + sampleBufferSize);
+        var sample_view = quiet_emscripten.HEAPF32.subarray((samples/4), (samples/4) + sampleBufferSize);
 
         var dummy_osc;
 
@@ -408,7 +446,7 @@ var Quiet = (function() {
                     break;
                 }
                 frame_available = true;
-                var written = Module.ccall('quiet_encoder_send', 'number', ['pointer', 'array', 'number'], [encoder, new Uint8Array(frame), frame.byteLength]);
+                var written = quiet_emscripten.ccall('quiet_encoder_send', 'number', ['pointer', 'array', 'number'], [encoder, new Uint8Array(frame), frame.byteLength]);
                 if (written === -1) {
                     payload.unshift(frame);
                     break;
@@ -440,7 +478,7 @@ var Quiet = (function() {
             }
 
             var before = new Date();
-            var written = Module.ccall('quiet_encoder_emit', 'number', ['pointer', 'pointer', 'number'], [encoder, samples, sampleBufferSize]);
+            var written = quiet_emscripten.ccall('quiet_encoder_emit', 'number', ['pointer', 'pointer', 'number'], [encoder, samples, sampleBufferSize]);
             var after = new Date();
 
             last_emit_times.unshift(after - before);
@@ -503,8 +541,8 @@ var Quiet = (function() {
             if (destroyed) {
                 return;
             }
-            Module.ccall('free', null, ['pointer'], [samples]);
-            Module.ccall('quiet_encoder_destroy', null, ['pointer'], [encoder]);
+            quiet_emscripten.ccall('free', null, ['pointer'], [samples]);
+            quiet_emscripten.ccall('quiet_encoder_destroy', null, ['pointer'], [encoder]);
             if (running === true) {
                 stopTransmitter();
             }
@@ -598,7 +636,6 @@ var Quiet = (function() {
             }
         };
     };
-
 
     function createAudioInput() {
         audioInput = 0; // prevent others from trying to create
@@ -697,16 +734,16 @@ var Quiet = (function() {
         var profile = opts.profile;
         var c_profiles, c_profile;
         if (typeof profile === 'object') {
-            c_profiles = Module.intArrayFromString(JSON.stringify({"profile": profile}));
-            c_profile = Module.intArrayFromString("profile");
+            c_profiles = quiet_emscripten.intArrayFromString(JSON.stringify({"profile": profile}));
+            c_profile = quiet_emscripten.intArrayFromString("profile");
         } else {
-            c_profiles = Module.intArrayFromString(profiles);
-            c_profile = Module.intArrayFromString(profile);
+            c_profiles = quiet_emscripten.intArrayFromString(profiles);
+            c_profile = quiet_emscripten.intArrayFromString(profile);
         }
-        var opt = Module.ccall('quiet_decoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
+        var opt = quiet_emscripten.ccall('quiet_decoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
 
         initAudioContext();
-        // quiet does not create an audio input when it starts
+        // quiet creates audioCtx when it starts but it does not create an audio input
         // getting microphone access requires a permission dialog so only ask for it if we need it
         if (gUM === undefined) {
             gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
@@ -732,16 +769,16 @@ var Quiet = (function() {
         receivers_idx++;
 
         // inform quiet about our local sound card's sample rate so that it can resample to its internal sample rate
-        var decoder = Module.ccall('quiet_decoder_create', 'pointer', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
+        var decoder = quiet_emscripten.ccall('quiet_decoder_create', 'pointer', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
 
-        Module.ccall('free', null, ['pointer'], [opt]);
+        quiet_emscripten.ccall('free', null, ['pointer'], [opt]);
 
-        var samples = Module.ccall('malloc', 'pointer', ['number'], [4 * sampleBufferSize]);
+        var samples = quiet_emscripten.ccall('malloc', 'pointer', ['number'], [4 * sampleBufferSize]);
 
-        var frame = Module.ccall('malloc', 'pointer', ['number'], [frameBufferSize]);
+        var frame = quiet_emscripten.ccall('malloc', 'pointer', ['number'], [frameBufferSize]);
 
         if (opts.onReceiverStatsUpdate !== undefined) {
-            Module.ccall('quiet_decoder_enable_stats', null, ['pointer'], [decoder]);
+            quiet_emscripten.ccall('quiet_decoder_enable_stats', null, ['pointer'], [decoder]);
         }
 
         var destroyed = false;
@@ -751,12 +788,12 @@ var Quiet = (function() {
                 return;
             }
             while (true) {
-                var read = Module.ccall('quiet_decoder_recv', 'number', ['pointer', 'pointer', 'number'], [decoder, frame, frameBufferSize]);
+                var read = quiet_emscripten.ccall('quiet_decoder_recv', 'number', ['pointer', 'pointer', 'number'], [decoder, frame, frameBufferSize]);
                 if (read === -1) {
                     break;
                 }
                 // convert from emscripten bytes to js string. more pointer arithmetic.
-                var frameArray = Module.HEAP8.slice(frame, frame + read);
+                var frameArray = quiet_emscripten.HEAP8.slice(frame, frame + read);
                 opts.onReceive(frameArray.buffer);
             }
         };
@@ -769,7 +806,7 @@ var Quiet = (function() {
                 return;
             }
             var before = new Date();
-            Module.ccall('quiet_decoder_consume', 'number', ['pointer', 'pointer', 'number'], [decoder, samples, sampleBufferSize]);
+            quiet_emscripten.ccall('quiet_decoder_consume', 'number', ['pointer', 'pointer', 'number'], [decoder, samples, sampleBufferSize]);
             var after = new Date();
 
             last_consume_times.unshift(after - before);
@@ -779,18 +816,18 @@ var Quiet = (function() {
 
             window.setTimeout(readbuf, 0);
 
-            var currentChecksumFailCount = Module.ccall('quiet_decoder_checksum_fails', 'number', ['pointer'], [decoder]);
+            var currentChecksumFailCount = quiet_emscripten.ccall('quiet_decoder_checksum_fails', 'number', ['pointer'], [decoder]);
             if ((opts.onReceiveFail !== undefined) && (currentChecksumFailCount > lastChecksumFailCount)) {
                 window.setTimeout(function() { opts.onReceiveFail(currentChecksumFailCount); }, 0);
             }
             lastChecksumFailCount = currentChecksumFailCount;
 
             if (opts.onReceiverStatsUpdate !== undefined) {
-                var num_frames_ptr = Module.ccall('malloc', 'pointer', ['number'], [4]);
-                var frames = Module.ccall('quiet_decoder_consume_stats', 'pointer', ['pointer', 'pointer'], [decoder, num_frames_ptr]);
+                var num_frames_ptr = quiet_emscripten.ccall('malloc', 'pointer', ['number'], [4]);
+                var frames = quiet_emscripten.ccall('quiet_decoder_consume_stats', 'pointer', ['pointer', 'pointer'], [decoder, num_frames_ptr]);
                 // time for some more pointer arithmetic
-                var num_frames = Module.HEAPU32[num_frames_ptr/4];
-                Module.ccall('free', null, ['pointer'], [num_frames_ptr]);
+                var num_frames = quiet_emscripten.HEAPU32[num_frames_ptr/4];
+                quiet_emscripten.ccall('free', null, ['pointer'], [num_frames_ptr]);
 
                 var framesize = 4 + 4 + 4 + 4 + 4;
                 var stats = [];
@@ -798,17 +835,17 @@ var Quiet = (function() {
                 for (var i = 0; i < num_frames; i++) {
                     var frameStats = {};
                     var frame = (frames + i*framesize)/4;
-                    var symbols = Module.HEAPU32[frame];
-                    var num_symbols = Module.HEAPU32[frame + 1];
-                    frameStats.errorVectorMagnitude = Module.HEAPF32[frame + 2];
-                    frameStats.receivedSignalStrengthIndicator = Module.HEAPF32[frame + 3];
+                    var symbols = quiet_emscripten.HEAPU32[frame];
+                    var num_symbols = quiet_emscripten.HEAPU32[frame + 1];
+                    frameStats.errorVectorMagnitude = quiet_emscripten.HEAPF32[frame + 2];
+                    frameStats.receivedSignalStrengthIndicator = quiet_emscripten.HEAPF32[frame + 3];
 
                     frameStats.symbols = [];
                     for (var j = 0; j < num_symbols; j++) {
                         var symbol = (symbols + 8*j)/4;
                         frameStats.symbols.push({
-                            real: Module.HEAPF32[symbol],
-                            imag: Module.HEAPF32[symbol + 1]
+                            real: quiet_emscripten.HEAPF32[symbol],
+                            imag: quiet_emscripten.HEAPF32[symbol + 1]
                         });
                     }
                     stats.push(frameStats);
@@ -822,7 +859,7 @@ var Quiet = (function() {
                 return;
             }
             var input = e.inputBuffer.getChannelData(0);
-            var sample_view = Module.HEAPF32.subarray(samples/4, samples/4 + sampleBufferSize);
+            var sample_view = quiet_emscripten.HEAPF32.subarray(samples/4, samples/4 + sampleBufferSize);
             sample_view.set(input);
 
             window.setTimeout(consume, 0);
@@ -848,9 +885,9 @@ var Quiet = (function() {
             }
             fakeGain.disconnect();
             scriptProcessor.disconnect();
-            Module.ccall('free', null, ['pointer'], [samples]);
-            Module.ccall('free', null, ['pointer'], [frame]);
-            Module.ccall('quiet_decoder_destroy', null, ['pointer'], [decoder]);
+            quiet_emscripten.ccall('free', null, ['pointer'], [samples]);
+            quiet_emscripten.ccall('free', null, ['pointer'], [frame]);
+            quiet_emscripten.ccall('quiet_decoder_destroy', null, ['pointer'], [decoder]);
             delete receivers[idx];
             destroyed = true;
         };
@@ -934,8 +971,13 @@ var Quiet = (function() {
         }
     };
 
+    var emscriptenConfig = {
+        onRuntimeInitialized: onEmscriptenInitialized,
+        locateFile: emscriptenLocateFile
+    };
+
     return {
-        emscriptenInitialized: onEmscriptenInitialized,
+        emscriptenConfig: emscriptenConfig,
         addReadyCallback: addReadyCallback,
         init: init,
         transmitter: transmitter,
@@ -947,8 +989,5 @@ var Quiet = (function() {
     };
 })();
 
-// extend emscripten Module
-var Module = {
-    onRuntimeInitialized: Quiet.emscriptenInitialized,
-    memoryInitializerPrefixURL: ""
-};
+return Quiet;
+}));

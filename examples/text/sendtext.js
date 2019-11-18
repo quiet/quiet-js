@@ -1,8 +1,8 @@
 var TextTransmitter = (function() {
     Quiet.init({
-        profilesPrefix: "/",
-        memoryInitializerPrefix: "/",
-        libfecPrefix: "/"
+        profilesPath: "/quiet-profiles.json",
+        memoryInitializerPath: "/quiet-emscripten.js.mem",
+        emscriptenPath: "/quiet-emscripten.js"
     });
     var btn;
     var textbox;
@@ -34,7 +34,7 @@ var TextTransmitter = (function() {
 
     function onQuietReady() {
         var profilename = document.querySelector('[data-quiet-profile-name]').getAttribute('data-quiet-profile-name');
-        transmit = Quiet.transmitter({profile: profilename, onFinish: onTransmitFinish});
+        transmit = Quiet.transmitter({profile: profilename, onFinish: onTransmitFinish, clampFrame: false});
         btn.addEventListener('click', onClick, false);
     };
 
