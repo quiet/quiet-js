@@ -1,0 +1,242 @@
+<!doctype html>
+<html>
+    <head>
+        <title>QuietJS</title>
+        <style>
+            html {
+                overflow: hidden;
+            }
+
+            body {
+                --border-radius: 5px;
+                --button-height: 30px;
+                --color-red: #C25B56;
+                color: #FEF6EB;
+                background-color: #525564;
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+                font-family: monospace;
+                font-size: 15px;
+                height: 100vh;
+                margin: 0;
+                padding: 10px;
+            }
+
+            button {
+                color: #525564;
+                background-color: #FEF6EB;
+                border: 0;
+                border-radius: var(--border-radius);
+                box-sizing: border-box;
+                cursor: pointer;
+                font-family: inherit;
+                font-size: inherit;
+                height: var(--button-height);
+                outline: none;
+                padding: 0 8px 0 30px;
+                position: relative;
+                transition: all .25s ease-in-out;
+            }
+
+            button:hover {
+                filter: brightness( 105% );
+            }
+
+            button:before {
+                color: initial;
+                bottom: 0;
+                display: block;
+                font-size: 14px;
+                height: 14px;
+                left: 8px;
+                margin: auto;
+                position: absolute;
+                top: 0;
+                transition: all .25s ease;
+            }
+
+            button.active {
+                color: transparent;
+            }
+
+            button.active:before {
+                color: var(--color-red);
+                left: 50%;
+                transform: translateX(-50%) scale(1.2);
+            }
+
+            textarea, .textarea {
+                background-color: #74828F;
+                border: 0;
+                border-radius: var(--border-radius);
+                box-sizing: border-box;
+                color: inherit;
+                flex-grow: 1;
+                font-family: inherit;
+                font-size: inherit;
+                outline: none;
+                resize: none;
+            }
+
+            .message {
+                align-items: center;
+                background-color: #96C0CE;
+                border: 0;
+                box-sizing: border-box;
+                flex-grow: 1;
+                display: flex;
+                min-height: var(--button-height);
+                padding: 4px 8px;
+                position: relative;
+            }
+
+            .message:first-child {
+                border-top-left-radius: var(--border-radius);
+                border-top-right-radius: var(--border-radius);
+            }
+
+            .message:not(:first-child):before {
+                align-items: center;
+                content: attr(data-time);
+                display: flex;
+                font-size: 0.7em;
+                height: 29px;
+                justify-content: flex-end;
+                right: 100%;
+                margin-right: 20px;
+                position: absolute;
+                text-align: right;
+                top: 0;
+                width: 100%;
+            }
+
+            .message.error {
+                background-color: var(--color-red);
+            }
+
+            .message.header {
+                background-color: #BEB9B5;
+                height: var(--button-height);
+                position: sticky;
+                top: 0;
+                z-index: 2;
+            }
+
+            .message:not(:last-child) {
+                border-bottom: 1px solid #74828F;
+            }
+
+            .panel#receive {
+                flex-grow: 1;
+                overflow: auto;
+            }
+
+            .panel#receive > button {
+                position: sticky;
+                top: 0;
+                z-index: 1;
+            }
+
+            .panel#receive > button:before {
+                content: '\25C9';
+                height: 18px;
+            }
+
+            .panel#transmit > button {
+                padding-left: 26px;
+            }
+
+            .panel#transmit > button:before {
+                content: '\25BA';
+                font-size: 12px;
+            }
+
+            .panel#transmit > textarea {
+                height: 100px;
+                padding: 10px;
+            }
+
+            .panel {
+                display: flex;
+            }
+
+            .panel + .panel {
+                margin-top: 14px;
+            }
+
+            .panel > * + * {
+                margin-left: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="panel" id="transmit">
+            <textarea></textarea>
+            <button>Transmit</button>
+        </div>
+        <div class="panel" id="receive">
+            <button>Receive</button>
+            <div class="textarea">
+                <div class="message header"></div>
+            </div>
+        </div>
+
+        <script>
+            document.write( `<script src="quiet.js?t=${ Date.now( ) }"></scr` + 'ipt>' )
+        </script>
+        <script>
+            const receivePanel = document.querySelector( '#receive' )
+            const transmitPanel = document.querySelector( '#transmit' )
+            const receiveButton = receivePanel.querySelector( 'button' )
+            const transmitButton = transmitPanel.querySelector( 'button' )
+            const receiverArea = receivePanel.querySelector( '.textarea' )
+            const transmitArea = transmitPanel.querySelector( 'textarea' )
+
+            const appendMessage = ( message, modifiers = [ ] ) => {
+                const div = document.createElement( 'div' )
+                div.classList.add( 'message', ... modifiers )
+                div.dataset.time = new Date( ).toLocaleTimeString( )
+                div.innerText = message
+                receiverArea.insertBefore( div, receiverArea.firstElementChild.nextSibling )
+            }
+
+            const appendError = ( error = 'There was a problem' ) =>
+                appendMessage( error, [ 'error' ] )
+
+            const receiver = new Quiet.Receiver( Quiet.Profiles.Ultrasonic )
+            receiver.on( 'error', appendError )
+            receiver.on( 'payload', buffer => {
+                const message = Quiet.Helpers.ab2str( buffer )
+                appendMessage( message )
+            } )
+
+            let isReceiverStarted = false
+            let isReceiverPaused = false
+            receiveButton.addEventListener( 'click', async ( ) => {
+                if( ! isReceiverStarted ) {
+                    await receiver.start( )
+                    isReceiverStarted = true
+
+                    receiveButton.classList.add( 'active' )
+                    return
+                }
+
+                if( ! isReceiverPaused ) {
+                    receiver.pause( )
+                    receiveButton.classList.remove( 'active' )
+                    isReceiverPaused = true
+                } else {
+                    await receiver.resume( )
+                    receiveButton.classList.add( 'active' )
+                    isReceiverPaused = false
+                }
+            } )
+
+            const transmitter = new Quiet.Transmitter( Quiet.Profiles.Ultrasonic )
+            transmitButton.addEventListener( 'click', async ( ) => {
+                transmitter.send( Quiet.Helpers.str2ab( transmitArea.value ) )
+            } )
+        </script>
+    </body>
+</html>
