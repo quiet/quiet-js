@@ -333,6 +333,11 @@
         "outer_fec_scheme": "v29",
         "mod_scheme": "fsk8"
       },
+      "preamble": {
+        "polynomial": "0x29",
+        "polynomial_length": 5,
+        "polynomial_seed": 1
+      },
       "fsk": {
         "bandwidth": 0.45,
         "samples_per_symbol": 50
@@ -436,6 +441,11 @@
         "inner_fec_scheme": "none",
         "outer_fec_scheme": "v29",
         "mod_scheme": "fsk8"
+      },
+      "preamble": {
+        "polynomial": "0x29",
+        "polynomial_length": 5,
+        "polynomial_seed": 1
       },
       "fsk": {
         "bandwidth": 0.45,
