@@ -339,7 +339,7 @@
         "polynomial_seed": 1
       },
       "fsk": {
-        "bandwidth": 0.45,
+        "bandwidth": 0.35,
         "samples_per_symbol": 70
       }
     },
