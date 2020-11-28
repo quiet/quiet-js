@@ -331,7 +331,7 @@
         "checksum_scheme": "crc32",
         "inner_fec_scheme": "none",
         "outer_fec_scheme": "v29",
-        "mod_scheme": "fsk8"
+        "mod_scheme": "fsk4"
       },
       "preamble": {
         "polynomial": "0x13",
@@ -340,7 +340,7 @@
       },
       "fsk": {
         "bandwidth": 0.45,
-        "samples_per_symbol": 30
+        "samples_per_symbol": 70
       }
     },
     "ultrasonic-experimental": {
