@@ -313,17 +313,17 @@
         "gain": 0.35
       },
       "interpolation": {
-        "shape": "kaiser",
+        "shape": "rrcos",
         "samples_per_symbol": 40,
-        "symbol_delay": 13,
-        "excess_bandwidth": 0.45
+        "symbol_delay": 21,
+        "excess_bandwidth": 0.40
       },
       "encoder_filters": {
         "dc_filter_alpha": 0.01
       },
       "resampler": {
-        "delay": 21,
-        "bandwidth": 0.40,
+        "delay": 13,
+        "bandwidth": 0.45,
         "attenuation": 60,
         "filter_bank_size": 64
       },
