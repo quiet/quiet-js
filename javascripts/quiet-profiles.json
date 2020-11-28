@@ -303,7 +303,7 @@
       }
     },
     "ultrasonic-fsk": {
-      "mod_scheme": "fsk4",
+      "mod_scheme": "fsk16",
       "checksum_scheme": "crc32",
       "inner_fec_scheme": "none",
       "outer_fec_scheme": "v29",
@@ -331,7 +331,7 @@
         "checksum_scheme": "crc32",
         "inner_fec_scheme": "none",
         "outer_fec_scheme": "v29",
-        "mod_scheme": "fsk4"
+        "mod_scheme": "fsk16"
       },
       "preamble": {
         "polynomial": "0x13",
