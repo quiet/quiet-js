@@ -303,7 +303,7 @@
       }
     },
     "ultrasonic-fsk": {
-      "mod_scheme": "fsk8",
+      "mod_scheme": "fsk4",
       "checksum_scheme": "crc32",
       "inner_fec_scheme": "none",
       "outer_fec_scheme": "v29",
