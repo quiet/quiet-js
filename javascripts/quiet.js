@@ -134,6 +134,10 @@ var Quiet = (function() {
         Module.memoryInitializerPrefixURL = prefix;
     };
 
+    function locateFile(prefix) {
+        Module.locateFile(prefix + "quiet-emscripten.js.mem");
+    };
+
     function setLibfecPrefix(prefix) {
         Module.dynamicLibraries = Module.dynamicLibraries || [];
         Module.dynamicLibraries.push(prefix + "libfec.js");
@@ -205,7 +209,7 @@ var Quiet = (function() {
         }
 
         if (opts.memoryInitializerPrefix !== undefined) {
-            setMemoryInitializerPrefix(opts.memoryInitializerPrefix);
+            locateFile(opts.memoryIntializerPrefix);
         }
 
         if (opts.libfecPrefix !== undefined) {
