@@ -287,6 +287,7 @@ var Quiet = (function() {
      * tx.transmit(Quiet.str2ab("Hello, World!"));
      */
     function transmitter(opts) {
+        return;
         var profile = opts.profile;
         var c_profiles, c_profile;
         var profileObj;
