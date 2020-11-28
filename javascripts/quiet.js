@@ -305,10 +305,12 @@ var Quiet = (function() {
         var done = opts.onFinish;
 
         var opt = Module.ccall('quiet_encoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
+        console.log(opt);
 
         // libquiet internally works at 44.1kHz but the local sound card
         // may be a different rate. we inform quiet about that here
         var encoder = Module.ccall('quiet_encoder_create', 'pointer', ['pointer', 'number'], [opt, audioCtx.sampleRate]);
+        console.log(encoder);
 
         Module.ccall('free', null, ['pointer'], [opt]);
 
