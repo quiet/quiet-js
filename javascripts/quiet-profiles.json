@@ -340,7 +340,7 @@
       },
       "fsk": {
         "bandwidth": 0.45,
-        "samples_per_symbol": 50
+        "samples_per_symbol": 20
       }
     },
     "ultrasonic-experimental": {
