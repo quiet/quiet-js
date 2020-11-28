@@ -15,6 +15,7 @@ var Quiet = (function() {
     // initialization flags
     var emscriptenInitialized = false;
     var profilesFetched = false;
+    var memoryInitializerPrefix = "";
 
     // profiles is the string content of quiet-profiles.json
     var profiles;
@@ -64,7 +65,7 @@ var Quiet = (function() {
             console.log(audioCtx.sampleRate);
         }
     };
-    
+
     function resumeAudioContext() {
         if (audioCtx.state === 'suspended') {
             audioCtx.resume();
@@ -95,6 +96,14 @@ var Quiet = (function() {
     function onEmscriptenInitialized() {
         emscriptenInitialized = true;
         checkInitState();
+    };
+
+    function onEmscriptenLocateFile(path, prefix) {
+        if (path.endsWith(".mem")) {
+            return memoryInitializerPrefixURL + path;
+        }
+
+        return prefix + path;
     };
 
     function setProfilesPrefix(prefix) {
@@ -131,11 +140,7 @@ var Quiet = (function() {
     };
 
     function setMemoryInitializerPrefix(prefix) {
-        Module.memoryInitializerPrefixURL = prefix;
-    };
-
-    function locateFile(prefix) {
-        Module.locateFile(prefix + "quiet-emscripten.js.mem");
+        memoryInitializerPrefixURL = prefix;
     };
 
     function setLibfecPrefix(prefix) {
@@ -209,7 +214,7 @@ var Quiet = (function() {
         }
 
         if (opts.memoryInitializerPrefix !== undefined) {
-            locateFile(opts.memoryIntializerPrefix);
+            setMemoryInitializerPrefix(opts.memoryInitializerPrefix);
         }
 
         if (opts.libfecPrefix !== undefined) {
@@ -957,6 +962,7 @@ var Quiet = (function() {
 
     return {
         emscriptenInitialized: onEmscriptenInitialized,
+        emscriptenLocateFile: onEmscriptenLocateFile,
         addReadyCallback: addReadyCallback,
         init: init,
         transmitter: transmitter,
@@ -971,5 +977,5 @@ var Quiet = (function() {
 // extend emscripten Module
 var Module = {
     onRuntimeInitialized: Quiet.emscriptenInitialized,
-    memoryInitializerPrefixURL: ""
+    locateFile: Quiet.emscriptenLocateFile
 };
