@@ -334,8 +334,8 @@
         "mod_scheme": "fsk8"
       },
       "preamble": {
-        "polynomial": "0xc1",
-        "polynomial_length": 7,
+        "polynomial": "0x13",
+        "polynomial_length": 4,
         "polynomial_seed": 1
       },
       "fsk": {
