@@ -316,7 +316,7 @@
         "shape": "kaiser",
         "samples_per_symbol": 40,
         "symbol_delay": 13,
-        "excess_bandwidth": 0.3
+        "excess_bandwidth": 0.45
       },
       "encoder_filters": {
         "dc_filter_alpha": 0.01
