@@ -287,7 +287,6 @@ var Quiet = (function() {
      * tx.transmit(Quiet.str2ab("Hello, World!"));
      */
     function transmitter(opts) {
-        return;
         var profile = opts.profile;
         var c_profiles, c_profile;
         var profileObj;
@@ -417,6 +416,7 @@ var Quiet = (function() {
         // first we push as much payload as will fit into encoder's tx queue
         // then we create the next sample block (if played = true)
         var writebuf = function() {
+            console.log('writebuf');
             if (destroyed) {
                 return;
             }
@@ -507,6 +507,7 @@ var Quiet = (function() {
         };
 
         var transmit = function(buf) {
+            console.log('transmit');
             if (destroyed) {
                 return;
             }
