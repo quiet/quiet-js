@@ -322,8 +322,8 @@
         "dc_filter_alpha": 0.01
       },
       "resampler": {
-        "delay": 13,
-        "bandwidth": 0.45,
+        "delay": 21,
+        "bandwidth": 0.40,
         "attenuation": 60,
         "filter_bank_size": 64
       },
