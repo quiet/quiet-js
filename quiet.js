@@ -15,6 +15,7 @@ var Quiet = (function() {
     // initialization flags
     var emscriptenInitialized = false;
     var profilesFetched = false;
+    var memoryInitializerPrefix = "";
 
     // profiles is the string content of quiet-profiles.json
     var profiles;
@@ -61,7 +62,12 @@ var Quiet = (function() {
     function initAudioContext() {
         if (audioCtx === undefined) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            console.log(audioCtx.sampleRate);
+        }
+    };
+
+    function resumeAudioContext() {
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
         }
     };
 
@@ -89,6 +95,14 @@ var Quiet = (function() {
     function onEmscriptenInitialized() {
         emscriptenInitialized = true;
         checkInitState();
+    };
+
+    function onEmscriptenLocateFile(path, prefix) {
+        if (path.endsWith(".mem")) {
+            return memoryInitializerPrefixURL + path;
+        }
+
+        return prefix + path;
     };
 
     function setProfilesPrefix(prefix) {
@@ -125,7 +139,7 @@ var Quiet = (function() {
     };
 
     function setMemoryInitializerPrefix(prefix) {
-        Module.memoryInitializerPrefixURL = prefix;
+        memoryInitializerPrefixURL = prefix;
     };
 
     function setLibfecPrefix(prefix) {
@@ -236,6 +250,7 @@ var Quiet = (function() {
      * this length or shorter
      * @property {function} getAverageEncodeTime - returns average time in ms spent encoding data
      * into sound samples over the last 3 runs
+     * @property {function} getProfile - get the profile object used to create this transmitter
      */
 
     /**
@@ -273,11 +288,14 @@ var Quiet = (function() {
     function transmitter(opts) {
         var profile = opts.profile;
         var c_profiles, c_profile;
+        var profileObj;
         if (typeof profile === 'object') {
-            c_profiles = Module.intArrayFromString(JSON.stringify({"profile": profile}));
+            profileObj = profile;
+            c_profiles = Module.intArrayFromString(JSON.stringify({"profile": profileObj}));
             c_profile = Module.intArrayFromString("profile");
         } else {
             // get an encoder_options object for our quiet-profiles.json and profile key
+            profileObj = JSON.parse(profiles)[profile];
             c_profiles = Module.intArrayFromString(profiles);
             c_profile = Module.intArrayFromString(profile);
         }
@@ -342,6 +360,7 @@ var Quiet = (function() {
         };
 
         var startTransmitter = function () {
+            resumeAudioContext();
             if (destroyed) {
                 return;
             }
@@ -522,11 +541,16 @@ var Quiet = (function() {
             return total/(last_emit_times.length);
         };
 
+        var getProfile = function() {
+            return Object.assign({}, profileObj);
+        };
+
         return {
             transmit: transmit,
             destroy: destroy,
             frameLength: frame_len,
-            getAverageEncodeTime: getAverageEncodeTime
+            getAverageEncodeTime: getAverageEncodeTime,
+            getProfile: getProfile
         };
     };
 
@@ -706,6 +730,7 @@ var Quiet = (function() {
         var opt = Module.ccall('quiet_decoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
 
         initAudioContext();
+        resumeAudioContext();
         // quiet does not create an audio input when it starts
         // getting microphone access requires a permission dialog so only ask for it if we need it
         if (gUM === undefined) {
@@ -936,6 +961,7 @@ var Quiet = (function() {
 
     return {
         emscriptenInitialized: onEmscriptenInitialized,
+        emscriptenLocateFile: onEmscriptenLocateFile,
         addReadyCallback: addReadyCallback,
         init: init,
         transmitter: transmitter,
@@ -950,5 +976,5 @@ var Quiet = (function() {
 // extend emscripten Module
 var Module = {
     onRuntimeInitialized: Quiet.emscriptenInitialized,
-    memoryInitializerPrefixURL: ""
+    locateFile: Quiet.emscriptenLocateFile
 };
