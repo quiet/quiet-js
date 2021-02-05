@@ -449,7 +449,7 @@
       },
       "fsk": {
         "bandwidth": 0.45,
-        "samples_per_symbol": 250
+        "samples_per_symbol": 50
       }
     },
     "audible-fsk-fast": {
