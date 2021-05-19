@@ -501,9 +501,9 @@
       },
       "interpolation": {
         "shape": "kaiser",
-        "samples_per_symbol": 40,
-        "symbol_delay": 13,
-        "excess_bandwidth": 0.3
+        "samples_per_symbol": 20,
+        "symbol_delay": 17,
+        "excess_bandwidth": 0.35
       },
       "encoder_filters": {
         "dc_filter_alpha": 0.01
@@ -521,7 +521,7 @@
         "mod_scheme": "fsk16"
       },
       "fsk": {
-        "bandwidth": 0.45,
+        "bandwidth": 0.2,
         "samples_per_symbol": 32
       }
     }
