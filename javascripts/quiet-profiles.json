@@ -338,6 +338,7 @@
         "polynomial_length": 4,
         "polynomial_seed": 1
       },
+      "detection_threshold": "0.5",
       "fsk": {
         "bandwidth": 0.35,
         "samples_per_symbol": 70
@@ -489,14 +490,14 @@
       }
     },
     "ultrasonic-fsk-fast": {
-      "mod_scheme": "fsk8",
-      "checksum_scheme": "crc32",
-      "inner_fec_scheme": "rs8",
+      "mod_scheme": "fsk16",
+      "checksum_scheme": "crc8",
+      "inner_fec_scheme": "none",
       "outer_fec_scheme": "v29",
       "frame_length": 20,
       "modulation": {
-        "center_frequency": 19000,
-        "gain": 0.35
+        "center_frequency": 18800,
+        "gain": 0.44
       },
       "interpolation": {
         "shape": "kaiser",
@@ -514,14 +515,14 @@
         "filter_bank_size": 64
       },
       "header": {
-        "checksum_scheme": "crc32",
-        "inner_fec_scheme": "rs8",
+        "checksum_scheme": "crc8",
+        "inner_fec_scheme": "none",
         "outer_fec_scheme": "v29",
-        "mod_scheme": "fsk8"
+        "mod_scheme": "fsk16"
       },
       "fsk": {
         "bandwidth": 0.45,
-        "samples_per_symbol": 20
+        "samples_per_symbol": 32
       }
     }
 }
