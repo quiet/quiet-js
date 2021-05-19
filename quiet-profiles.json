@@ -303,7 +303,7 @@
       }
     },
     "ultrasonic-fsk": {
-      "mod_scheme": "fsk8",
+      "mod_scheme": "fsk16",
       "checksum_scheme": "crc32",
       "inner_fec_scheme": "none",
       "outer_fec_scheme": "v29",
@@ -313,10 +313,10 @@
         "gain": 0.35
       },
       "interpolation": {
-        "shape": "kaiser",
+        "shape": "rrcos",
         "samples_per_symbol": 40,
-        "symbol_delay": 13,
-        "excess_bandwidth": 0.3
+        "symbol_delay": 21,
+        "excess_bandwidth": 0.40
       },
       "encoder_filters": {
         "dc_filter_alpha": 0.01
@@ -331,16 +331,17 @@
         "checksum_scheme": "crc32",
         "inner_fec_scheme": "none",
         "outer_fec_scheme": "v29",
-        "mod_scheme": "fsk8"
+        "mod_scheme": "fsk16"
       },
       "preamble": {
-        "polynomial": "0x29",
-        "polynomial_length": 5,
+        "polynomial": "0x13",
+        "polynomial_length": 4,
         "polynomial_seed": 1
       },
+      "detection_threshold": "0.5",
       "fsk": {
-        "bandwidth": 0.45,
-        "samples_per_symbol": 50
+        "bandwidth": 0.35,
+        "samples_per_symbol": 70
       }
     },
     "ultrasonic-experimental": {
@@ -489,14 +490,14 @@
       }
     },
     "ultrasonic-fsk-fast": {
-      "mod_scheme": "fsk8",
-      "checksum_scheme": "crc32",
-      "inner_fec_scheme": "rs8",
+      "mod_scheme": "fsk16",
+      "checksum_scheme": "crc8",
+      "inner_fec_scheme": "none",
       "outer_fec_scheme": "v29",
       "frame_length": 20,
       "modulation": {
-        "center_frequency": 19000,
-        "gain": 0.35
+        "center_frequency": 18800,
+        "gain": 0.44
       },
       "interpolation": {
         "shape": "kaiser",
@@ -514,14 +515,14 @@
         "filter_bank_size": 64
       },
       "header": {
-        "checksum_scheme": "crc32",
-        "inner_fec_scheme": "rs8",
+        "checksum_scheme": "crc8",
+        "inner_fec_scheme": "none",
         "outer_fec_scheme": "v29",
-        "mod_scheme": "fsk8"
+        "mod_scheme": "fsk16"
       },
       "fsk": {
         "bandwidth": 0.45,
-        "samples_per_symbol": 20
+        "samples_per_symbol": 32
       }
     }
 }
