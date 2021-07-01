@@ -5,8 +5,123 @@
  *  - emscripten, Copyright (c) 2010-2016 Emscripten authors
  */
 
+
+// Source: https://gist.github.com/icodeforlove/a4ee3ee9d1546ff212d700d85118d57e
+Float32Array.prototype.concat = function () {
+    const bytesPerIndex = 4;
+    let buffers = Array.prototype.slice.call(arguments);
+
+    // add self
+    buffers.unshift(this);
+
+    buffers = buffers.map((item) => {
+        if (item instanceof Float32Array) {
+            return item.buffer;
+        } else if (item instanceof ArrayBuffer) {
+            if (item.byteLength / bytesPerIndex % 1 !== 0) {
+                throw new Error('One of the ArrayBuffers is not from a Float32Array');
+            }
+            return item;
+        } else {
+            throw new Error('You can only concat Float32Array, or ArrayBuffers');
+        }
+    });
+
+    const concatenatedByteLength = buffers
+        .map(a => a.byteLength)
+        .reduce((a,b) => a + b, 0);
+
+    const concatenatedArray = new Float32Array(concatenatedByteLength / bytesPerIndex);
+
+    let offset = 0;
+    buffers.forEach((buffer, index) => {
+        concatenatedArray.set(new Float32Array(buffer), offset);
+        offset += buffer.byteLength / bytesPerIndex;
+    });
+
+    return concatenatedArray;
+};
+
+// Source: https://stackoverflow.com/a/62173861/5231031
+// Returns Uint8Array of WAV bytes
+const getWavBytes = (buffer, options) => {
+    const type = options.isFloat ? Float32Array : Uint16Array;
+    const numFrames = buffer.byteLength / type.BYTES_PER_ELEMENT;
+
+    const headerBytes = getWavHeader(Object.assign({}, options, {numFrames}));
+    const wavBytes = new Uint8Array(headerBytes.length + buffer.byteLength);
+
+    // prepend header, then add pcmBytes
+    wavBytes.set(headerBytes, 0);
+    wavBytes.set(new Uint8Array(buffer), headerBytes.length);
+
+    return wavBytes;
+};
+
+// adapted from https://gist.github.com/also/900023
+// returns Uint8Array of WAV header bytes
+const getWavHeader = (options) => {
+    const numFrames = options.numFrames;
+    const numChannels = options.numChannels || 2;
+    const sampleRate = options.sampleRate || 44100;
+    const bytesPerSample = options.isFloat ? 4 : 2;
+    const format = options.isFloat ? 3 : 1;
+
+    const blockAlign = numChannels * bytesPerSample;
+    const byteRate = sampleRate * blockAlign;
+    const dataSize = numFrames * blockAlign;
+
+    const buffer = new ArrayBuffer(44);
+    const dv = new DataView(buffer);
+
+    let p = 0;
+
+    const writeString = (s) => {
+        for (let i = 0; i < s.length; i++) {
+            dv.setUint8(p + i, s.charCodeAt(i));
+        }
+        p += s.length;
+    };
+
+    const writeUint32 = (d) => {
+        dv.setUint32(p, d, true);
+        p += 4;
+    };
+
+    const writeUint16 = (d) => {
+        dv.setUint16(p, d, true);
+        p += 2;
+    };
+
+    writeString('RIFF');              // ChunkID
+    writeUint32(dataSize + 36);       // ChunkSize
+    writeString('WAVE');              // Format
+    writeString('fmt ');              // Subchunk1ID
+    writeUint32(16);                  // Subchunk1Size
+    writeUint16(format);                 // AudioFormat
+    writeUint16(numChannels);            // NumChannels
+    writeUint32(sampleRate);             // SampleRate
+    writeUint32(byteRate);               // ByteRate
+    writeUint16(blockAlign);             // BlockAlign
+    writeUint16(bytesPerSample * 8);  // BitsPerSample
+    writeString('data');              // Subchunk2ID
+    writeUint32(dataSize);               // Subchunk2Size
+
+    return new Uint8Array(buffer);
+};
+
+const saveFile = (() => {
+    const a = document.createElement('a');
+    return (url, fileName) => {
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    };
+})();
+
 /** @namespace */
-var Quiet = (function() {
+var Quiet = (function () {
     // sampleBufferSize is the number of audio samples we'll write per onaudioprocess call
     // must be a power of two. we choose the absolute largest permissible value
     // we implicitly assume that the browser will play back a written buffer without any gaps
@@ -114,26 +229,26 @@ var Quiet = (function() {
         }
         var profilesPath = prefix + "quiet-profiles.json";
 
-        var fetch = new Promise(function(resolve, reject) {
+        var fetch = new Promise(function (resolve, reject) {
             var xhr = new XMLHttpRequest();
             xhr.overrideMimeType("application/json");
             xhr.open("GET", profilesPath, true);
-            xhr.onload = function() {
+            xhr.onload = function () {
                 if (this.status >= 200 && this.status < 300) {
                     resolve(this.responseText);
                 } else {
                     reject(this.statusText);
                 }
             };
-            xhr.onerror = function() {
+            xhr.onerror = function () {
                 reject(this.statusText);
             };
             xhr.send();
         });
 
-        fetch.then(function(body) {
+        fetch.then(function (body) {
             onProfilesFetch(body);
-        }, function(err) {
+        }, function (err) {
             fail("fetch of quiet-profiles.json failed: " + err);
         });
     };
@@ -286,6 +401,9 @@ var Quiet = (function() {
      * tx.transmit(Quiet.str2ab("Hello, World!"));
      */
     function transmitter(opts) {
+        opts.downloadTransmission = opts.downloadTransmission || false;
+        opts.downloadableTransmissionFileName = opts.downloadableTransmissionFileName || 'transmission.wav';
+
         var profile = opts.profile;
         var c_profiles, c_profile;
         var profileObj;
@@ -341,7 +459,7 @@ var Quiet = (function() {
         // prevent races with callbacks on destroyed in-flight objects
         var destroyed = false;
 
-        var onaudioprocess = function(e) {
+        var onaudioprocess = function (e) {
             var output_l = e.outputBuffer.getChannelData(0);
 
             if (played === true) {
@@ -357,6 +475,54 @@ var Quiet = (function() {
 
             output_l.set(sample_view);
             window.setTimeout(writebuf, 0);
+
+            if (opts.downloadTransmission) {
+                recordStream(e);
+            }
+        };
+
+        let wavByteOptions;
+        let float32ArrayList = [];
+        const recordStream = (e) => {
+            const audioBuffer = e.outputBuffer;
+            const [left, right] = [audioBuffer.getChannelData(0), audioBuffer.getChannelData(1)];
+
+            // interleaved
+            const interleaved = new Float32Array(left.length + right.length)
+            for (let src = 0, dst = 0; src < left.length; src++, dst += 2) {
+                interleaved[dst] = left[src];
+                interleaved[dst + 1] = right[src];
+            }
+
+            float32ArrayList.push(interleaved);
+
+            if (!wavByteOptions) {
+                wavByteOptions = {
+                    isFloat: true,       // floating point or 16-bit integer
+                    numChannels: audioBuffer.numberOfChannels,
+                    sampleRate: audioBuffer.sampleRate,
+                };
+            }
+        };
+
+        const downloadStream = () => {
+            float32ArrayList = float32ArrayList.filter(float32Array => !!float32Array[0] || !!float32Array[1]);
+
+            let float32ArraysMerged = float32ArrayList[0];
+            for (let i = 1; i < float32ArrayList.length; i++) {
+                const float32ArraysCurrent = float32ArrayList[i];
+
+                float32ArraysMerged = float32ArraysMerged.concat(float32ArraysCurrent);
+            }
+
+            // get WAV file bytes and audio params of your audio source
+            const wavBytes = getWavBytes(float32ArraysMerged.buffer, wavByteOptions);
+
+            const wav = new Blob([wavBytes], {type: 'audio/wav'});
+
+            const url = URL.createObjectURL(wav);
+            const fileName = opts.downloadableTransmissionFileName;
+            saveFile(url, fileName);
         };
 
         var startTransmitter = function () {
@@ -390,6 +556,9 @@ var Quiet = (function() {
             }
             dummy_osc.disconnect();
             transmitter.disconnect();
+            if (opts.downloadTransmission) {
+                downloadStream();
+            }
             running = false;
         };
 
@@ -414,14 +583,14 @@ var Quiet = (function() {
         // writebuf calls _send and _emit on the encoder
         // first we push as much payload as will fit into encoder's tx queue
         // then we create the next sample block (if played = true)
-        var writebuf = function() {
+        var writebuf = function () {
             if (destroyed) {
                 return;
             }
             // fill as much of quiet's transmit queue as possible
             var frame_available = false;
             var frame_written = false;
-            while(true) {
+            while (true) {
                 var frame = payload.shift();
                 if (frame === undefined) {
                     break;
@@ -482,7 +651,7 @@ var Quiet = (function() {
                 // looks like we are done
                 // user callback
                 if (done !== undefined) {
-                        done();
+                    done();
                 }
                 if (running === true) {
                     stopTransmitter();
@@ -504,12 +673,12 @@ var Quiet = (function() {
 
         };
 
-        var transmit = function(buf) {
+        var transmit = function (buf) {
             if (destroyed) {
                 return;
             }
             // slice up into frames and push the frames to a list
-            for (var i = 0; i < buf.byteLength; ) {
+            for (var i = 0; i < buf.byteLength;) {
                 var frame = buf.slice(i, i + frame_len);
                 i += frame.byteLength;
                 payload.push(frame);
@@ -518,7 +687,7 @@ var Quiet = (function() {
             writebuf();
         };
 
-        var destroy = function() {
+        var destroy = function () {
             if (destroyed) {
                 return;
             }
@@ -530,7 +699,7 @@ var Quiet = (function() {
             destroyed = true;
         };
 
-        var getAverageEncodeTime = function() {
+        var getAverageEncodeTime = function () {
             if (last_emit_times.length === 0) {
                 return 0;
             }
@@ -538,10 +707,10 @@ var Quiet = (function() {
             for (var i = 0; i < last_emit_times.length; i++) {
                 total += last_emit_times[i];
             }
-            return total/(last_emit_times.length);
+            return total / (last_emit_times.length);
         };
 
-        var getProfile = function() {
+        var getProfile = function () {
             return Object.assign({}, profileObj);
         };
 
@@ -591,17 +760,17 @@ var Quiet = (function() {
             return {
                 audio: {
                     optional: [
-                      {googAutoGainControl: false},
-                      {googAutoGainControl2: false},
-                      {echoCancellation: false},
-                      {googEchoCancellation: false},
-                      {googEchoCancellation2: false},
-                      {googDAEchoCancellation: false},
-                      {googNoiseSuppression: false},
-                      {googNoiseSuppression2: false},
-                      {googHighpassFilter: false},
-                      {googTypingNoiseDetection: false},
-                      {googAudioMirroring: false}
+                        {googAutoGainControl: false},
+                        {googAutoGainControl2: false},
+                        {echoCancellation: false},
+                        {googEchoCancellation: false},
+                        {googEchoCancellation2: false},
+                        {googDAEchoCancellation: false},
+                        {googNoiseSuppression: false},
+                        {googNoiseSuppression2: false},
+                        {googHighpassFilter: false},
+                        {googTypingNoiseDetection: false},
+                        {googAudioMirroring: false}
                     ]
                 }
             };
@@ -626,16 +795,16 @@ var Quiet = (function() {
 
     function createAudioInput() {
         audioInput = 0; // prevent others from trying to create
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             gUM.call(navigator, gUMConstraints(),
-                function(e) {
+                function (e) {
                     audioInput = audioCtx.createMediaStreamSource(e);
 
                     // stash a very permanent reference so this isn't collected
                     window.quiet_receiver_anti_gc = audioInput;
 
                     audioInputReady();
-                }, function(reason) {
+                }, function (reason) {
                     audioInputFailed(reason.name);
                 });
         }, 0);
@@ -771,7 +940,7 @@ var Quiet = (function() {
 
         var destroyed = false;
 
-        var readbuf = function() {
+        var readbuf = function () {
             if (destroyed) {
                 return;
             }
@@ -789,7 +958,7 @@ var Quiet = (function() {
         var lastChecksumFailCount = 0;
         var last_consume_times = [];
         var num_consume_times = 3;
-        var consume = function() {
+        var consume = function () {
             if (destroyed) {
                 return;
             }
@@ -806,7 +975,9 @@ var Quiet = (function() {
 
             var currentChecksumFailCount = Module.ccall('quiet_decoder_checksum_fails', 'number', ['pointer'], [decoder]);
             if ((opts.onReceiveFail !== undefined) && (currentChecksumFailCount > lastChecksumFailCount)) {
-                window.setTimeout(function() { opts.onReceiveFail(currentChecksumFailCount); }, 0);
+                window.setTimeout(function () {
+                    opts.onReceiveFail(currentChecksumFailCount);
+                }, 0);
             }
             lastChecksumFailCount = currentChecksumFailCount;
 
@@ -814,7 +985,7 @@ var Quiet = (function() {
                 var num_frames_ptr = Module.ccall('malloc', 'pointer', ['number'], [4]);
                 var frames = Module.ccall('quiet_decoder_consume_stats', 'pointer', ['pointer', 'pointer'], [decoder, num_frames_ptr]);
                 // time for some more pointer arithmetic
-                var num_frames = Module.HEAPU32[num_frames_ptr/4];
+                var num_frames = Module.HEAPU32[num_frames_ptr / 4];
                 Module.ccall('free', null, ['pointer'], [num_frames_ptr]);
 
                 var framesize = 4 + 4 + 4 + 4 + 4;
@@ -822,7 +993,7 @@ var Quiet = (function() {
 
                 for (var i = 0; i < num_frames; i++) {
                     var frameStats = {};
-                    var frame = (frames + i*framesize)/4;
+                    var frame = (frames + i * framesize) / 4;
                     var symbols = Module.HEAPU32[frame];
                     var num_symbols = Module.HEAPU32[frame + 1];
                     frameStats.errorVectorMagnitude = Module.HEAPF32[frame + 2];
@@ -830,7 +1001,7 @@ var Quiet = (function() {
 
                     frameStats.symbols = [];
                     for (var j = 0; j < num_symbols; j++) {
-                        var symbol = (symbols + 8*j)/4;
+                        var symbol = (symbols + 8 * j) / 4;
                         frameStats.symbols.push({
                             real: Module.HEAPF32[symbol],
                             imag: Module.HEAPF32[symbol + 1]
@@ -842,19 +1013,19 @@ var Quiet = (function() {
             }
         }
 
-        scriptProcessor.onaudioprocess = function(e) {
+        scriptProcessor.onaudioprocess = function (e) {
             if (destroyed) {
                 return;
             }
             var input = e.inputBuffer.getChannelData(0);
-            var sample_view = Module.HEAPF32.subarray(samples/4, samples/4 + sampleBufferSize);
+            var sample_view = Module.HEAPF32.subarray(samples / 4, samples / 4 + sampleBufferSize);
             sample_view.set(input);
 
             window.setTimeout(consume, 0);
         }
 
         // if this is the first receiver object created, wait for our input node to be created
-        addAudioInputReadyCallback(function() {
+        addAudioInputReadyCallback(function () {
             audioInput.connect(scriptProcessor);
             if (opts.onCreate !== undefined) {
                 window.setTimeout(opts.onCreate, 0);
@@ -867,7 +1038,7 @@ var Quiet = (function() {
         scriptProcessor.connect(fakeGain);
         fakeGain.connect(audioCtx.destination);
 
-        var destroy = function() {
+        var destroy = function () {
             if (destroyed) {
                 return;
             }
@@ -880,7 +1051,7 @@ var Quiet = (function() {
             destroyed = true;
         };
 
-        var getAverageDecodeTime = function() {
+        var getAverageDecodeTime = function () {
             if (last_consume_times.length === 0) {
                 return 0;
             }
@@ -888,7 +1059,7 @@ var Quiet = (function() {
             for (var i = 0; i < last_consume_times.length; i++) {
                 total += last_consume_times[i];
             }
-            return total/(last_consume_times.length);
+            return total / (last_consume_times.length);
         };
 
         return {
